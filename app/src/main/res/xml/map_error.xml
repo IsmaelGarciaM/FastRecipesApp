@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<map linked="true">
+
+    <entry key="10">empty_field</entry>
+    <entry key="11">invalid_email</entry>
+    <entry key="12">password_same</entry>
+    <entry key="13">password_length</entry>
+    <entry key="14">password_case</entry>
+    <entry key="15">password_number</entry>
+    <entry key="16">phone_error</entry>
+
+
+</map>

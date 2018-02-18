@@ -2,14 +2,31 @@ package com.ismael.fastrecipes;
 
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
 
+import com.ismael.fastrecipes.adapter.FilterAdapter;
+import com.ismael.fastrecipes.model.Filter;
 import com.ismael.fastrecipes.interfaces.SearchPresenter;
-import com.ismael.fastrecipes.presenter.SearchPresenterImpl;
+
+import java.util.ArrayList;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 
 
 /**
@@ -17,40 +34,66 @@ import com.ismael.fastrecipes.presenter.SearchPresenterImpl;
  */
 public class SearchRecipeFragment extends Fragment implements SearchPresenter.View {
 
+    /**
+     * Variables de clase
+     */
+    @BindView(R.id.fabSearch)
+    FloatingActionButton fabSearch;
+
+    @BindView(R.id.btnDelete)
+    Button btnDeleteFilters;
+
+    @BindView(R.id.txvfilterEmptyList)
+    TextView txvEmpty;
+
+    @BindView(R.id.rcvFilterList)
+    ListView lvFilters;
+
+    @BindView(R.id.btnAddFilter)
+    Button btnAddFilter;
+
+
+    private static final String f1 = "Con los ingredientes:";
+    private static final String f2 = "Que no lleve:";
+    private static final String f3 = "Dentro de:";
+    private static final String f4 = "Por su nombre";
+    private static final String f5 = "Tiempo máximo:";
+    private static final String f6 = "Dificultad:";
+
     private SearchFragmentListener mCallback;
     static SearchRecipeFragment srfInstance;
-    SearchPresenterImpl presenter;
-
-    public SearchRecipeFragment() {
-        // Required empty public constructor
-    }
-
-    public interface SearchFragmentListener{
-        void showSearchFragment();
-    }
+    AlertDialog.Builder customDialog = null;
+    FilterAdapter filterAdapter;
 
     public static SearchRecipeFragment getInstance(Bundle args){
 
         if(srfInstance == null){
             srfInstance = new SearchRecipeFragment();
-            srfInstance.setArguments(args);}
+        }
+        srfInstance.setArguments(args);
         return  srfInstance;
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        presenter = new SearchPresenterImpl(this);
+    public SearchRecipeFragment() {
+        // Required empty public constructor
     }
 
-    @Override
-    public android.view.View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        android.view.View rootView = inflater.inflate(R.layout.fragment_search_recipe, container, false);
-
-        return rootView;
+    //Interfaz para HomeActivity
+    public interface SearchFragmentListener{
+        void showSearchFragment(Bundle data);
+        void showSearchByIngredients(Bundle data);
+        void showSearchByCategories(Bundle data);
+        Filter getFilter(int pos);
+        void addFilter(Filter f);
+        void removeFilter(int pos);
+        int getNFilters();
+        int getPos(String type);
+        Filter getFilterByName(String name);
+        ArrayList<Filter> getFilters();
+        void showRecipesList(Bundle b);
+        void deleteFilters();
     }
+
 
     @Override
     public void onAttach(Activity activity) {
@@ -58,8 +101,27 @@ public class SearchRecipeFragment extends Fragment implements SearchPresenter.Vi
         try {
             mCallback = (SearchFragmentListener) activity;
         } catch (ClassCastException e) {
-            throw new ClassCastException(e.getMessage() + " activity must implement ListChemistListener interface");
+            throw new ClassCastException(e.getMessage() + " activity must implement SearchFragmentListener interface");
         }
+    }
+
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public android.view.View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        android.view.View rootView = inflater.inflate(R.layout.fragment_search_recipe, container, false);
+        ButterKnife.bind(this, rootView);
+        filterAdapter = new FilterAdapter(this.getContext(), 0, mCallback.getFilters());
+        if(mCallback.getFilters().size() == 0){
+            txvEmpty.setVisibility(View.VISIBLE);
+        }
+        return rootView;
     }
 
     @Override
@@ -76,5 +138,250 @@ public class SearchRecipeFragment extends Fragment implements SearchPresenter.Vi
     @Override
     public void onViewCreated(android.view.View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        fabSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //doSearch()
+                Bundle b = new Bundle();
+                //               Recipe tmp  = new Recipe("Lentejas", "Sopas y cremas", "pan, lentejas, xhorizo, comino", "Cocer las lentejas. Añadir el chorizo. Enjoy", 5, "Facil", 2, "31/01/18", "", "");
+                //             b.putParcelable("recipe", tmp);
+                mCallback.showRecipesList(b);
+            }
+        });
+
+        btnAddFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showFilters();
+            }
+        });
+
+        lvFilters.setAdapter(filterAdapter);
+        lvFilters.setOnItemClickListener( new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Bundle b = new Bundle();
+                String type = (filterAdapter.getItem(i)).getType();
+
+                switch (type){
+                    case f1:
+                        Filter ingnot = mCallback.getFilterByName(f2);
+                        ArrayList<Filter> tmp = new ArrayList<>();
+                        tmp.add(filterAdapter.getItem(i));
+                        tmp.add(ingnot);
+                        b.putParcelableArrayList("filters", tmp);
+                        mCallback.showSearchByIngredients(b);
+                        break;
+                    case f2:
+                        Filter ingok = mCallback.getFilterByName(f1);
+                        ArrayList<Filter> tmp2 = new ArrayList<>();
+                        tmp2.add(filterAdapter.getItem(i));
+                        tmp2.add(ingok);
+                        b.putParcelableArrayList("filters", tmp2);
+                        mCallback.showSearchByIngredients(b);
+                        break;
+                    case f3:
+                        Filter ftmp3 = mCallback.getFilterByName(f3);
+                        b.putParcelable("filter", ftmp3);
+                        mCallback.showSearchByCategories(b);
+                        break;
+                    case f4:
+                        showNameDialog();
+                        break;
+                    case f5:
+                        showTimeDialog("");
+                        break;
+                    case f6:
+                        showDifficultDialog();
+                        break;
+                }
+            }});
+        lvFilters.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                filterAdapter.remove(filterAdapter.getItem(i));
+                filterAdapter.refreshList();
+                if(mCallback.getFilters().size() == 0)
+                    txvEmpty.setVisibility(View.VISIBLE);
+                return true;
+            }
+        });
+        btnDeleteFilters.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mCallback.deleteFilters();
+                filterAdapter.refreshList();
+                txvEmpty.setVisibility(View.VISIBLE);
+
+            }
+        });
+
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    public void showFilters(){
+        // con este tema personalizado evitamos los bordes por defecto
+        customDialog = new AlertDialog.Builder(this.getContext(), R.style.Theme_Dialog_Translucent);
+        //deshabilitamos el título por defecto
+
+//customDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        customDialog.setTitle("Filtros");
+        //obligamos al usuario a pulsar los botones para cerrarlo
+        //customDialog.setCancelable(false);
+        //establecemos el contenido de nuestro dialog
+        //customDialog.setView(R.layout.filter_options_dialog_layout);
+
+        customDialog.setItems(new CharSequence[]{"Ingredientes", "Categorias", "Nombre", "Tiempo", "Dificultad"}, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                switch (i){
+                    case 0: mCallback.showSearchByIngredients(null);
+                        break;
+                    case 1: mCallback.showSearchByCategories(null);
+                        break;
+                    case 2: showNameDialog();
+                        break;
+                    case 3: showTimeDialog("");
+                        break;
+                    case 4:showDifficultDialog();
+                        break;
+
+                }
+            }
+        });
+
+        customDialog.show();
+    }
+
+    private void showTimeDialog(String time){
+        final String[] t = new String[1];
+
+        customDialog = new AlertDialog.Builder(this.getContext(), R.style.Theme_Dialog_Translucent);
+        // obligamos al usuario a pulsar los botones para cerrarlo
+        customDialog.setCancelable(false);
+        //establecemos el contenido de nuestro dialog
+        customDialog.setView(R.layout.dialog_time_picker);
+
+        customDialog.setNegativeButton("Atrás", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                //cancel
+            }
+        });
+
+        customDialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                //add filtro de tiempo
+                EditText edtTime = ((Dialog)dialogInterface).findViewById(R.id.edtTime);
+                t[0] = edtTime.getText().toString() + "   minutos";
+                if (mCallback.getFilterByName(f5) != null) {
+                    mCallback.getFilterByName(f5).setContent(t[0]);
+                    filterAdapter.refreshList();
+                }
+                else {
+                    Filter ftmp = new Filter(f5, t[0]);
+                    mCallback.addFilter(ftmp);
+                    filterAdapter.refreshList();
+                    if(txvEmpty.getVisibility() == View.VISIBLE)
+                        hideEmpty();
+
+                }
+            }
+        });
+
+      /*  if(!time.equals("")){
+            EditText edttim = customDialog.create().findViewById(R.id.edtTime);
+            edttim.setText(time);
+        }*/
+
+        customDialog.show();
+    }
+
+    private void showDifficultDialog(){
+        AlertDialog.Builder builderDificult = new AlertDialog.Builder(this.getContext(), R.style.Theme_Dialog_Translucent);
+
+        builderDificult.setTitle("Dificultad")
+                .setItems(R.array.diff_array, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String content = "";
+                        switch (which) {
+                            case 0:  content = "Tirado";
+                             break;
+                            case 1:  content = "Facil";
+                                break;
+                            case 2:  content = "Medio";
+                                break;
+                            case 3:  content = "Dificil";
+                                break;
+                        }
+
+                        int p = mCallback.getPos(f6);
+                        if (p != 10) {
+                            mCallback.getFilter(p).setContent(content);
+                            filterAdapter.refreshList();
+                        }
+                        else {
+                            Filter ft = new Filter(f6, content);
+                            mCallback.addFilter(ft);
+                            if(txvEmpty.getVisibility() == View.VISIBLE)
+                                hideEmpty();
+                            filterAdapter.refreshList();
+                        }
+                        dialog.dismiss();
+                    }
+                });
+
+        builderDificult.setCancelable(false).create().show();
+
+
+    }
+
+    private void showNameDialog(){
+        final String[] t = new String[1];
+
+        customDialog = new AlertDialog.Builder(this.getContext(), R.style.Theme_Dialog_Translucent);
+        customDialog.setCancelable(false);
+        customDialog.setView(R.layout.item_search);
+        customDialog.setNegativeButton("Atrás", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                //cancel
+            }
+        });
+
+        customDialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                EditText edtTime = ((Dialog)dialogInterface).findViewById(R.id.edtNameRecSearch);
+                t[0] = edtTime.getText().toString();
+                if (mCallback.getFilterByName(f4) != null) {
+                    mCallback.getFilterByName(f4).setContent(t[0]);
+                    filterAdapter.refreshList();
+                }
+                else {
+                    Filter ftmp = new Filter(f4, t[0]);
+                    mCallback.addFilter(ftmp);
+                    if(txvEmpty.getVisibility() == View.VISIBLE)
+                        hideEmpty();
+                    filterAdapter.refreshList();
+                }
+            }
+        }).show();
+
+    }
+    
+    private void doSearch(){
+        
+    }
+
+    private void hideEmpty(){
+        txvEmpty.setVisibility(View.GONE);
+    }
+
 }

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    >
+    <PreferenceCategory android:title="Configuración de Cuenta"
+        >
+
+
+        <Preference android:title="Cerrar sesión"
+            android:icon="@mipmap/ic_launcher_testing"
+            android:key="close_session">
+        </Preference>
+            <SwitchPreference
+                android:defaultValue="false"
+                android:title="Recordar usuario"
+                android:key="remember_user" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:title="Recibir notificaciones"
+            android:key="notifications" />
+
+        <Preference
+            android:defaultValue="false"
+            android:title="Términos y condiciones"
+            android:key="notifications" />
+
+        <Preference android:title="Ayuda"
+            android:icon="@drawable/fridge_filled"
+            android:key="help">
+        </Preference>
+
+
+
+
+
+        </PreferenceCategory>
+</PreferenceScreen>

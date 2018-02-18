@@ -1,0 +1,107 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.ismael.fastrecipes.SearchByIngredientFragment">
+
+    <TextView
+        android:text="Que contenga"
+        android:layout_marginTop="@dimen/hbLines"
+        android:layout_marginStart="@dimen/textPageBorder"
+        android:layout_width="wrap_content"
+        android:layout_alignBaseline="@+id/swtIngr"
+        android:layout_height="wrap_content" />
+
+    <Switch
+        android:id="@+id/swtIngr"
+        android:layout_marginTop="@dimen/hbLines"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:text="Que no contenga"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="@dimen/hbLines"
+        android:layout_marginEnd="@dimen/textPageBorder"
+        android:layout_width="wrap_content"
+        android:layout_alignBaseline="@+id/swtIngr"
+        android:layout_height="wrap_content" />
+
+
+    <AutoCompleteTextView
+        android:id="@+id/sacsi"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/textPageBorder"
+        android:layout_marginEnd="@dimen/textPageBorder"
+        android:layout_below="@+id/swtIngr"
+        android:drawableEnd="@drawable/ic_search_black_24dp"
+        android:hint="Buscar ingredientes.."/>
+
+    <RelativeLayout
+        android:id="@+id/rls"
+        android:layout_below="@+id/sacsi"
+        android:layout_width="match_parent"
+        android:layout_margin="@dimen/textPageBorder"
+        android:layout_height="wrap_content"
+        android:maxHeight="50dp">
+
+
+
+        <TextView
+            android:id="@+id/txvquecontenga"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Que contenga..."/>
+
+        <GridView
+            android:id="@+id/grvsi"
+            android:layout_below="@+id/txvquecontenga"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="100dp"
+            android:numColumns="3"
+            android:verticalSpacing="@dimen/elevation">
+
+
+        </GridView>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/textPageBorder"
+        android:layout_below="@+id/rls"
+        >
+    <TextView
+        android:id="@+id/sacno"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Que no contenga..."/>
+
+    <GridView
+        android:id="@+id/grvno"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/sacno"
+        android:verticalSpacing="@dimen/elevation"
+        android:layout_width="match_parent"
+        android:numColumns="3"
+        android:minHeight="100dp">
+
+    </GridView>
+    </RelativeLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabSaveIngredients"
+        android:layout_width="54dp"
+        android:layout_height="54dp"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="@dimen/textPageBorder"
+        app:srcCompat="@drawable/ic_save"
+        app:backgroundTint="@color/colorPrimary"
+        android:layout_alignParentBottom="true"/>
+
+</RelativeLayout>

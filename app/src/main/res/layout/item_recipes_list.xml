@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:elevation="@dimen/hbLines"
+    app:cardElevation="@dimen/elevation"
+    app:cardCornerRadius="@dimen/elevation"
+    app:cardBackgroundColor="@color/ic_launcher_background_testing">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="110dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/imvRecipeImg"
+            android:layout_width="92dp"
+            android:src="@drawable/heart_outline"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:layout_marginEnd="@dimen/textPageBorder"
+            android:layout_alignParentTop="true"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/textPageBorder"
+            android:id="@+id/txvRecipeName"
+            android:layout_toEndOf="@id/imvRecipeImg"
+            android:layout_alignParentTop="true"
+            android:textSize="16sp"
+            />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/textPageBorder"
+            android:id="@+id/txvRecipeCategories"
+            android:layout_toEndOf="@id/imvRecipeImg"
+            android:layout_below="@id/txvRecipeName"
+            android:textSize="10sp"
+            />
+
+
+
+        <RelativeLayout
+            android:id="@+id/rllInformation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/imvRecipeImg"
+            android:layout_marginTop="@dimen/textPageBorder"
+            android:layout_below="@id/txvRecipeCategories"
+            android:layout_marginStart="@dimen/textPageBorder">
+
+        <ImageView
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:id="@+id/timeIcon"
+            android:src="@drawable/hourglass"
+            android:layout_alignParentStart="true"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:id="@+id/txvTimeRecipe"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/timeIcon"
+                android:layout_alignBaseline="@id/timeIcon"
+                android:textSize="10sp"
+                android:text="" />
+
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:id="@+id/difficultIcon"
+            android:layout_marginStart="@dimen/textPageBorder"
+            android:layout_marginEnd="@dimen/hbLines"
+            android:src="@drawable/speedometer"
+            android:layout_toEndOf="@id/txvTimeRecipe"
+            />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="10sp"
+            android:id="@+id/txvRecipeDifficult"
+android:layout_alignBaseline="@id/difficultIcon"
+            android:layout_toEndOf="@id/difficultIcon"
+
+            />
+
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:id="@+id/ratingIcon"
+            android:layout_marginStart="@dimen/textPageBorder"
+            android:src="@drawable/heart"
+            android:layout_toEndOf="@id/txvRecipeDifficult"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txvRecipeRating"
+            android:textSize="10sp"
+            android:layout_toEndOf="@id/ratingIcon"
+            android:layout_alignBaseline="@id/ratingIcon"
+            />
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:id="@+id/likesIcon"
+            android:layout_marginStart="@dimen/textPageBorder"
+            android:src="@drawable/heart_outline"
+            android:layout_toEndOf="@+id/txvRecipeRating"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/likesIcon"
+            android:id="@+id/txvRecipeLikes"
+            android:textSize="10sp"
+            android:layout_toEndOf="@id/likesIcon"
+            android:text="240"
+            />
+
+        </RelativeLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginEnd="@dimen/hbLines"
+        android:layout_below="@id/rllInformation"
+        android:background="@color/textColorPrimary"/>
+
+
+
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

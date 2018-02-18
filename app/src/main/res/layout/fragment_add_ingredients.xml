@@ -1,0 +1,47 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.ismael.fastrecipes.AddIngredientsFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <LinearLayout
+        android:id="@+id/lladding"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+    <AutoCompleteTextView
+        android:id="@+id/actxvIng"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/textPageBorder"
+        android:drawableEnd="@drawable/ic_search_black_24dp"
+        android:layout_weight="2"
+        android:hint="Buscar ingredientes.." />
+        <Button
+            android:layout_marginTop="@dimen/textPageBorder"
+            android:id="@+id/btnAddIng"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:background="@drawable/ic_add"/>
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/lvAddIngredients"
+        android:layout_below="@id/lladding"
+        android:layout_width="wrap_content"
+        android:layout_margin="@dimen/textPageBorder"
+        android:layout_height="wrap_content"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabSaveNewIngredients"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_save"
+        app:backgroundTint="@color/colorPrimary"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/textPageBorder"/>
+
+</RelativeLayout>

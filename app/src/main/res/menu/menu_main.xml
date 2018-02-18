@@ -8,24 +8,18 @@
         android:title="Buscar"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/action_my_recipes"
+        android:id="@+id/action_social"
         android:enabled="true"
         android:icon="@drawable/fridge_filled"
-        android:title="Mis Rrecetas"
+        android:title="Social"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/action_activity"
+        android:id="@+id/action_favs"
         android:enabled="true"
         android:icon="@drawable/heart_outline"
-        android:title="Actividad"
+        android:title="Favoritos"
         app:showAsAction="ifRoom" />
 
-    <item
-         android:id="@+id/action_shoplist"
-         android:enabled="true"
-         android:icon="@drawable/heart_outline"
-         android:title="Listas de compra"
-          app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_config"
         android:enabled="true"

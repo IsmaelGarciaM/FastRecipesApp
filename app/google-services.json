@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1091572228816",
+    "firebase_url": "https://fastrecipes-26c3c.firebaseio.com",
+    "project_id": "fastrecipes-26c3c",
+    "storage_bucket": "fastrecipes-26c3c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1091572228816:android:fa97a3e22fa552f1",
+        "android_client_info": {
+          "package_name": "com.ismael.fastrecipes"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1091572228816-6vpe2tj3aelt97e0cr00qgqauh4dad3d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ismael.fastrecipes",
+            "certificate_hash": "e5ebeedbe24e28ef7bd8a6f9c20dd3007ed9a32f"
+          }
+        },
+        {
+          "client_id": "1091572228816-imr35u6pmh0g62rdenr5v8m1n0slacg7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAFvF8AEylqK4S073Rg1zESG5AM35b7_MA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1091572228816-imr35u6pmh0g62rdenr5v8m1n0slacg7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

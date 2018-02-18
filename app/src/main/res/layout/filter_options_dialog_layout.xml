@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/btnFIngredients"
+        android:layout_width="wrap_content"
+        android:background="@drawable/bg_button"
+        android:layout_height="wrap_content"></Button>
+
+    <Button
+        android:id="@+id/btnFCategories"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_button"
+        ></Button>
+
+    <Button
+        android:id="@+id/btnFTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_button"
+        ></Button>
+
+    <Button
+        android:id="@+id/btnFDifficult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_button"
+        ></Button>
+
+    <Button
+        android:id="@+id/btnFRating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_button"
+        ></Button>
+
+    <Button
+        android:id="@+id/btnFName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_button"
+        ></Button>
+
+</LinearLayout>

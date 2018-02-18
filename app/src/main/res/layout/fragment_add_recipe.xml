@@ -1,0 +1,172 @@
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent" >
+<RelativeLayout
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.ismael.fastrecipes.AddRecipeFragment">
+    <android.support.v7.widget.CardView
+        android:id="@+id/crvAddRecipe"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="@dimen/elevation"
+        android:layout_margin="@dimen/hbLines">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <ImageView
+        android:id="@+id/imvAddRecipeImage"
+        android:layout_width="match_parent"
+        android:layout_height="192dp"
+        android:src="@drawable/ic_add"/>
+
+        <Button
+            android:id="@+id/btnAddImg"
+            android:layout_below="@id/imvAddRecipeImage"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:text="EXAMINAR..."
+            android:background="@drawable/bg_button"/>
+    </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/tilNameRecipe"
+        android:layout_below="@+id/crvAddRecipe"
+        android:layout_marginStart="@dimen/textPageBorder"
+        android:layout_marginEnd="@dimen/textPageBorder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/edtNameRecipe"
+            android:layout_width="match_parent"
+            android:hint="Nombre:"
+            android:layout_height="wrap_content" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <Button
+        android:id="@+id/btnAddCategories"
+        android:layout_below="@id/tilNameRecipe"
+        android:layout_width="wrap_content"
+        android:layout_marginStart="@dimen/textPageBorder"
+        android:layout_marginTop="@dimen/hbLines"
+        android:layout_height="50dp"
+        android:text="Categorias..."
+        android:background="@drawable/bg_button"/>
+
+    <TextView
+        android:id="@+id/txvAddRecipeCat"
+        android:layout_below="@id/tilNameRecipe"
+        android:layout_toEndOf="@+id/btnAddCategories"
+        android:text="Sin categorías."
+        android:layout_marginStart="@dimen/textPageBorder"
+        android:layout_marginTop="@dimen/textPageBorder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:id="@+id/llSpn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnAddCategories"
+        android:layout_marginTop="@dimen/hbLines"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnAddTime"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/textPageBorder"
+            android:layout_height="50dp"
+            android:layout_marginEnd="@dimen/textPageBorder"
+            android:background="@drawable/bg_button"
+            android:text="Tiempo"
+            />
+
+
+        <Button
+            android:id="@+id/btnAddDifficult"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginStart="@dimen/textPageBorder"
+            android:layout_marginEnd="@dimen/textPageBorder"
+            android:background="@drawable/bg_button"
+            android:text="Dificultad"
+            />
+
+    </LinearLayout>
+
+
+
+    <TextView
+        android:id="@+id/txvAddIng"
+        android:layout_below="@+id/llSpn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/textPageBorder"
+        android:text="Ingredientes:"
+        android:textSize="16dp"/>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_margin="@dimen/hbLines"
+        android:layout_below="@+id/txvAddIng"
+        android:id="@+id/tilAddIng"
+        android:hint="Elaboración: "
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/txvAddIngredients"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </android.support.design.widget.TextInputLayout>
+
+
+    <Button
+        android:id="@+id/btnAddIngredient"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/tilAddIng"
+        android:layout_width="wrap_content"
+        android:text="Añadir ingredientes"
+        android:layout_height="50dp"
+        android:background="@drawable/bg_button"/>
+
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/tilDetailsRecipe"
+        android:layout_below="@+id/btnAddIngredient"
+        android:layout_marginStart="@dimen/textPageBorder"
+        android:layout_marginEnd="@dimen/textPageBorder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/edtDetailsRecipe"
+            android:layout_width="wrap_content"
+            android:hint="Elaboración"
+            android:layout_height="wrap_content" />
+    </android.support.design.widget.TextInputLayout>
+
+
+</RelativeLayout>
+</ScrollView>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabSaveRecipe"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        app:srcCompat="@drawable/ic_save"
+        android:layout_margin="@dimen/textPageBorder"
+        app:backgroundTint="@color/colorPrimary"/>
+</android.support.design.widget.CoordinatorLayout>

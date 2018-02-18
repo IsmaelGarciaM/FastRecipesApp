@@ -2,5 +2,57 @@
     <string name="app_name">FastRecipes</string>
 
     <!-- TODO: Remove or change this placeholder text -->
+    <string name="strqqc">Búsqueda avanzada de recetas</string>
+    <string name="strFilters">AÑADIR FILTROS</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="email">email</string>
+    <string name="password">password</string>
+    <string name="name">Name</string>
+    <string name="register">Register</string>
+    <string name="cat1">Meats</string>
+
+
+    <string-array name="categories_array">
+        <item>Drinks and Cocktails</item>
+        <item>Rice and Cereals</item>
+        <item>Vegetables</item>
+        <item>Desserts</item>
+        <item>Soups and Creams</item>
+        <item>Meats</item>
+        <item>Nuts</item>
+        <item>Fish and Seafood</item>
+        <item>Fruits</item>
+        <item>Pastas and Pizzas</item>
+        <item>Dairy products</item>
+        <item>Appetizers</item>
+        <item>To take away</item>
+    </string-array>
+
+
+    <string-array name="diff_array">
+        <item>Tirado</item>
+        <item>Facil</item>
+        <item>Medio</item>
+        <item>Dificil</item>
+    </string-array>
+
+    <integer-array name="icons_cat">
+        <item>@drawable/cat_drinks</item>
+        <item>@drawable/cat_rice</item>
+        <item>@drawable/cat_veget</item>
+        <item>@drawable/cat_desserts</item>
+        <item>@drawable/cat_soups</item>
+        <item>@drawable/cat_meat</item>
+        <item>@drawable/cat_nuts</item>
+        <item>@drawable/cat_fish</item>
+        <item>@drawable/cat_fruits</item>
+        <item>@drawable/cat_pasta</item>
+        <item>@drawable/cat_dairy</item>
+        <item>@drawable/cat_aperitifs</item>
+        <item>@drawable/cat_take</item>
+
+
+    </integer-array>
 </resources>

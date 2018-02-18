@@ -1,0 +1,27 @@
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.ismael.fastrecipes.MyRecipesFragment">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rcvMyRecipes"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_marginBottom="30dp">
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabAddRecipe"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_add"
+        app:backgroundTint="@color/colorPrimary"
+        android:layout_margin="@dimen/textPageBorder"/>
+    </RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>

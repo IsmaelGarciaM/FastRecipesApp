@@ -1,0 +1,43 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.ismael.fastrecipes.SocialActivityFragment">
+
+
+        <android.support.design.widget.NavigationView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        android:id="@+id/navigation_head"
+        android:layout_alignParentStart="true"
+            android:background="@color/ic_launcher_background_testing"
+        app:itemBackground="@color/ic_launcher_background_testing"
+        app:itemIconTint="@drawable/nav_item_color_state"
+        app:itemTextColor="@drawable/nav_item_color_state">
+
+
+
+    </android.support.design.widget.NavigationView>
+
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tlSocialMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/navigation_head"
+        app:tabTextColor="@color/textColorPrimary"
+        android:background="@color/colorPrimary"
+        android:elevation="6dp"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
+    <FrameLayout
+        android:id="@+id/vpSocial"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@id/tlSocialMenu"
+        android:layout_below="@id/tlSocialMenu"/>
+</RelativeLayout>

@@ -1,0 +1,27 @@
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.ismael.fastrecipes.SearchByCategoriesFragment">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rcvCategories"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/textPageBorder"
+        tools:listitem="@layout/item_categories_list"
+        >
+
+    </android.support.v7.widget.RecyclerView>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/btnSaveCategories"
+        android:layout_width="54dp"
+        android:layout_height="54dp"
+        android:layout_marginBottom="@dimen/textPageBorder"
+        android:layout_marginEnd="@dimen/textPageBorder"
+        android:layout_gravity="end|bottom"
+        app:backgroundTint="@color/colorPrimary"
+        app:srcCompat="@drawable/ic_save"/>
+
+</android.support.design.widget.CoordinatorLayout>

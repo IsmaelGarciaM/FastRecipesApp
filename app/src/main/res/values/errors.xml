@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="empty_field">Este campo es obligatorio.</string>
+    <string name="invalid_email">E-mail inválido.</string>
+    <string name="password_length">La longitud de la contraseña debe estar comprendida entre 8 y 15 caracteres.</string>
+    <string name="password_same">La contraseña no puede ser igual que tu e-mail.</string>
+    <string name="password_case">La contraseña debe contener al menos una mayúscula.</string>
+    <string name="password_number">La contraseña debe contener al menos un número.</string>
+    <string name="phone_error">Número de teléfono inválido.</string>
+    <drawable name="meat">@drawable/ic_settings</drawable>
+</resources>
