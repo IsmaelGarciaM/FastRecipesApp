@@ -18,6 +18,8 @@ import com.ismael.fastrecipes.interfaces.RecipesPresenter;
 import com.ismael.fastrecipes.model.Recipe;
 import com.ismael.fastrecipes.presenter.RecipesPresenterImpl;
 
+import java.util.ArrayList;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -129,7 +131,12 @@ public class MyRecipesFragment extends Fragment implements RecipesPresenter.View
     }
 
     @Override
-    public void setFavState() {
+    public void setFavState(Recipe recipe) {
+
+    }
+
+    @Override
+    public void setListData(ArrayList<Recipe> recs) {
 
     }
 

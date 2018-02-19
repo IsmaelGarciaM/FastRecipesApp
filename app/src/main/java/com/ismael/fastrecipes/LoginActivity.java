@@ -19,16 +19,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import com.google.firebase.auth.FirebaseUser;
 import com.ismael.fastrecipes.exceptions.DataEntryException;
 import com.ismael.fastrecipes.interfaces.LoginPresenter;
 import com.ismael.fastrecipes.presenter.LoginPresenterImpl;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-
+/**
+ * LoginActivity.java - Clase que controla el acceso de los usuarios a los servidores
+ * @author Ismael Garcia
+ * @version 0.2
+ */
 public class LoginActivity extends Activity implements LoginPresenter.View{
 
     @BindView(R.id.btnEntry)
@@ -49,6 +51,9 @@ public class LoginActivity extends Activity implements LoginPresenter.View{
     @BindView(R.id.tilPasswordLogin)
     TextInputLayout tilPassL;
 
+    @BindView(R.id.tilForgetPass)
+    TextInputLayout tilForget;
+
     @BindView(R.id.pgbLoading)
     ProgressBar pgbLoadingAnimation;
 
@@ -57,12 +62,6 @@ public class LoginActivity extends Activity implements LoginPresenter.View{
 
     LoginPresenter presenter;
     View mView = null;
-
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
-    //private UserLoginTask mAuthTask = null;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,34 +108,69 @@ public class LoginActivity extends Activity implements LoginPresenter.View{
             }
         });
 
+        tilForget.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tilMailL.setError(null);
+                tilMailL.setErrorEnabled(false);
+                String mail = String.valueOf(edtMail.getText());
+                boolean cancel = false;
+                View focusView = null;
+                try {
+                    presenter.validateMail(mail);
+                } catch (DataEntryException exc) {
+                    tilMailL.setErrorEnabled(true);
+                    tilMailL.setError(exc.getMessage());
+                    focusView = tilMailL;
+                    cancel = true;
+                }
+                if(cancel){
+                    focusView.requestFocus();
+                }
+                //El presentador realiza el envío
+                else{
+                    showProgress(true);
+                    presenter.forgetPass(mail);
+                }
+
+            }
+        });
+
     }
 
+    /**
+     * Cambia a la ventana de registro
+     */
     void Registrarse(){
         Intent i = new Intent(this, RegisterActivity.class);
         startActivity(i);
         finish();
     }
 
+
+    /**
+     * Comprueba que el email y contraseña están bien formadas y de ser así, realiza el login. Mediante el presentador
+     */
     void attemptLogin() {
 
-        //try network, always try network conection
+        //probar conexion de red
 
-        //reset posible errors
+        //resetear posibles errores
         tilMailL.setErrorEnabled(false);
         tilPassL.setErrorEnabled(false);
 
         tilMailL.setError(null);
         tilPassL.setError(null);
 
-
-        //get values
+        //obtener valores
         String mail = String.valueOf(edtMail.getText());
         String pass = String.valueOf(edtPass.getText());
 
-        //if an error appear, then login attempt is cancelled; cancel = true
+        //si aparece un error se cancela el login; cancel = true
         boolean cancel = false;
         View focusView = null;
 
+        //El presentador comprueba los datos
         try {
             presenter.validateMail(mail);
         } catch (DataEntryException exc) {
@@ -158,6 +192,7 @@ public class LoginActivity extends Activity implements LoginPresenter.View{
         if(cancel){
             focusView.requestFocus();
         }
+        //El presentador realiza el login
         else{
             showProgress(true);
             presenter.logIn(mail, pass);
@@ -191,15 +226,25 @@ public class LoginActivity extends Activity implements LoginPresenter.View{
         });
     }
 
+    /**
+     * Muestra un error general de login
+     */
     @Override
-    public void showLoginError(){
-        Snackbar.make(mView, "Incorrect user or e-mail", Snackbar.LENGTH_LONG).show();
+    public void showLoginError(String msg){
+        Snackbar.make(mView, msg, Snackbar.LENGTH_LONG).show();
     }
 
+    /**
+     * Muestra un error de conexión
+     */
     private void showNetworkError(){
         Snackbar.make(mView, "Errors de conexión con el servidor", Snackbar.LENGTH_LONG).show();
     }
 
+    /**
+     * Si el login es correcto, el servidor devuelve la informacion del usuario y se accede a la aplicación
+     * @param userInfo Información del usuario
+     */
     @Override
     public void showHome(Bundle userInfo){
         Intent i = new Intent(this, HomeActivity.class);
@@ -208,6 +253,10 @@ public class LoginActivity extends Activity implements LoginPresenter.View{
         finish();
     }
 
+    /**
+     * Realiza el login en el servidor rest
+     * @param currentUser Usuario firebase para login en servidor rest
+     */
     @Override
     public void updateUI(FirebaseUser currentUser) {
         if (currentUser != null){
@@ -218,6 +267,10 @@ public class LoginActivity extends Activity implements LoginPresenter.View{
     }
 
 
+    /**
+     * Comprueba la conexión de red del dispositivo
+     * @return Devuelve true o false en función de la disponibilidad de la conexión del dispositivo
+     */
     private boolean isOnline() {
         ConnectivityManager cm =
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);

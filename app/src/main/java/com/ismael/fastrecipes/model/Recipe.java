@@ -13,7 +13,7 @@ public class Recipe implements Parcelable, Serializable{
 
     private int id;
     private int idAuthor;
-    //private String authorName;
+    private String authorName;
     private String name;
     private String categories;
     private String ingredients;
@@ -26,6 +26,16 @@ public class Recipe implements Parcelable, Serializable{
     private String source;
     private float rating;
 
+    public int getFav() {
+        return fav;
+    }
+
+    public void setFav(int fav) {
+        this.fav = fav;
+    }
+
+    private int fav;
+
     public Recipe() {}
 
     public int getAuthor() {
@@ -35,7 +45,7 @@ public class Recipe implements Parcelable, Serializable{
     public void setAuthor(int author) {
         this.idAuthor = author;
     }
-/*
+
     public String getAuthorName() {
         return authorName;
     }
@@ -43,7 +53,7 @@ public class Recipe implements Parcelable, Serializable{
     public void setAuthorName(String authorName) {
         this.authorName = authorName;
     }
-*/
+
     public String getIngredients() {
         return ingredients;
     }
@@ -69,9 +79,10 @@ public class Recipe implements Parcelable, Serializable{
     }
 
 
-    public Recipe(int id, int idAuthor, String name, String categories, String ingredients, String elaboration, int time, String difficulty,  int nPers, String date, String image, String source,  float rating) {
+    public Recipe(int id, int idAuthor, String authorName, String name, String categories, String ingredients, String elaboration, int time, String difficulty,  int nPers, String date, String image, String source,  float rating, int fav) {
         this.id = id;
         this.idAuthor = idAuthor;
+        this.authorName = authorName;
         this.name = name;
         this.categories = categories;
         this.ingredients = ingredients;
@@ -83,6 +94,7 @@ public class Recipe implements Parcelable, Serializable{
         this.image = image;
         this.source = source;
         this.rating = rating;
+        this.fav = fav;
     }
 
     public Recipe(int idAuthor, String name, String categories, String ingredients, String elaboration, int time, String difficulty,  int nPers, String date, String image, String source,  float rating) {
@@ -132,6 +144,7 @@ public class Recipe implements Parcelable, Serializable{
     protected Recipe(Parcel in) {
         id = in.readInt();
         idAuthor = in.readInt();
+        authorName = in.readString();
         name = in.readString();
         categories = in.readString();
         ingredients = in.readString();
@@ -143,6 +156,7 @@ public class Recipe implements Parcelable, Serializable{
         image = in.readString();
         source = in.readString();
         rating = in.readFloat();
+        fav = in.readInt();
     }
 
     public static final Creator<Recipe> CREATOR = new Creator<Recipe>() {
@@ -240,6 +254,7 @@ public class Recipe implements Parcelable, Serializable{
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeInt(id);
         parcel.writeInt(idAuthor);
+        parcel.writeString(authorName);
         parcel.writeString(name);
         parcel.writeString(categories);
         parcel.writeString(ingredients);
@@ -251,6 +266,6 @@ public class Recipe implements Parcelable, Serializable{
         parcel.writeString(image);
         parcel.writeString(source);
         parcel.writeFloat(rating);
-
+        parcel.writeInt(fav);
     }
 }

@@ -12,28 +12,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-
 import com.ismael.fastrecipes.adapter.PagerAdapter;
-import com.ismael.fastrecipes.interfaces.CommentPresenter;
-import com.ismael.fastrecipes.presenter.CommentPresenterImpl;
+import com.ismael.fastrecipes.model.User;
 import com.squareup.picasso.Picasso;
-
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * SocialActivityFragment.class - Fragment con la vista de actividad social del usuario
+ * Contiene un tabLayout para visualizar las recetas del usuario logueado o sus comentarios
+ * También el acceso al perfil.
  */
 public class SocialActivityFragment extends Fragment{
-
-  //  @BindView(R.id.cd_civUserProfile)
-    CircleImageView userImage;
-/*
-    @BindView(R.id.cd_txvUserName)
-    TextView userName;
-
-    @BindView(R.id.navigation_head)
-    NavigationView nav;*/
 
     private SocialActivityFragmentListener mCallback;
     static SocialActivityFragment safInstance;
@@ -46,17 +36,22 @@ public class SocialActivityFragment extends Fragment{
     }
 
 
-
+    /**
+     * Interfaz de escucha de la clase HomeAcivity
+     */
     public interface SocialActivityFragmentListener{
         void showSocialFragment();
-
         String getUserName();
-
         void showProfile(Bundle b);
+        User getUser();
     }
 
+    /**
+     * Instanciador del fragment que asegura una única instancia
+     * @param args Datos previos para la carga del fragment
+     * @return Devuelve la instancia de la vista
+     */
     public static SocialActivityFragment getInstance(Bundle args){
-
         if(safInstance == null){
             safInstance = new SocialActivityFragment();
         }
@@ -69,25 +64,27 @@ public class SocialActivityFragment extends Fragment{
     }
 
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView =  inflater.inflate(R.layout.fragment_social_activity, container, false);
         //ButterKnife.bind(rootView);
-        NavigationView nav = (NavigationView) rootView.findViewById(R.id.navigation_head);
+        NavigationView nav = rootView.findViewById(R.id.navigation_head);
         nav.inflateHeaderView(R.layout.header_navigation_view);
-        View nav_header = LayoutInflater.from(getContext()).inflate(R.layout.header_navigation_view, null);
+        View nav_header = LayoutInflater.from(getContext()).inflate(R.layout.header_navigation_view, container);
         ((TextView) nav_header.findViewById(R.id.cd_txvUserName)).setText(mCallback.getUserName());
 
-        Picasso.with(getContext())
-                .load("https://images.vexels.com/media/users/3/137047/isolated/preview/5831a17a290077c646a48c4db78a81bb-user-profile-blue-icon-by-vexels.png")
-                .into((CircleImageView) nav_header.findViewById(R.id.cd_civUserProfile));
+        if(mCallback.getUser().getImage() != null){
+            Picasso.with(getContext())
+                    .load(mCallback.getUser().getImage())
+                    .into((CircleImageView) nav_header.findViewById(R.id.cd_civUserProfile));
+        }
 
-        ((CircleImageView) nav_header.findViewById(R.id.cd_civUserProfile)).setOnClickListener(new View.OnClickListener() {
+        ( nav_header.findViewById(R.id.cd_civUserProfile)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 mCallback.showProfile(null);
             }
         });;
@@ -137,8 +134,8 @@ public class SocialActivityFragment extends Fragment{
         //viewPager.setAdapter(adapter);
         //tabLayout.setupWithViewPager(viewPager);
 
-        tabLayout.addTab(tabLayout.newTab().setText("Mis Recetas"));
-        tabLayout.addTab(tabLayout.newTab().setText("Comentarios"));
+        tabLayout.addTab(tabLayout.newTab().setText(getContext().getResources().getString(R.string.myrecipes)));
+        tabLayout.addTab(tabLayout.newTab().setText(getContext().getResources().getString(R.string.mycomments)));
         //viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -164,10 +161,17 @@ public class SocialActivityFragment extends Fragment{
 
     }
 
+    /**
+     * Carga la vista de las recetas del usuario en el TabLayout
+     */
     void showMyRecipes(){
         MyRecipesFragment mrF = MyRecipesFragment.getInstance(null);
         getChildFragmentManager().beginTransaction().replace(R.id.vpSocial, mrF).commit();
     }
+
+    /**
+     * Carga la vista de los comentarios del usuario en el TabLayout
+     */
     void showMyComments(){
         MyCommentsFragment mcF = MyCommentsFragment.getInstance(null);
         getChildFragmentManager().beginTransaction().replace(R.id.vpSocial, mcF).commit();

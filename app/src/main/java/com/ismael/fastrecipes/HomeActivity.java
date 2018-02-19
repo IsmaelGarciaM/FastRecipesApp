@@ -16,14 +16,18 @@ import com.ismael.fastrecipes.model.User;
 import java.util.ArrayList;
 
 /**
- * Clase con la actividad contenedora de toda la aplicacion. Maneja el menu y contiene el objeto con los filtros de busqueda
- *
+ * HomeActivity.class - Clase con la actividad contenedora de toda la aplicacion.
+ * Maneja el menu y contiene el objeto con los filtros de busqueda
  */
 public class HomeActivity extends AppCompatActivity implements UsersListFragment.UsersListListener, AddIngredientsFragment.AddIngredientsListener, AddRecipeFragment.AddRecipeFragmentListener, RecipeFragment.RecipeFragmentListener, RecipesListFragment.RecipesListListener, ProfileFragment.ProfileListener, MyRecipesFragment.MyRecipeFragmentListener, MyCommentsFragment.MyCommentsFragmentListener, SettingsPreferences.PrefsListener, FavRecipesFragment.FavRecipesListener, SearchRecipeFragment.SearchFragmentListener, SocialActivityFragment.SocialActivityFragmentListener, SearchByIngredientFragment.SearchIngredientsListener, SearchByCategoriesFragment.SearchCategoriesListener{
 
+    //int para gestionar OnBackPressed de algunas vistas
     int where = -1;
+    //longs para gestionar la salida de la aplicacion mediante OnBacPressed
     private long mBackPressed = 0;
     private static final long MAX_TIME = 2500;
+
+    //Fragmentos de las vistas de la aplicación
     SearchRecipeFragment searchFragment;
     SocialActivityFragment socialFragment;
     SearchByCategoriesFragment sbcFragment;
@@ -35,19 +39,21 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
     RecipesListFragment rlFragment;
     AddIngredientsFragment addingFr;
     UsersListFragment ulfFragment;
+
+    //Dialog base para la gestion de filtros
     Dialog customDialog = null;
+
+    //Array de filtros para buscar recetas
+    ArrayList<Filter> filters;
 
     public ArrayList<Filter> getFilters() {
         return filters;
     }
-
     public void setFilters(ArrayList<Filter> filters) {
         this.filters = filters;
     }
 
-    ArrayList<Filter> filters;
-    Bundle filtersData;
-
+    //Usuario activo actualmente
     public User getUser() {
         return user;
     }
@@ -69,7 +75,7 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
             Log.d( "BACKSTACKCOUNT", String.valueOf(getSupportFragmentManager().getBackStackEntryCount()));
         user = new User(20,"ismagm94@gmail.com", "Ismael ", "García", "Málaga", "09/01/18", 2, null, "uid");
 
-/*
+
             try {
                 if(getIntent().getExtras().getParcelable("user") != null) {
                     user = getIntent().getExtras().getParcelable("user");
@@ -78,7 +84,9 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
                 }
             }catch (NullPointerException npe) {
                 user = new User("Anónimo", "email", "dd/mm/aa", "uid");
-            }*/
+            }
+
+            //Menu de la aplicacion
             bnvTabMenu.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
                 @Override
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -88,7 +96,7 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
                         //muestra el fragment para añadir filtros a una nueva busqueda
                         case R.id.action_search_recipes:
                             //filtersData.putParcelableArrayList("filters", filters);
-                            showSearchFragment(filtersData);
+                            showSearchFragment(null);
                             break;
                             //muestra el fragment con el perfil, las recetas y los comentarios
                         case R.id.action_social:
@@ -111,6 +119,10 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
             showSearchFragment(null);
         }
 
+
+    /**
+     * Gestión de pulsación de la tecla 'Atrás'
+     */
     @Override
     public void onBackPressed() {
         Log.d("BACK PRESSED", String.valueOf(getSupportFragmentManager().getBackStackEntryCount()));
@@ -174,6 +186,10 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
 
     }
 
+    /**
+     * Muestra la vista para añadir ingredientes a una nueva receta
+     * @param b Datos de los indredientes añadidos si los hay
+     */
     @Override
     public void showAddIngredients(Bundle b) {
         addingFr = AddIngredientsFragment.getInstance(b);
@@ -182,8 +198,11 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
         ft.commit();
     }
 
-    void setSettingsOp(boolean v){settingsOp = v;}
 
+    /**
+     * Carga la vista para añadir filtros y buscar recetas
+     * @param data Datos necesarios para la carga de la vista
+     */
     @Override
     public void showSearchFragment(Bundle data) {
         bnvTabMenu.setVisibility(View.VISIBLE);
@@ -212,6 +231,10 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
 
     }
 
+    /**
+     * Muestra la vista de búsqueda de categorias para añadir a un filtro
+     * @param data Datos de las categorias añadidos anteriormente si las hubiera
+     */
     @Override
     public void showSearchByCategories(Bundle data) {
         bnvTabMenu.setVisibility(View.GONE);
@@ -221,6 +244,10 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
         ft.commit();
     }
 
+    /**
+     * Muestra la vista de búsqueda de igredientes para añadir a un filtro
+     * @param data Datos de los ingredientes añadidos anteriormente si los hubiera
+     */
     @Override
     public void showSearchByIngredients(Bundle data) {
         bnvTabMenu.setVisibility(View.GONE);
@@ -230,11 +257,19 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
         ft.commit();
     }
 
+    /**
+     * Obtiene el nombre del usuario actual
+     * @return Nombre del usuario actual
+     */
     @Override
     public String getUserName(){
         return user.getName() + "\r\n" + user.getEmail();
     }
 
+    /**
+     * Carga la vista del perfil de un usuario
+     * @param b Datos del perfil a cargar
+     */
     @Override
     public void showProfile(Bundle b) {
         bnvTabMenu.setVisibility(View.GONE);
@@ -244,6 +279,10 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
         ft.commit();
     }
 
+    /**
+     * Muestra la vista de un listado de usuarios
+     * @param args Datos necesarios para cargar la vista
+     */
     @Override
     public void showUsersList(Bundle args) {
         ulfFragment = UsersListFragment.getInstance(args);
@@ -253,6 +292,9 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
     }
 
 
+    /**
+     * Carga la vista de recetas favoritas almacenadas en la base de datos interna
+     */
     @Override
     public void showFavRecipes() {
         where = 2;
@@ -264,7 +306,10 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
         ft.commit();
     }
 
-
+    /**
+     * Muestra la lista de recetas filtradas
+     * @param b Datos necesarios para la carga de la vista
+     */
     @Override
     public void showRecipesList(Bundle b) {
         bnvTabMenu.setVisibility(View.GONE);
@@ -280,6 +325,10 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
 
     }
 
+    /**
+     * Muestra la vista de una receta concreta
+     * @param recipe Receta a mostrar
+     */
     @Override
     public void showRecipe(Bundle recipe) {
         bnvTabMenu.setVisibility(View.GONE);
@@ -289,6 +338,10 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
         ft.commit();
     }
 
+    /**
+     * Muestra la vista para añadir recetas
+     * @param b Datos previos para la carga de la vista
+     */
     @Override
     public void showAddRecipe(Bundle b) {
         bnvTabMenu.setVisibility(View.GONE);
@@ -299,6 +352,9 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
 
     }
 
+    /**
+     * Muesta la vista de la configuración
+     */
     @Override
     public void showConfig() {
         bnvTabMenu.setVisibility(View.VISIBLE);
@@ -313,25 +369,49 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
         getFragmentManager().beginTransaction().replace(R.id.framehome, new android.app.Fragment()).commit();
     }
 
+    /**
+     * Obtiene un filtro según su posición
+     * @param pos Posición del filtro a obtener
+     * @return Filtro según posición
+     */
     @Override
     public Filter getFilter(int pos){
         return filters.get(pos);
     }
+
+
+    /**
+     * Añade un filtro para la búsqueda de recetas
+     * @param f Filtro a añadir
+     */
     @Override
     public void addFilter(Filter f){
          filters.add(f);
     }
 
+    /**
+     * Elimina un filtro por su posición
+     * @param pos Posición del filtro a eliminar
+     */
     @Override
     public void removeFilter(int pos){
          filters.remove(pos);
     }
 
+    /**
+     * Obtiene el número de filtro que el usuario ha añadido
+     * @return Numero de filtros
+     */
     @Override
     public int getNFilters(){
         return filters.size();
     }
 
+    /**
+     * Obtiene la posición de un filtro en el arraylist
+     * @param type Tipo del filtro a buscar
+     * @return Posición del filtro en el arraylist
+     */
     @Override
     public int getPos(String type) {
         int p = 10;
@@ -342,6 +422,11 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
         return p;
     }
 
+    /**
+     * Obtiene un filtro por su nombre
+     * @param name Nombre del filtro a obtener
+     * @return Filtro buscado
+     */
     @Override
     public Filter getFilterByName(String name){
         Filter ftmp = null;
@@ -352,6 +437,9 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
         return ftmp;
     }
 
+    /**
+     * Borra todos los filtros de búsqueda
+     */
     @Override
     public void deleteFilters() {
         for(int i = 0; i< filters.size(); i++){
@@ -363,4 +451,11 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
     public void showMyComments() {
 
     }
+
+    /**
+     * Cambia el valor de settingsOp para controlar la vista de la configuración
+     * @param v True para mostrar la vista, false para no mostrarla
+     */
+    void setSettingsOp(boolean v){settingsOp = v;}
+
 }

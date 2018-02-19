@@ -13,6 +13,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
 import com.ismael.fastrecipes.FastRecipesApplication;
+import com.ismael.fastrecipes.R;
 import com.ismael.fastrecipes.interfaces.FastRecipesApi;
 import com.ismael.fastrecipes.interfaces.LoginPresenter;
 import com.ismael.fastrecipes.exceptions.DataEntryException;
@@ -35,15 +36,11 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 import static android.content.ContentValues.TAG;
-/*
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
- * Created by ismael on 3/05/17.
+ * Presentador para controlar los datos y las conexiones de la vista de LoginActivity. Conectados mediante la interfez LoginPresenter
+ * @author Ismael Garcia
+ * @see LoginPresenter
  */
 
 public class LoginPresenterImpl implements LoginPresenter {
@@ -51,9 +48,13 @@ public class LoginPresenterImpl implements LoginPresenter {
     LoginPresenter.View vista;
     Context context;
     private FirebaseAuth mAuth;
-
     private FastRecipesService mService;
 
+    /**
+     * Constructor del presentador
+     * @param view Vista a la que controla
+     * @param c Contexto de la aplicación
+     */
     public LoginPresenterImpl(LoginPresenter.View view, Context c){
         this.vista = view;
         this.context = c;
@@ -62,6 +63,10 @@ public class LoginPresenterImpl implements LoginPresenter {
 
     }
 
+    /**
+     * Realiza la comprobación de que el email no es nulo y llama a otra función para comprobar su validez
+     * @param email Email a comprobar
+     */
     @Override
     public void validateMail(String email) {
         if(TextUtils.isEmpty(email))
@@ -72,6 +77,10 @@ public class LoginPresenterImpl implements LoginPresenter {
         }
     }
 
+    /**
+     * Realiza la comprobacón de contraseña llamando. 8 o mas caracteres, mayusculas y minusculas y algún símbolo
+     * @param password Contraseña a comprobar
+     */
     @Override
     public void validatePassword(String password) {
         if (TextUtils.isEmpty(password))
@@ -89,13 +98,19 @@ public class LoginPresenterImpl implements LoginPresenter {
             throw new DataEntryException(Errors.PASSNUMBER_EXCEPTION, context);
         }
     }
-
+/*
     @Override
     public void logIn() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         vista.updateUI(currentUser);
     }
+*/
 
+    /**
+     * Realiza la coneión y logueo en el servidor de Firebase
+     * @param email Email de usuario
+     * @param pass Contraseña de usuario
+     */
     @Override
     public void logIn(String email, String pass) {
 
@@ -112,13 +127,17 @@ public class LoginPresenterImpl implements LoginPresenter {
                 } else {
                     Log.d(TAG, "signInWithEmail:failure", task.getException());
                     vista.showProgress(false);
-                    vista.showLoginError();
+                    vista.showLoginError(context.getResources().getString(R.string.login_error));
                 }
             }
         });
 
     }
 
+    /**
+     * Obtiene el token de Firebase del usuario para la autenticación el el servidor rest
+     * @param currentUser Usuario de Firebase una vez logueado
+     */
     public void logInRest(final FirebaseUser currentUser) {
         currentUser.getIdToken(true).addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
             @Override
@@ -135,7 +154,34 @@ public class LoginPresenterImpl implements LoginPresenter {
         });
     }
 
+    /**
+     * Envía un correo para el cambio de contraseña
+     * @param email
+     */
+    @Override
+    public void forgetPass(String email) {
+        FirebaseAuth.getInstance().sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                String msg;
+                if (task.isSuccessful()) {
+                    msg = "Email enviado.";
+                }
+                else {
+                    msg = "Email incorrecto.";
+                }
+                vista.showLoginError(msg);
 
+            }
+        });
+    }
+
+
+    /**
+     * Comrpueba que el email es válido
+     * @param email Email a comprobar
+     * @return Devuelve true o false en función de la validez del email
+     */
     private boolean isEmailValid(String email) {
         boolean isValid = false;
 
@@ -184,6 +230,10 @@ public class LoginPresenterImpl implements LoginPresenter {
         }
     };*/
 
+    /**
+     * Realiza la conexión y login con el servidor rest
+     * @param token Token de firebase para autenticación
+     */
     private void userLogin(String token){
         final Bundle b = new Bundle();
 
@@ -199,7 +249,7 @@ public class LoginPresenterImpl implements LoginPresenter {
                     @Override
                     public void onError(Throwable e) {
                         vista.showProgress(false);
-                        vista.showLoginError();
+                        vista.showLoginError(context.getResources().getString(R.string.login_error));
                     }
 
                     @Override

@@ -24,6 +24,7 @@ public class FastRecipesContract {
         public static final String CONTENT_PATH = "recipe";
         public static final Uri CONTENT_URI = Uri.withAppendedPath(AUTHORITY_URI, CONTENT_PATH);
         public static final String AUTHOR = "author";
+        public static final String AUTHORNAME = "authorname";
         public static final String NAME = "name";
         public static final String CATEGORIES = "categories";
         public static final String ELABORATION= "elaboration";
@@ -33,7 +34,6 @@ public class FastRecipesContract {
         public static final String DATE = "date";
         public static final String IMAGE = "image";
         public static final String SOURCE = "source";
-        public static final String RATING = "rating";
         public static final String[] PROJECTION = new String[]{CONTENT_PATH+"."+NAME};
 
     }
@@ -49,21 +49,12 @@ public class FastRecipesContract {
 
     }
 
-    public static class RecipeIngredients implements BaseColumns {
-
-        public static final String CONTENT_PATH = "recipeingredients";
-        public static final Uri CONTENT_URI = Uri.withAppendedPath(AUTHORITY_URI, CONTENT_PATH);
-        public static final String COLUMN_IDRECIPE = "id_recipe";
-        public static final String COLUMN_IDINGREDIENT = "id_ingredient";
-        public static final String COLUMN_QUANTITY= "quantity";
-
-    }
-
     public static class FavRecipe implements BaseColumns {
 
         public static final String CONTENT_PATH = "favrecipes";
         public static final Uri CONTENT_URI = Uri.withAppendedPath(AUTHORITY_URI, CONTENT_PATH);
         public static final String AUTHOR = "author";
+        public static final String AUTHORNAME = "authorname";
         public static final String NAME = "name";
         public static final String CATEGORIES = "categories";
         public static final String INGREDIENTS = "ingredients";
@@ -74,7 +65,6 @@ public class FastRecipesContract {
         public static final String DATE = "date";
         public static final String IMAGE = "image";
         public static final String SOURCE = "source";
-        public static final String RATING = "rating";
         public static final String[] PROJECTION = new String[]{"*"};
 
     }

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.SwitchPreference;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +20,11 @@ import com.ismael.fastrecipes.interfaces.Prefs;
 
 public class SettingsPreferences extends PreferenceFragment implements Prefs.View{
     private Preference prefCloseSession;
+    private SwitchPreference rememberUser;
+    private Preference changePassword;
+    private Preference help;
+    private Preference terms;
+    private Preference sendEmail;
 
 
     public interface PrefsListener{
@@ -39,7 +45,7 @@ public class SettingsPreferences extends PreferenceFragment implements Prefs.Vie
         prefCloseSession.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                Log.d("aaaaaaaaaaaaaaaaaa", "CERRARRRRRRRR SESSSSSSSION");//code for what you want it to do
+                Log.d("Preferences", "Cerrar sesión");//code for what you want it to do
                 return true;
             }
         });

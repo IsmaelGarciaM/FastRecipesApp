@@ -18,6 +18,8 @@ public class Result implements Serializable {
     List<Recipe> recipes;
     List<Comment> comments;
     int last;
+    int fav;
+
     public boolean getCode() {return code;}
     public void setCode(boolean code) { this.code = code;}
     public int getStatus() {return status;}
@@ -30,4 +32,11 @@ public class Result implements Serializable {
     public void setLast(int last) { this.last = last; }
     public List<Comment> getComments() { return comments; }
     public void setComments(List<Comment> comments) { this.comments = comments; }
+    public int getFav() {
+        return fav;
+    }
+
+    public void setFav(int fav) {
+        this.fav = fav;
+    }
 }

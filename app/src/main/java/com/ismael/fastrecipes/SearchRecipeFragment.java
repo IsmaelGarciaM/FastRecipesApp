@@ -17,22 +17,23 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import com.ismael.fastrecipes.adapter.FilterAdapter;
 import com.ismael.fastrecipes.model.Filter;
-import com.ismael.fastrecipes.interfaces.SearchPresenter;
-
 import java.util.ArrayList;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-
+import static com.ismael.fastrecipes.utils.Const.f1;
+import static com.ismael.fastrecipes.utils.Const.f2;
+import static com.ismael.fastrecipes.utils.Const.f3;
+import static com.ismael.fastrecipes.utils.Const.f4;
+import static com.ismael.fastrecipes.utils.Const.f5;
+import static com.ismael.fastrecipes.utils.Const.f6;
 
 /**
- * A simple {@link Fragment} subclass.
+ * SearchRecipeFragment.class - Vista del buscador de recetas. Gestiona los filtros por los que se va a buscar una receta.
  */
-public class SearchRecipeFragment extends Fragment implements SearchPresenter.View {
+public class SearchRecipeFragment extends Fragment{
 
     /**
      * Variables de clase
@@ -51,14 +52,6 @@ public class SearchRecipeFragment extends Fragment implements SearchPresenter.Vi
 
     @BindView(R.id.btnAddFilter)
     Button btnAddFilter;
-
-
-    private static final String f1 = "Con los ingredientes:";
-    private static final String f2 = "Que no lleve:";
-    private static final String f3 = "Dentro de:";
-    private static final String f4 = "Por su nombre";
-    private static final String f5 = "Tiempo máximo:";
-    private static final String f6 = "Dificultad:";
 
     private SearchFragmentListener mCallback;
     static SearchRecipeFragment srfInstance;
@@ -86,7 +79,6 @@ public class SearchRecipeFragment extends Fragment implements SearchPresenter.Vi
         Filter getFilter(int pos);
         void addFilter(Filter f);
         void removeFilter(int pos);
-        int getNFilters();
         int getPos(String type);
         Filter getFilterByName(String name);
         ArrayList<Filter> getFilters();
@@ -141,11 +133,7 @@ public class SearchRecipeFragment extends Fragment implements SearchPresenter.Vi
         fabSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //doSearch()
-                Bundle b = new Bundle();
-                //               Recipe tmp  = new Recipe("Lentejas", "Sopas y cremas", "pan, lentejas, xhorizo, comino", "Cocer las lentejas. Añadir el chorizo. Enjoy", 5, "Facil", 2, "31/01/18", "", "");
-                //             b.putParcelable("recipe", tmp);
-                mCallback.showRecipesList(b);
+                mCallback.showRecipesList(null);
             }
         });
 
@@ -223,17 +211,13 @@ public class SearchRecipeFragment extends Fragment implements SearchPresenter.Vi
         super.onStart();
     }
 
+    /**
+     * Muestra el cuadro de diálogo para añadir un nuevo filtro
+     */
     public void showFilters(){
         // con este tema personalizado evitamos los bordes por defecto
         customDialog = new AlertDialog.Builder(this.getContext(), R.style.Theme_Dialog_Translucent);
-        //deshabilitamos el título por defecto
-
-//customDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         customDialog.setTitle("Filtros");
-        //obligamos al usuario a pulsar los botones para cerrarlo
-        //customDialog.setCancelable(false);
-        //establecemos el contenido de nuestro dialog
-        //customDialog.setView(R.layout.filter_options_dialog_layout);
 
         customDialog.setItems(new CharSequence[]{"Ingredientes", "Categorias", "Nombre", "Tiempo", "Dificultad"}, new DialogInterface.OnClickListener() {
             @Override
@@ -257,28 +241,32 @@ public class SearchRecipeFragment extends Fragment implements SearchPresenter.Vi
         customDialog.show();
     }
 
+    /**
+     * Muestra el cuadro de diálogo para añadir un nuevo filtro de tiempo máximo
+     * @param time Tiempo máximo
+     */
     private void showTimeDialog(String time){
         final String[] t = new String[1];
 
         customDialog = new AlertDialog.Builder(this.getContext(), R.style.Theme_Dialog_Translucent);
         // obligamos al usuario a pulsar los botones para cerrarlo
-        customDialog.setCancelable(false);
+        //customDialog.setCancelable(false);
         //establecemos el contenido de nuestro dialog
         customDialog.setView(R.layout.dialog_time_picker);
 
-        customDialog.setNegativeButton("Atrás", new DialogInterface.OnClickListener() {
+        customDialog.setNegativeButton(getResources().getString(R.string.back), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 //cancel
             }
         });
 
-        customDialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+        customDialog.setPositiveButton(getResources().getString(R.string.accept), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 //add filtro de tiempo
                 EditText edtTime = ((Dialog)dialogInterface).findViewById(R.id.edtTime);
-                t[0] = edtTime.getText().toString() + "   minutos";
+                t[0] = edtTime.getText().toString() + getResources().getString(R.string.minutes);
                 if (mCallback.getFilterByName(f5) != null) {
                     mCallback.getFilterByName(f5).setContent(t[0]);
                     filterAdapter.refreshList();
@@ -302,22 +290,25 @@ public class SearchRecipeFragment extends Fragment implements SearchPresenter.Vi
         customDialog.show();
     }
 
+    /**
+     * Muestra el cuadro de diálogo para añadir un nuevo filtro de dificultad
+     */
     private void showDifficultDialog(){
         AlertDialog.Builder builderDificult = new AlertDialog.Builder(this.getContext(), R.style.Theme_Dialog_Translucent);
 
-        builderDificult.setTitle("Dificultad")
+        builderDificult.setTitle(f6)
                 .setItems(R.array.diff_array, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String content = "";
                         switch (which) {
-                            case 0:  content = "Tirado";
+                            case 0:  content = getResources().getStringArray(R.array.diff_array)[0];
                              break;
-                            case 1:  content = "Facil";
+                            case 1: content = getResources().getStringArray(R.array.diff_array)[1];
                                 break;
-                            case 2:  content = "Medio";
+                            case 2:  content = getResources().getStringArray(R.array.diff_array)[2];
                                 break;
-                            case 3:  content = "Dificil";
+                            case 3:  content = getResources().getStringArray(R.array.diff_array)[3];
                                 break;
                         }
 
@@ -342,20 +333,23 @@ public class SearchRecipeFragment extends Fragment implements SearchPresenter.Vi
 
     }
 
+    /**
+     * Muestra el cuadro de diálogo para añadir un nuevo filtro de nombre
+     */
     private void showNameDialog(){
         final String[] t = new String[1];
 
         customDialog = new AlertDialog.Builder(this.getContext(), R.style.Theme_Dialog_Translucent);
         customDialog.setCancelable(false);
         customDialog.setView(R.layout.item_search);
-        customDialog.setNegativeButton("Atrás", new DialogInterface.OnClickListener() {
+        customDialog.setNegativeButton(getResources().getString(R.string.back), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 //cancel
             }
         });
 
-        customDialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+        customDialog.setPositiveButton(getResources().getString(R.string.accept), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 EditText edtTime = ((Dialog)dialogInterface).findViewById(R.id.edtNameRecSearch);
@@ -374,10 +368,6 @@ public class SearchRecipeFragment extends Fragment implements SearchPresenter.Vi
             }
         }).show();
 
-    }
-    
-    private void doSearch(){
-        
     }
 
     private void hideEmpty(){

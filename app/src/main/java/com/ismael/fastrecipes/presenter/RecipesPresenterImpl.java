@@ -2,15 +2,18 @@ package com.ismael.fastrecipes.presenter;
 
 import android.app.Activity;
 import android.app.LoaderManager;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
+import android.database.CursorWrapper;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
 import com.ismael.fastrecipes.FastRecipesApplication;
+import com.ismael.fastrecipes.db.DatabaseContract;
 import com.ismael.fastrecipes.interfaces.RecipesPresenter;
 import com.ismael.fastrecipes.model.Comment;
 import com.ismael.fastrecipes.model.Recipe;
@@ -31,6 +34,7 @@ import static com.ismael.fastrecipes.provider.FastRecipesProvider.RECIPE;
 import static com.ismael.fastrecipes.provider.FastRecipesProvider.RECIPE_ID;
 
 /**
+ * RecipesPresenterImpl.java - Clase que controla todas las conexiones para la obtención, modificación, borrado y añadido de recetas. Local o externo
  * Created by Ismael on 24/01/2018.
  */
 
@@ -47,7 +51,12 @@ public class RecipesPresenterImpl implements RecipesPresenter, LoaderManager.Loa
     }
 
 
-
+    /**
+     * Crea un Loader para realizar una consulta a la base de datos sqlite
+     * @param id Identificador para el loader
+     * @param data Datos para asociar a la búsqueda
+     * @return Devuelve el loader con una lista de objetos según el id
+     */
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle data) {
         Loader<Cursor> loader = null;
@@ -72,6 +81,11 @@ public class RecipesPresenterImpl implements RecipesPresenter, LoaderManager.Loa
         return loader;
     }
 
+    /**
+     * Carga los datos del loader en la interfaz gráfica
+     * @param loader Loader con un cursor obtenido de la consulta
+     * @param data Cursor con los datos obtenidos en la consulta
+     */
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         Bundle b = new Bundle();
@@ -103,15 +117,148 @@ public class RecipesPresenterImpl implements RecipesPresenter, LoaderManager.Loa
         view.setCursorData(null);
     }
 
+
+
+
+    /*
+        Métodos para la gestión de 'MyRecipes'
+     */
+
+    /**
+     * Obtiene el listado de recetas propias desde sqlite
+     */
     @Override
     public void getMyRecipesList() {
         ((Activity)context).getLoaderManager().restartLoader(RECIPE, null, this);
     }
 
+
     @Override
-    public void addRecipe() {
+    public void getMyRecipe(int idRecipe) {
+        Bundle b = new Bundle();
+        b.putInt("id", idRecipe);
+        ((Activity)context).getLoaderManager().restartLoader(RECIPE_ID, b, this);
+    }
+
+
+    @Override
+    public void addMyRecipe(Recipe addR) {
+        ContentValues cv = recipeToValues(addR);
+        context.getContentResolver().insert(FastRecipesContract.Recipe.CONTENT_URI, cv);
+    }
+
+    @Override
+    public void deleteMyRecipe(int idRecipe) {
+        context.getContentResolver().delete(Uri.withAppendedPath(FastRecipesContract.Recipe.CONTENT_URI, String.valueOf(idRecipe)), null, null);
+    }
+
+
+    @Override
+    public void modifyMyRecipe(Recipe addR) {
+        ContentValues cv = recipeToValues(addR);
+        cv.put(DatabaseContract.RecipeEntry._ID, addR.getId());
+        context.getContentResolver().update(FastRecipesContract.Recipe.CONTENT_URI, cv, FastRecipesContract.Recipe._ID+"="+String.valueOf(addR.getId()), null);
 
     }
+
+     /*
+        Métodos para la gestión de 'FavRecipes'
+     */
+
+    /**
+     * Obtiene el listado de recetas propias desde sqlite
+     */
+
+
+    @Override
+    public void getFavRecipes(){
+        ((Activity)context).getLoaderManager().restartLoader(FAVRECIPES, null, this);
+    }
+
+    @Override
+    public void addFavRecipe(Recipe addR) {
+        ContentValues cv = recipeToValues(addR);
+        context.getContentResolver().insert(FastRecipesContract.FavRecipe.CONTENT_URI, cv);
+    }
+
+
+
+    @Override
+    public void deleteFavRecipe(int idRecipe) {
+        context.getContentResolver().delete(Uri.withAppendedPath(FastRecipesContract.FavRecipe.CONTENT_URI, String.valueOf(idRecipe)), null, null);
+    }
+
+
+    @Override
+    public void getFavRecipe(int idRecipe) {
+        Bundle b = new Bundle();
+        b.putInt("id", idRecipe);
+        ((Activity)context).getLoaderManager().restartLoader(FAVRECIPE_ID, b, this);
+
+    }
+
+
+    /*
+    Métodos para la gestion de recetas filtradas
+     */
+
+
+    @Override
+    public void addRecipe(Recipe addR) {
+        final Recipe[] r = new Recipe[1];
+        mService.addRecipe(addR).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Result>() {
+                    @Override
+                    public void onCompleted() {
+                        addMyRecipe(addR);
+                        Log.d("SUBSCRIBER ADD INFO", "RECIPE ADDED");
+                        //view.showSocialFragment();
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d("SUBSCRIBER FAILED", e.getMessage());
+                    }
+
+                    @Override
+                    public void onNext(Result result) {
+                        r[0] = result.getRecipes().get(0);
+                    }
+
+                });
+    }
+
+
+    @Override
+    public void modifyRecipe(Recipe addR) {
+        final Recipe[] r = new Recipe[1];
+        mService.modifyRecipe(addR).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Result>() {
+                    @Override
+                    public void onCompleted() {
+                        modifyMyRecipe(addR);
+                        Log.d("SUBSCRIBER ADD INFO", "RECIPE ADDED");
+                        //view.showSocialFragment();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d("SUBSCRIBER FAILED", e.getMessage());
+                    }
+
+                    @Override
+                    public void onNext(Result result) {
+                        r[0] = result.getRecipes().get(0);
+                    }
+
+                });
+    }
+
+
+
 
     @Override
     public void getRecipe(int id) {
@@ -142,7 +289,6 @@ public class RecipesPresenterImpl implements RecipesPresenter, LoaderManager.Loa
                         if(result.getComments().size() > 0) {
                             c = new ArrayList<>();
                             c.addAll(result.getComments());
-                            int a = 0;
                         }
                     }
 
@@ -150,44 +296,27 @@ public class RecipesPresenterImpl implements RecipesPresenter, LoaderManager.Loa
     }
 
 
-/*        Recipe recipe = mService.getRecipe(id);
-
-        CompositeDisposable mCompo;
-*/
 
 
 
     @Override
-    public void getFavRecipes(){
-        ((Activity)context).getLoaderManager().restartLoader(FAVRECIPES, null, this);
-    }
-
-    @Override
-    public void getMyRecipe(int idRecipe) {
-        Bundle b = new Bundle();
-        b.putInt("id", idRecipe);
-        ((Activity)context).getLoaderManager().restartLoader(RECIPE_ID, b, this);
-    }
-
-    @Override
-    public void getFavRecipe(int idRecipe) {
-        Bundle b = new Bundle();
-        b.putInt("id", idRecipe);
-        ((Activity)context).getLoaderManager().restartLoader(FAVRECIPE_ID, b, this);
-
-    }
-
-    @Override
-    public void setFavourite(int idUser, int idRecipe) {
+    public void setFavourite(int idUser, int idRecipe, boolean fav) {
         final Recipe[] r = new Recipe[1];
         final ArrayList<Comment> c = new ArrayList<>();
         //Observable<Recipe> call = mService.getRecipe(id);
-        mService.setFavouriteRec(idUser, idRecipe).subscribeOn(Schedulers.io())
+        mService.setFavouriteRec(idUser, idRecipe, fav).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<Result>() {
                     @Override
                     public void onCompleted() {
-                       view.setFavState();
+                        if(r[0].getFav() == 0){
+                            //La ha desmarcado. Borrar de FavRecipes
+                        }
+                        else if(r[0].getFav() == 1){
+                            //La ha marcado. Añadir a fav recipes
+
+                        }
+                       view.setFavState(r[0]);
                     }
 
                     @Override
@@ -197,6 +326,34 @@ public class RecipesPresenterImpl implements RecipesPresenter, LoaderManager.Loa
 
                     @Override
                     public void onNext(Result result) {
+                        r[0] = result.getRecipes().get(0);
+                    }
+
+                });
+    }
+
+    @Override
+    public void getFilteredRecipes(Recipe rModel) {
+        final ArrayList<Recipe> recs = new ArrayList<>();
+        //Observable<Recipe> call = mService.getRecipe(id);
+        mService.getRecipesFiltered(rModel).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Result>() {
+                    @Override
+                    public void onCompleted() {
+                        view.setListData(recs);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d("SUBSCRIBER FAILED", e.getMessage());
+                    }
+
+                    @Override
+                    public void onNext(Result result) {
+                        if (result.getRecipes().size() > 0){
+                            recs.addAll(result.getRecipes());
+                        }
                     }
 
                 });
@@ -204,16 +361,62 @@ public class RecipesPresenterImpl implements RecipesPresenter, LoaderManager.Loa
 
     @Override
     public void deleteRecipe(int idRecipe) {
+        int[] state = new int[1];
+        //Observable<Recipe> call = mService.getRecipe(id);
+        mService.removeRecipe(idRecipe).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Integer>() {
+                    @Override
+                    public void onCompleted() {
+                        if(state[0] == 0){
+                            deleteMyRecipe(idRecipe);
+                        }
+                        else if(state[0] == 1){
+                            Log.d("SUBSCRIBER DELETE", "LA RECETA NO SE HA BORRADO.");
+                        }else{
+                            Log.d("SUBSCRIBER DELETE", "LA CONSULTA NO SE HA REALIZADO.");
 
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d("SUBSCRIBER FAILED", e.getMessage());
+                    }
+
+                    @Override
+                    public void onNext(Integer result) {
+                        state[0] = result;
+                    }
+
+                });
     }
 
     private Recipe consRecipe(Cursor data){
         data.moveToPosition(0);
-        return new Recipe(data.getInt(0), data.getInt(1), data.getString(2),
-                data.getString(3), data.getString(4), data.getString(5), data.getInt(6),
-                data.getString(7), data.getInt(8), data.getString(9), data.getString(10),
-                data.getString(11), 0);
+        return new Recipe(data.getInt(0), data.getInt(1), data.getString(2), data.getString(3),
+                data.getString(4), data.getString(5), data.getString(6), data.getInt(7),
+                data.getString(8), data.getInt(9), data.getString(10), data.getString(11),
+                data.getString(12), data.getFloat(13), data.getInt(14));
 
+    }
+
+    private ContentValues recipeToValues(Recipe tmp){
+        ContentValues cv = new ContentValues();
+
+        cv.put(DatabaseContract.RecipeEntry.COLUMN_AUTHOR, tmp.getAuthor());
+        cv.put(DatabaseContract.RecipeEntry.COLUMN_AUTHORNAME, tmp.getAuthorName());
+        cv.put(DatabaseContract.RecipeEntry.COLUMN_NAME, tmp.getName());
+        cv.put(DatabaseContract.RecipeEntry.COLUMN_CATEGORIES, tmp.getCategories());
+        cv.put(DatabaseContract.RecipeEntry.COLUMN_INGREDIENTS, tmp.getIngredients());
+        cv.put(DatabaseContract.RecipeEntry.COLUMN_ELABORATION, tmp.getElaboration());
+        cv.put(DatabaseContract.RecipeEntry.COLUMN_TIME , tmp.getTime());
+        cv.put(DatabaseContract.RecipeEntry.COLUMN_DIFFICULTY, tmp.getDifficulty());
+        cv.put(DatabaseContract.RecipeEntry.COLUMN_NPERS, tmp.getnPers());
+        cv.put(DatabaseContract.RecipeEntry.COLUMN_DATE , tmp.getDate());
+        cv.put(DatabaseContract.RecipeEntry.COLUMN_IMAGE, tmp.getImage());
+        cv.put(DatabaseContract.RecipeEntry.COLUMN_SOURCE, tmp.getSource());
+        return cv;
     }
 
 }

@@ -67,8 +67,7 @@ public class FastRecipesProvider extends ContentProvider {
                 break;
 
             case RECIPE_ID:
-                rowId = uri.getPathSegments().get(1);             //0       1
-                //Content://com.barranquero.manageproductprovider/category/id
+                rowId = uri.getPathSegments().get(1);
                 selection = DatabaseContract.RecipeEntry._ID+"="+rowId;
                 builder.setTables(DatabaseContract.RecipeEntry.TABLE_NAME);
 
@@ -141,6 +140,10 @@ public class FastRecipesProvider extends ContentProvider {
                 regId = _database.insert(DatabaseContract.RecipeEntry.TABLE_NAME, null, contentValues);
                 u = ContentUris.withAppendedId(uri, regId);
                 break;
+            case FAVRECIPES:
+                regId = _database.insert(DatabaseContract.FavouriteRecipeEntry.TABLE_NAME, null, contentValues);
+                u = ContentUris.withAppendedId(uri, regId);
+                break;
             default: u = null;
         }
 
@@ -153,7 +156,22 @@ public class FastRecipesProvider extends ContentProvider {
 
     @Override
     public int delete(@NonNull Uri uri, @Nullable String s, @Nullable String[] strings) {
-        return 0;
+        int nRows = -1;
+        switch (uriMatcher.match(uri)){
+            case RECIPE:
+                s = FastRecipesContract.Recipe._ID+"="+uri.getLastPathSegment();
+                nRows = _database.delete(DatabaseContract.RecipeEntry.TABLE_NAME, s, null);
+                break;
+            case FAVRECIPES:
+                s = FastRecipesContract.FavRecipe._ID+"="+uri.getLastPathSegment();
+                nRows = _database.delete(DatabaseContract.FavouriteRecipeEntry.TABLE_NAME, s, null);
+                break;
+        }
+
+        if(nRows != -1)
+            getContext().getContentResolver().notifyChange(uri, null);
+
+        return nRows;
     }
 
     @Override
@@ -161,33 +179,23 @@ public class FastRecipesProvider extends ContentProvider {
 
 
         int affected = -1;
-        String rowId;
         switch (uriMatcher.match(uri)) {
-            case RECIPE:
-                affected = _database.update(DatabaseContract.RecipeEntry.TABLE_NAME, contentValues, selection, selectionArgs);
-                break;
 
             case RECIPE_ID:
-                //rowId = uri.getLastPathSegment();
-                rowId = uri.getPathSegments().get(1);             //0       1
-                //Content://com.barranquero.manageproductprovider/category/id
-                selection = DatabaseContract.RecipeEntry._ID+"=";
-                selectionArgs = new String[]{rowId};
                 affected = _database.update(DatabaseContract.RecipeEntry.TABLE_NAME, contentValues, selection, selectionArgs);
                 break;
-
+ /*
             case INGREDIENT:
                 affected = _database.update(DatabaseContract.IngredientEntry.TABLE_NAME, contentValues, selection, selectionArgs);
                 break;
 
-            case FAVRECIPES:
-                //rowId = uri.getLastPathSegment();
-                rowId = uri.getPathSegments().get(1);             //0       1
-                //Content://com.barranquero.manageproductprovider/category/id
+
+            case FAVRECIPES_ID:
+                rowId = uri.getLastPathSegment();
                 selection = DatabaseContract.RecipeIngredientsEntry._ID+"=";
                 selectionArgs = new String[]{rowId};
                 affected = _database.update(DatabaseContract.RecipeIngredientsEntry.TABLE_NAME, contentValues, selection, selectionArgs);
-                break;
+                break;*/
         }
 
         if(affected != -1){

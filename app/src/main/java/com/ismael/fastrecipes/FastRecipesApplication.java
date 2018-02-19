@@ -12,12 +12,15 @@ import com.ismael.fastrecipes.utils.FastRecipesService;
 public class FastRecipesApplication extends Application {
     private static FastRecipesApplication instance;
     private static FastRecipesService fastRecipesService;
-
+    private static String token;
 
     @Override
     public void onCreate() {
         super.onCreate();
         fastRecipesService = new FastRecipesService();
+    }
+    public static String getToken(){
+        return token;
     }
 
     public static FastRecipesService getFastRecipesService(){

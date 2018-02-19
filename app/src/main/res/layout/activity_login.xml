@@ -14,8 +14,9 @@
 
     <RelativeLayout
         android:id="@+id/login_data_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></RelativeLayout>
+
     <ProgressBar
         android:id="@+id/pgbLoading"
         android:layout_width="match_parent"
@@ -43,8 +44,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/imgIcon"
-            android:layout_marginTop="10dp"
-            android:text="Iniciar sesión"
+            android:layout_marginTop="-30dp"
+            android:text="@string/singin"
             android:textSize="20sp"
             android:layout_centerHorizontal="true"
             />
@@ -57,7 +58,7 @@
         android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:layout_marginTop="@dimen/hbLines"
         android:layout_below="@id/crvIcon"
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/tilMailLogin"
         android:hint="@string/email"
@@ -77,10 +78,10 @@
         android:id="@+id/tilPasswordLogin"
         android:layout_marginTop="@dimen/activity_horizontal_margin"
         android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/tilMailLogin"
-        android:hint="Contraseña">
+        android:hint="@string/password">
 
         <android.support.design.widget.TextInputEditText
             android:id="@+id/edtPasswordLogin"
@@ -91,6 +92,26 @@
             android:text="Holacaracola8" />
 
     </android.support.design.widget.TextInputLayout>
+
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/tilForgetPass"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:layout_width="match_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tilPasswordLogin">
+
+            <TextView
+                android:textColor="@android:color/holo_blue_light"
+                android:id="@+id/txvForgetPass"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textAlignment="center"
+                android:text="@string/forget_pass" />
+
+        </android.support.design.widget.TextInputLayout>
 
 
     <LinearLayout
@@ -110,7 +131,7 @@
             android:paddingStart="64dp"
             android:paddingEnd="@dimen/activity_horizontal_margin"
             android:textColor="@color/textColorPrimary"
-            android:text="Entrar"
+            android:text="@string/access"
             android:layout_gravity="center"/>
 
 
@@ -124,8 +145,7 @@
             android:paddingStart="64dp"
             android:paddingEnd="@dimen/activity_horizontal_margin"
             android:textColor="@color/textColorPrimary"
-            android:text="REGISTRARSE"
+            android:text="@string/register"
             android:layout_gravity="center"/>
     </LinearLayout>
-    </RelativeLayout>
 </RelativeLayout>

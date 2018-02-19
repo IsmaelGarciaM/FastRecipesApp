@@ -75,7 +75,7 @@ public class SplashScreen extends AppCompatActivity implements LoginPresenter.Vi
     }
 
     @Override
-    public void showLoginError() {
+    public void showLoginError(String s) {
 
     }
 

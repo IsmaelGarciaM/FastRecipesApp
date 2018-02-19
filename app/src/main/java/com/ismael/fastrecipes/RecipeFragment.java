@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -119,8 +118,17 @@ public class RecipeFragment extends Fragment implements RecipesPresenter.View{
     }
 
     @Override
-    public void setFavState() {
-        //fabFav.setImageResource(R.drawable.heart);
+    public void setFavState(Recipe recipe) {
+        if (recipe.getFav() == 0){
+            fabFav.setImageResource(R.drawable.heart_outline);
+        }else{
+            fabFav.setImageResource(R.drawable.heart);
+        }
+    }
+
+    @Override
+    public void setListData(ArrayList<Recipe> recs) {
+
     }
 
     interface RecipeFragmentListener{
@@ -234,7 +242,12 @@ public class RecipeFragment extends Fragment implements RecipesPresenter.View{
             fabFav.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-//                presenter.setFavourite(mCallback.getUser().getId(), recetaActual.getId());
+                    if(recetaActual.getFav() == 0){
+                        presenter.setFavourite(mCallback.getUser().getId(), recetaActual.getId(), true);
+                    }
+                    else
+                        presenter.setFavourite(mCallback.getUser().getId(), recetaActual.getId(), false);
+
                 }
             });
 

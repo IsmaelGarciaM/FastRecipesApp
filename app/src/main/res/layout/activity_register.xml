@@ -37,8 +37,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/imgIconR"
-                android:layout_marginTop="-32dp"
-                android:text="Registrarse"
+                android:layout_marginTop="-30dp"
+                android:text="@string/register"
                 android:textSize="20sp"
                 android:layout_centerHorizontal="true"
                 />
@@ -52,7 +52,6 @@
         android:layout_marginTop="@dimen/hbLines"
         android:layout_width="match_parent"
         android:layout_below="@+id/crvIconR"
-        android:layout_weight="1"
         android:background="@drawable/border"
         android:layout_height="wrap_content"
         android:id="@+id/tilNameRegister"
@@ -61,7 +60,7 @@
         <android.support.design.widget.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:textSize="12dp"
+            android:textSize="12sp"
             android:id="@+id/edtNameRegister" />
 
     </android.support.design.widget.TextInputLayout>
@@ -71,7 +70,6 @@
         android:layout_marginTop="@dimen/activity_vertical_margin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:layout_below="@+id/tilNameRegister"
         android:id="@+id/tilEmailRegister"
         android:background="@drawable/border"
@@ -80,33 +78,51 @@
         <android.support.design.widget.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:textSize="12dp"
+            android:textSize="12sp"
             android:id="@+id/edtEmailRegister" />
 
     </android.support.design.widget.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
+    <LinearLayout
         android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:id="@+id/llpass"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:orientation="horizontal"
         android:layout_below="@+id/tilEmailRegister"
+        >
+    <android.support.design.widget.TextInputLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/tilPasswordRegister"
         android:background="@drawable/border"
-        android:hint="@string/password">
+        android:hint="@string/password"
+        android:layout_weight="2">
 
         <android.support.design.widget.TextInputEditText
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:textSize="12dp"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
             android:inputType="textPassword"
             android:id="@+id/edtPasswordRegister" />
 
     </android.support.design.widget.TextInputLayout>
 
+    <Button
+        android:id="@+id/btnSeePass"
+        android:background="@drawable/bg_button"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_weight="1"
+        android:layout_marginStart="@dimen/hbLines"
+        android:drawableStart="@drawable/ic_add"
+        />
+    </LinearLayout>
+
         <Button
-            android:layout_below="@+id/tilPasswordRegister"
+            android:layout_below="@+id/llpass"
             android:layout_width="200dp"
             android:layout_height="50dp"
             android:id="@+id/btnAceptRegister"
@@ -114,7 +130,6 @@
             android:layout_marginTop="@dimen/textPageBorder"
             android:background="@drawable/bg_button"
             android:layout_centerHorizontal="true"
-            android:layout_weight="1"
             android:text="@string/register"/>
 
 

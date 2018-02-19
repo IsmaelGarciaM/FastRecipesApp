@@ -12,16 +12,13 @@ import com.ismael.fastrecipes.model.User;
 public interface LoginPresenter {
     void validateMail(String email);
     void validatePassword(String password);
-
-
-    void logIn();
     void logIn(String email, String pass);
     void logInRest(FirebaseUser currentUser);
-
+    void forgetPass(String email);
 
     interface View{
         void showProgress(boolean show);
-        void showLoginError();
+        void showLoginError(String msg);
         void showHome(Bundle userInfo);
         void updateUI(FirebaseUser currentUser);
     }

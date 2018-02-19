@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -22,6 +24,9 @@ import com.ismael.fastrecipes.presenter.RegisterPresenterImpl;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+/**
+ * RegisterActivity.class - Clase contenedora de la vista del formulario de registro para un usuario
+ */
 public class RegisterActivity extends AppCompatActivity implements RegisterPresenter.View{
 
     @BindView(R.id.tilNameRegister)
@@ -38,6 +43,8 @@ public class RegisterActivity extends AppCompatActivity implements RegisterPrese
     TextInputEditText edtPasswordRegister;
     @BindView(R.id.btnAceptRegister)
     Button btnOkRegister;
+    @BindView(R.id.btnSeePass)
+    Button btnSeePass;
     RegisterPresenter presenter;
 
 
@@ -53,10 +60,28 @@ public class RegisterActivity extends AppCompatActivity implements RegisterPrese
                 attemptRegister();
             }
         });
+        btnSeePass.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch ( motionEvent.getAction() ) {
+                    case MotionEvent.ACTION_UP:
+                        edtPasswordRegister.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                        break;
+                    case MotionEvent.ACTION_DOWN:
+                        edtPasswordRegister.setInputType(InputType.TYPE_CLASS_TEXT);
+                        break;
+                }
+                return true;
+            }
+
+        });
 
     }
 
 
+    /**
+     * Devuelve a la pantalla de login
+     */
     @Override
     public void onBackPressed() {
         Intent i = new Intent(this, LoginActivity.class);
@@ -64,11 +89,14 @@ public class RegisterActivity extends AppCompatActivity implements RegisterPrese
         finish();
     }
 
+    /**
+     * Comprueba los campos introducidos y realiza el registro mediante el presentador
+     */
     void attemptRegister() {
 
-        //try network, always try network conection
+        //Comprobar conexión de red
 
-        //reset posible errors
+        //resetear posibles errores
         tilNameRegister.setErrorEnabled(false);
         tilEmailRegister.setErrorEnabled(false);
         tilPasswordRegister.setErrorEnabled(false);
@@ -76,17 +104,15 @@ public class RegisterActivity extends AppCompatActivity implements RegisterPrese
         tilNameRegister.setError(null);
         tilEmailRegister.setError(null);
         tilPasswordRegister.setError(null);
-
-
-        //get values
+        //obtener valores
         String name = String.valueOf(edtNameRegister.getText());
         String mail = String.valueOf(edtEmailRegister.getText());
         String pass = String.valueOf(edtPasswordRegister.getText());
 
-        //if an error appear, then login attempt is cancelled; cancel = true
         boolean cancel = false;
         View focusView = null;
 
+        //Comprobar datos
         try {
             presenter.validateMail(mail);
         } catch (DataEntryException exc) {
@@ -105,22 +131,37 @@ public class RegisterActivity extends AppCompatActivity implements RegisterPrese
             cancel = true;
         }
 
+        try {
+            presenter.validateData(name);
+        } catch (DataEntryException exc) {
+            tilNameRegister.setErrorEnabled(true);
+            tilNameRegister.setError(exc.getMessage());
+            focusView = tilNameRegister;
+            cancel = true;
+        }
+
         if(cancel){
+            //cancelar registro
             focusView.requestFocus();
         }
         else{
+            //proceder con el registro
             presenter.registerUser(name, mail, pass);
         }
     }
+
 
     @Override
     public void showInputError() {
 
     }
 
+    /**
+     *
+     */
     @Override
     public void showLogin() {
-        startActivity(new Intent().setClass(this, LoginActivity.class));
+        startActivity(new Intent().setClass(this, LoginActivity.class).putExtra("registrado", true));
         finish();
     }
 }

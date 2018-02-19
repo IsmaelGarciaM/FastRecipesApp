@@ -2,6 +2,7 @@ package com.ismael.fastrecipes.interfaces;
 
 import android.util.Log;
 
+import com.ismael.fastrecipes.FastRecipesApplication;
 import com.ismael.fastrecipes.model.Recipe;
 import com.ismael.fastrecipes.model.User;
 import com.ismael.fastrecipes.utils.Result;
@@ -10,8 +11,12 @@ import com.ismael.fastrecipes.utils.ResultUser;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
+import retrofit2.http.Field;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import rx.Observable;
 
@@ -28,7 +33,7 @@ public interface FastRecipesApi {
     Call<User> login(@Path("token") String token);*/
 
     @POST("user/registro/{token}")
-    Call<Boolean> register(@Path("token") String token, @Body User user);
+    Observable<Boolean> register(@Path("token") String token, @Body User user);
 
     @GET("recipe/{id}")
     Observable<Result> getRecipeObservable(@Path("id") int id);
@@ -45,8 +50,22 @@ public interface FastRecipesApi {
     @GET("user/recipefavs/{idRecipe}")
     Observable<ResultUser> getUsersFavObservable(@Path("idRecipe") int idComment);
 
-    @POST("recipe/setfav/{idUser}/{idRecipe}")
-    Observable<Result> setFavRecipe(int idUser, int idRecipe);
+    @POST("recipe/setfav/{idUser}/{idRecipe}/{fav}")
+    Observable<Result> setFavRecipe(int idUser, int idRecipe, boolean fav);
+
+    @GET("recipe/")
+    Observable<Result> getFiltRecipes(@Body Recipe rModel);
+
+    @POST("recipe/")
+    Observable<Result> addRecipe(Recipe addR);
+
+    @PUT("recipe/")
+    Observable<Result> modifyRecipe(Recipe addR);
+
+    @DELETE("recipe/{id}")
+    Observable<Integer> removeRecipe(int idRecipe);
+
+
 
 
 /*

@@ -13,16 +13,19 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.ismael.fastrecipes.FastRecipesApplication;
 import com.ismael.fastrecipes.interfaces.FastRecipesApi;
 import com.ismael.fastrecipes.interfaces.RegisterPresenter;
 import com.ismael.fastrecipes.exceptions.DataEntryException;
 //import com.ismael.fastrecipes.interfaces.ProFinderApi;
 import com.ismael.fastrecipes.model.Errors;
 import com.ismael.fastrecipes.model.User;
+import com.ismael.fastrecipes.utils.FastRecipesService;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,13 +35,16 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 import static android.content.ContentValues.TAG;
 
-//import retrofit2.Retrofit;
-
 /**
- * Created by ismael on 30/05/17.
+ * RegisterPresenterImpl.java - Presentador que controla los datos y las conexiones de la vista de registro
+ * @author Ismael Garcia
+ * @see RegisterPresenter
  */
 
 public class RegisterPresenterImpl implements RegisterPresenter {
@@ -47,22 +53,26 @@ public class RegisterPresenterImpl implements RegisterPresenter {
     RegisterPresenter.View vista;
     Context context;
     FirebaseAuth mAuth;
-    private Retrofit mRestAdapter;
-    private FastRecipesApi fastRecipesApi;
+    private FastRecipesService mService;
 
-
+    /**
+     * Constructor del presentador
+     * @param view Vista a la que está ligado
+     * @param c contexto de la aplicación
+     */
     public RegisterPresenterImpl(RegisterPresenter.View view, Context c){
         this.vista = view;
         this.context = c;
+        //Instancia de AUTENTICACION DE FIREBASE
         mAuth = FirebaseAuth.getInstance();
-        //Conexión con servicio rest
-        mRestAdapter = new Retrofit.Builder().baseUrl(FastRecipesApi.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create()).build();
-
         //Conexión con la api
-        fastRecipesApi = mRestAdapter.create(FastRecipesApi.class);
+        mService = FastRecipesApplication.getFastRecipesService();
     }
 
+    /**
+     * Comprueba que el email no está vació y llama a otro método para validarlo
+     * @param email Email a comprobar
+     */
     @Override
     public void validateMail(String email) {
         if(TextUtils.isEmpty(email))
@@ -73,6 +83,10 @@ public class RegisterPresenterImpl implements RegisterPresenter {
         }
     }
 
+    /**
+     * Comprueba la validez y robustez de la contraseña
+     * @param password Contraseña a comprobar
+     */
     @Override
     public void validatePassword(String password) {
         if (TextUtils.isEmpty(password))
@@ -91,6 +105,10 @@ public class RegisterPresenterImpl implements RegisterPresenter {
         }
     }
 
+    /**
+     * Comprueba que el nombre no esté vacío
+     * @param name Nombre a comprobar
+     */
     @Override
     public void validateData(String name) {
         if(TextUtils.isEmpty(name))
@@ -98,21 +116,21 @@ public class RegisterPresenterImpl implements RegisterPresenter {
     }
 
 
+    /**
+     * Realiza el registro del usuario en firebase, obtiene el token y si se completa con exito se llama al metodo para registrar al usuario el servidor rest
+     * @param name Nombre del usuario
+     * @param mail Email del usuario
+     * @param password Contraseña del usuario
+     */
     @Override
     public void registerUser(String name, String mail, String password) {
         final String n = name;
-        final String dateStr = "04/05/2010";
         final String m = mail;
-        /*SimpleDateFormat curFormater = new SimpleDateFormat("dd/MM/yyyy");
-        Date dateObj = null;
-        try {
-            dateObj = curFormater.parse(dateStr);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        SimpleDateFormat postFormater = new SimpleDateFormat("MMMM dd, yyyy");
 
-        String newDateStr = postFormater.format(dateObj);*/
+        Date c = Calendar.getInstance().getTime();
+        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+        String formattedDate = df.format(c);
+
         mAuth.createUserWithEmailAndPassword(mail,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -126,7 +144,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
                             if(task.isSuccessful()){
                                 String idToken = task.getResult().getToken();
                                 //Enviar al backend
-                                registerUserRest(idToken, m, n, dateStr, user.getUid());
+                                registerUserRest(idToken, m, n, formattedDate, user.getUid());
                         }
                         }
                     });
@@ -141,11 +159,41 @@ public class RegisterPresenterImpl implements RegisterPresenter {
         });
     }
 
+    /**
+     * Realiza la petición de registro en el servidor rest
+     * @param idToken Token de firebase para autenticación
+     * @param email Email del nuevo usuario
+     * @param name Nombre del nuevo usuario
+     * @param regDate Fecha de registro, es decir, la actual
+     * @param uid Identificador único del usuario en firebase que sirve complementariamente para la autenticacion en el servidor rest
+     */
     @Override
     public void registerUserRest(String idToken, String email, String name, String regDate, String uid) {
         //(http://api.fastrecipes.com/user/registro/idToken) add json encoded name, mail, regDate, uid
-        User u = new User(email, name, regDate, uid );
-        Call<Boolean> registerCall = fastRecipesApi.register(idToken, u);
+        User u = new User(email, name, regDate, uid);
+        mService.registerUser(idToken, u).subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Boolean>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(Boolean aBoolean) {
+                        if(aBoolean){
+                            vista.showLogin();
+                        }
+                    }
+                });
+
+
+        /*Call<Boolean> registerCall = mService.registerUser(idToken, u);
         registerCall.enqueue(new Callback<Boolean>() {
             @Override
             public void onResponse(Call<Boolean> call, Response<Boolean> response) {
@@ -171,10 +219,15 @@ public class RegisterPresenterImpl implements RegisterPresenter {
             public void onFailure(Call<Boolean> call, Throwable t) {
 
             }
-        });
+        });*/
     }
 
 
+    /**
+     * Comprobación de validez del email
+     * @param email Email a comprobar
+     * @return Devuelve true o false en función de la validez del email
+     */
     private boolean isEmailValid(String email) {
         boolean isValid = false;
 
@@ -187,5 +240,5 @@ public class RegisterPresenterImpl implements RegisterPresenter {
             isValid = true;
         }
         return isValid;
-    }/**/
+    }
 }

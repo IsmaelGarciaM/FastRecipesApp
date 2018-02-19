@@ -6,6 +6,8 @@ import android.os.Bundle;
 
 import com.ismael.fastrecipes.model.Recipe;
 
+import java.util.ArrayList;
+
 /**
  * Created by Ismael on 24/01/2018.
  */
@@ -15,18 +17,24 @@ public interface RecipesPresenter {
     void getMyRecipe(int idRecipe);
     void getFavRecipe(int idRecipe);
     void deleteRecipe(int idRecipe);
-
-    void setFavourite(int id, int id1);
+    void setFavourite(int id, int id1, boolean fav);
+    void getFilteredRecipes(Recipe rModel);
 
     interface View{
         Context getContext();
         void setCursorData(Cursor data);
         void showRecipeInfo(Bundle recipe);
-
-        void setFavState();
+        void setFavState(Recipe recipe);
+        void setListData(ArrayList<Recipe> recs);
     }
 
     void getMyRecipesList();
-    void addRecipe();
+    void addRecipe(Recipe addR);
+    void addMyRecipe(Recipe addR);
+    void addFavRecipe(Recipe addR);
+    void deleteMyRecipe(int idRecipe);
+    void deleteFavRecipe(int idRecipe);
+    void modifyMyRecipe(Recipe addR);
+    void modifyRecipe(Recipe addR);
     void getRecipe(int id);
 }
