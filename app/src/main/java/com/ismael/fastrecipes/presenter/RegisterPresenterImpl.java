@@ -21,6 +21,7 @@ import com.ismael.fastrecipes.exceptions.DataEntryException;
 import com.ismael.fastrecipes.model.Errors;
 import com.ismael.fastrecipes.model.User;
 import com.ismael.fastrecipes.utils.FastRecipesService;
+import com.ismael.fastrecipes.utils.ResultUser;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -173,7 +174,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
         User u = new User(email, name, regDate, uid);
         mService.registerUser(idToken, u).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Boolean>() {
+                .subscribe(new Subscriber<ResultUser>() {
                     @Override
                     public void onCompleted() {
 
@@ -185,10 +186,9 @@ public class RegisterPresenterImpl implements RegisterPresenter {
                     }
 
                     @Override
-                    public void onNext(Boolean aBoolean) {
-                        if(aBoolean){
-                            vista.showLogin();
-                        }
+                    public void onNext(ResultUser result) {
+                           // vista.doLogin();
+
                     }
                 });
 

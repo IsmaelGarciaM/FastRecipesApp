@@ -106,7 +106,7 @@ public class FastRecipesService {
      * @param token Token de firebase para autenticación
      * @return
      */
-    public Observable<Boolean> registerUser(String token, User u) {
+    public Observable<ResultUser> registerUser(String token, User u) {
         return fastRecipesApi.register(token, u);
     }
 

@@ -33,7 +33,7 @@ public interface FastRecipesApi {
     Call<User> login(@Path("token") String token);*/
 
     @POST("user/registro/{token}")
-    Observable<Boolean> register(@Path("token") String token, @Body User user);
+    Observable<ResultUser> register(@Path("token") String token, @Body User user);
 
     @GET("recipe/{id}")
     Observable<Result> getRecipeObservable(@Path("id") int id);
