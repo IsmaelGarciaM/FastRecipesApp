@@ -11,6 +11,8 @@ import java.util.ArrayList;
  */
 
 public interface CommentPresenter {
+    void deleteComment(int id);
+
     public interface View{
         Context getContext();
         void setCursorData();

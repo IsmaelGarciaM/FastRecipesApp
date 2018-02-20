@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.ismael.fastrecipes.adapter.CommentsAdapter;
@@ -94,6 +95,13 @@ public class MyCommentsFragment extends Fragment implements CommentPresenter.Vie
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         lvMyComments.setAdapter(adapter);
+        lvMyComments.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                presenter.deleteComment(adapter.getItem(i).getId());
+                return false;
+            }
+        });
 
     }
 

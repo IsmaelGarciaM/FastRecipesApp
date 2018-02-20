@@ -19,6 +19,8 @@
     <string name="accept">Aceptar</string>
     <string name="back">Atrás</string>
     <string name="minutes">minutos</string>
+    <string name="commentrecipe">Comenta esta receta</string>
+    <string name="send">Enviar</string>
 
 
     <string-array name="categories_array">

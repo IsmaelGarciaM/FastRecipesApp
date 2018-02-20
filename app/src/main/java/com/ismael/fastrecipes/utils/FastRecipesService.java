@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.ismael.fastrecipes.FastRecipesApplication;
 import com.ismael.fastrecipes.interfaces.FastRecipesApi;
+import com.ismael.fastrecipes.model.Comment;
 import com.ismael.fastrecipes.model.Recipe;
 import com.ismael.fastrecipes.model.User;
 
@@ -96,7 +97,7 @@ public class FastRecipesService {
      * @param idRecipe Id de la receta marcada o desmarcada
      * @return Devuelve la receta marcada o desmarcada
      */
-    public Observable<Result> setFavouriteRec(int idUser, int idRecipe, boolean fav) {
+    public Observable<Result> setFavouriteRec(int idUser, int idRecipe, int fav) {
         return fastRecipesApi.setFavRecipe(idUser, idRecipe, fav);
     }
 
@@ -122,8 +123,16 @@ public class FastRecipesService {
         return fastRecipesApi.modifyRecipe(addR);
     }
 
-    public Observable<Integer> removeRecipe(int idRecipe) {
+    public Observable<Result> removeRecipe(int idRecipe) {
         return fastRecipesApi.removeRecipe(idRecipe);
+    }
+
+    public Observable<Result> sendComment(int idUser, Comment com) {
+        return fastRecipesApi.sendComment(idUser, com);
+    }
+
+    public Observable<Result> removeComment(int idComment) {
+        return fastRecipesApi.removeComment(idComment);
     }
 
 

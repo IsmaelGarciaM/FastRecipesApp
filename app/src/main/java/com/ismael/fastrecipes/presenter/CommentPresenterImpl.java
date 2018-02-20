@@ -37,6 +37,39 @@ public class CommentPresenterImpl implements CommentPresenter {
     }
 
     @Override
+    public void deleteComment(int idComment) {
+        int[] state = new int[1];
+        mService.removeComment(idComment).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Result>() {
+                    @Override
+                    public void onCompleted() {
+                        if(state[0] == 0){
+                            //Cambiar vista a eliminado
+                        }
+                        else if(state[0] == 1){
+                            Log.d("SUBSCRIBER DELETE", "EL COMENTARIO NO SE HA BORRADO.");
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d("SUBSCRIBER FAILED", e.getMessage());
+                    }
+
+                    @Override
+                    public void onNext(Result result) {
+                        if(result.getCode() == true && result.getStatus() == 200)
+                            state[0] = 0;
+                        else{
+                            state[0] = 1;
+                        }
+                    }
+
+                });
+    }
+
+    @Override
     public void showRecipeComments(int idRecipe) {
         final Comment[] r = new Comment[1];
         //Observable<Recipe> call = mService.getRecipe(id);

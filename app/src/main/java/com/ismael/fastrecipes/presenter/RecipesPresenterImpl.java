@@ -21,7 +21,10 @@ import com.ismael.fastrecipes.provider.FastRecipesContract;
 import com.ismael.fastrecipes.utils.FastRecipesService;
 import com.ismael.fastrecipes.utils.Result;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import rx.Subscriber;
@@ -300,7 +303,7 @@ public class RecipesPresenterImpl implements RecipesPresenter, LoaderManager.Loa
 
 
     @Override
-    public void setFavourite(int idUser, int idRecipe, boolean fav) {
+    public void setFavourite(int idUser, int idRecipe, int fav) {
         final Recipe[] r = new Recipe[1];
         final ArrayList<Comment> c = new ArrayList<>();
         //Observable<Recipe> call = mService.getRecipe(id);
@@ -360,12 +363,45 @@ public class RecipesPresenterImpl implements RecipesPresenter, LoaderManager.Loa
     }
 
     @Override
+    public void sendComment(String comment, int id, int id1) {
+
+
+        Date c = Calendar.getInstance().getTime();
+        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+        String formattedDate = df.format(c);
+
+        Comment com = new Comment("", id, comment, formattedDate,0);
+        final Comment[] r = new Comment[1];
+        mService.sendComment(id1, com).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Result>() {
+                    @Override
+                    public void onCompleted() {
+                        Log.d("SUBSCRIBER COMMENT INFO", "COMMENT SENT");
+                        //view.ADD COMMENT TO LIST();
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d("SUBSCRIBER FAILED", e.getMessage());
+                    }
+
+                    @Override
+                    public void onNext(Result result) {
+                        r[0] = result.getComments().get(0);
+                    }
+
+                });
+    }
+
+    @Override
     public void deleteRecipe(int idRecipe) {
         int[] state = new int[1];
         //Observable<Recipe> call = mService.getRecipe(id);
         mService.removeRecipe(idRecipe).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Integer>() {
+                .subscribe(new Subscriber<Result>() {
                     @Override
                     public void onCompleted() {
                         if(state[0] == 0){
@@ -373,9 +409,6 @@ public class RecipesPresenterImpl implements RecipesPresenter, LoaderManager.Loa
                         }
                         else if(state[0] == 1){
                             Log.d("SUBSCRIBER DELETE", "LA RECETA NO SE HA BORRADO.");
-                        }else{
-                            Log.d("SUBSCRIBER DELETE", "LA CONSULTA NO SE HA REALIZADO.");
-
                         }
                     }
 
@@ -385,8 +418,12 @@ public class RecipesPresenterImpl implements RecipesPresenter, LoaderManager.Loa
                     }
 
                     @Override
-                    public void onNext(Integer result) {
-                        state[0] = result;
+                    public void onNext(Result result) {
+                        if(result.getCode() == true && result.getStatus() == 200)
+                            state[0] = 0;
+                        else{
+                            state[0] = 1;
+                        }
                     }
 
                 });

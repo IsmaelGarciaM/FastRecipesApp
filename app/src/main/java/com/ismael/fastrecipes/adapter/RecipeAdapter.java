@@ -154,10 +154,10 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
 
     private Recipe getItem(int position){
         getCursor().moveToPosition(position);
-        Recipe pro = new Recipe(getCursor().getInt(0), getCursor().getInt(1), getCursor().getString(2),
-                getCursor().getString(3), getCursor().getString(4), getCursor().getString(5),getCursor().getInt(6),
-                getCursor().getString(7), getCursor().getInt(8), getCursor().getString(9), getCursor().getString(10),
-                getCursor().getString(11), 0);
+        Recipe pro = new Recipe(getCursor().getInt(0), getCursor().getInt(1), getCursor().getString(2), getCursor().getString(3),
+                getCursor().getString(4), getCursor().getString(5), getCursor().getString(6), getCursor().getInt(7),
+                getCursor().getString(8), getCursor().getInt(9),    getCursor().getString(10),getCursor().getString(11),
+                getCursor().getString(12),getCursor().getFloat(13), getCursor().getInt(14));
         return pro;
     }
 

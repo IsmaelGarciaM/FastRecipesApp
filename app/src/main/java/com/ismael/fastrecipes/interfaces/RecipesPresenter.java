@@ -17,8 +17,9 @@ public interface RecipesPresenter {
     void getMyRecipe(int idRecipe);
     void getFavRecipe(int idRecipe);
     void deleteRecipe(int idRecipe);
-    void setFavourite(int id, int id1, boolean fav);
+    void setFavourite(int id, int id1, int fav);
     void getFilteredRecipes(Recipe rModel);
+    void sendComment(String comment, int id, int id1);
 
     interface View{
         Context getContext();

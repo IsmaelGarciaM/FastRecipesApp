@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -39,6 +40,11 @@ public class RecipeFragment extends Fragment implements RecipesPresenter.View{
         // Required empty public constructor
     }
 
+    @BindView(R.id.edtComment)
+    EditText edtComment;
+
+    @BindView(R.id.btnSendComment)
+    TextView btnSendComment;
 
     @BindView(R.id.imvRecipeImage)
     ImageView imvRecipe;
@@ -201,6 +207,16 @@ public class RecipeFragment extends Fragment implements RecipesPresenter.View{
             });
         }
 
+        btnSendComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!edtComment.getText().toString().equals("")){
+                    String comment = edtComment.getText().toString();
+                    presenter.sendComment( comment, recetaActual.getId(), mCallback.getUser().getId());
+                }
+            }
+        });
+
         lvComments.setAdapter(cAdapter);
         lvComments.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -243,10 +259,10 @@ public class RecipeFragment extends Fragment implements RecipesPresenter.View{
                 @Override
                 public void onClick(View view) {
                     if(recetaActual.getFav() == 0){
-                        presenter.setFavourite(mCallback.getUser().getId(), recetaActual.getId(), true);
+                        presenter.setFavourite(mCallback.getUser().getId(), recetaActual.getId(), 1);
                     }
                     else
-                        presenter.setFavourite(mCallback.getUser().getId(), recetaActual.getId(), false);
+                        presenter.setFavourite(mCallback.getUser().getId(), recetaActual.getId(), 0);
 
                 }
             });

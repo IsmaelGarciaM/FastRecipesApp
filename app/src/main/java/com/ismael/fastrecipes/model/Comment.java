@@ -120,6 +120,15 @@ public class Comment implements Serializable, Parcelable{
         this.del = del;
     }
 
+    public Comment(String idUser, int idRecipe, String content, String date, int del) {
+        this.id = id;
+        this.idAuthor = idUser;
+        this.idRecipe = idRecipe;
+        this.content = content;
+        this.date = date;
+        this.del = del;
+    }
+
     @Override
     public int describeContents() {
         return hashCode();
