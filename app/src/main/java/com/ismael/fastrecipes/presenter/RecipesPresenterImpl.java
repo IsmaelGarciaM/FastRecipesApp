@@ -207,7 +207,7 @@ public class RecipesPresenterImpl implements RecipesPresenter, LoaderManager.Loa
 
 
     @Override
-    public void addRecipe(Recipe addR) {
+    public void addRecipe(final Recipe addR) {
         final Recipe[] r = new Recipe[1];
         mService.addRecipe(addR).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -235,7 +235,7 @@ public class RecipesPresenterImpl implements RecipesPresenter, LoaderManager.Loa
 
 
     @Override
-    public void modifyRecipe(Recipe addR) {
+    public void modifyRecipe(final Recipe addR) {
         final Recipe[] r = new Recipe[1];
         mService.modifyRecipe(addR).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -396,8 +396,8 @@ public class RecipesPresenterImpl implements RecipesPresenter, LoaderManager.Loa
     }
 
     @Override
-    public void deleteRecipe(int idRecipe) {
-        int[] state = new int[1];
+    public void deleteRecipe(final int idRecipe) {
+        final int[] state = new int[1];
         //Observable<Recipe> call = mService.getRecipe(id);
         mService.removeRecipe(idRecipe).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

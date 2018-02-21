@@ -2,6 +2,8 @@ package com.ismael.fastrecipes.utils;
 
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.ismael.fastrecipes.FastRecipesApplication;
 import com.ismael.fastrecipes.interfaces.FastRecipesApi;
 import com.ismael.fastrecipes.model.Comment;
@@ -30,11 +32,14 @@ public class FastRecipesService {
      * Constructor del servicio
      */
     public FastRecipesService() {
+        Gson gson = new GsonBuilder()
+                .setLenient().create();
         //Conexión con servicio rest
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(FastRecipesApi.BASE_URL)
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
         //Conexión con la api
@@ -98,7 +103,7 @@ public class FastRecipesService {
      * @return Devuelve la receta marcada o desmarcada
      */
     public Observable<Result> setFavouriteRec(int idUser, int idRecipe, int fav) {
-        return fastRecipesApi.setFavRecipe(idUser, idRecipe, fav);
+        return fastRecipesApi.setFavRecipeObservable(idUser, idRecipe, fav);
     }
 
 
@@ -108,31 +113,44 @@ public class FastRecipesService {
      * @return
      */
     public Observable<ResultUser> registerUser(String token, User u) {
-        return fastRecipesApi.register(token, u);
+        return fastRecipesApi.registerObservable(token, u);
     }
 
     public Observable<Result> getRecipesFiltered(Recipe rModel) {
-        return fastRecipesApi.getFiltRecipes(rModel);
+        return fastRecipesApi.getFiltRecipesObservable(rModel);
     }
 
     public Observable<Result> addRecipe(Recipe addR) {
-        return fastRecipesApi.addRecipe(addR);
+        return fastRecipesApi.addRecipeObservable(addR);
     }
 
     public Observable<Result> modifyRecipe(Recipe addR) {
-        return fastRecipesApi.modifyRecipe(addR);
+        return fastRecipesApi.modifyRecipeObservable(addR);
     }
 
     public Observable<Result> removeRecipe(int idRecipe) {
-        return fastRecipesApi.removeRecipe(idRecipe);
+        return fastRecipesApi.removeRecipeObservable(idRecipe);
     }
 
     public Observable<Result> sendComment(int idUser, Comment com) {
-        return fastRecipesApi.sendComment(idUser, com);
+        return fastRecipesApi.sendCommentObservable(idUser, com);
     }
 
     public Observable<Result> removeComment(int idComment) {
-        return fastRecipesApi.removeComment(idComment);
+        return fastRecipesApi.removeCommentObservable(idComment);
+    }
+
+    public Observable<ResultUser> getUser(int idUser ) {
+        return fastRecipesApi.getUserByIdObservable(idUser);
+    }
+
+    public Observable<Result> getUserRecipes(int idUser) {
+        return fastRecipesApi.getUserRecipesObservable(idUser);
+    }
+
+    public Observable<ResultUser> updateProfile(User userData) {
+        return fastRecipesApi.updateUserObservable(userData);
+
     }
 
 

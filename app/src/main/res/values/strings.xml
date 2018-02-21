@@ -21,22 +21,25 @@
     <string name="minutes">minutos</string>
     <string name="commentrecipe">Comenta esta receta</string>
     <string name="send">Enviar</string>
+    <string name="published_recipes">Recetas publicadas</string>
+    <string name="camera">Cámara</string>
+    <string name="gallery">Galería</string>
 
 
     <string-array name="categories_array">
-        <item>Drinks and Cocktails</item>
-        <item>Rice and Cereals</item>
-        <item>Vegetables</item>
-        <item>Desserts</item>
-        <item>Soups and Creams</item>
-        <item>Meats</item>
-        <item>Nuts</item>
-        <item>Fish and Seafood</item>
-        <item>Fruits</item>
-        <item>Pastas and Pizzas</item>
-        <item>Dairy products</item>
-        <item>Appetizers</item>
-        <item>To take away</item>
+        <item>Bebidas y cóckteles</item>
+        <item>Arroces y cereales</item>
+        <item>Verduras</item>
+        <item>Dulces y postres</item>
+        <item>Sopas y cremas</item>
+        <item>Carnes</item>
+        <item>Frutos secos</item>
+        <item>Pescado y marisco</item>
+        <item>Frutas</item>
+        <item>Pastas y pizzas</item>
+        <item>Lácteos</item>
+        <item>Aperitivos</item>
+        <item>Para llevar</item>
     </string-array>
 
 

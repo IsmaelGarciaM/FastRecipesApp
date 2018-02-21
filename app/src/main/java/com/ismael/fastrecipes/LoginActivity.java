@@ -248,7 +248,7 @@ public class LoginActivity extends Activity implements LoginPresenter.View{
     @Override
     public void showHome(Bundle userInfo){
         Intent i = new Intent(this, HomeActivity.class);
-//        i.putExtras(userInfo);
+        i.putExtras(userInfo);
         startActivity(i);
         finish();
     }

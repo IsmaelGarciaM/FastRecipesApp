@@ -199,7 +199,7 @@ public class AddRecipeFragment extends Fragment {
         int time = Integer.parseInt(btnAddTime.getText().toString().substring(0, 2));
         String difficulty = btnAddDifficulty.getText().toString();
 
-        Recipe newR = new Recipe(mCallback.getUser().getId(), edtNameRecipe.getText().toString(), txvCats.getText().toString(),
+        Recipe newR = new Recipe(mCallback.getUser().getId(), mCallback.getUser().getId(), mCallback.getUser().getName(), edtNameRecipe.getText().toString(), txvCats.getText().toString(),
                 txvIng.getText().toString(), edtElaboration.getText().toString(), time, difficulty, 2,"TODAY",
                 "null", "fastrecipes.com");
 

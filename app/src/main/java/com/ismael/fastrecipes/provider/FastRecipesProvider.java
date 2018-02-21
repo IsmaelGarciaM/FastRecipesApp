@@ -28,8 +28,6 @@ public class FastRecipesProvider extends ContentProvider {
     public static final int INGREDIENT = 2;
     public static final int FAVRECIPES = 3;
 
-
-
     public static final int RECIPE_ID= 11;
     public static final int FAVRECIPE_ID= 12;
 
@@ -64,6 +62,7 @@ public class FastRecipesProvider extends ContentProvider {
         switch (uriMatcher.match(uri)){
             case RECIPE:
                 builder.setTables(DatabaseContract.RecipeEntry.TABLE_NAME);
+                projection = FastRecipesContract.Recipe.PROJECTION;
                 break;
 
             case RECIPE_ID:

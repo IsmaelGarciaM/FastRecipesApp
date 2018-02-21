@@ -69,6 +69,8 @@ public class RecipesListFragment extends Fragment implements RecipesPresenter.Vi
         void showRecipe(Bundle args);
 
         ArrayList<Filter> getFilters();
+
+        Filter getFilterByName(String s);
     }
 
     /**
@@ -140,26 +142,54 @@ public class RecipesListFragment extends Fragment implements RecipesPresenter.Vi
 
     private Recipe getRModel(){
         Recipe rModel = new Recipe();
-
-        for(int i = 0; i < mCallback.getFilters().size(); i++){
-            switch (mCallback.getFilters().get(i).getType()){
-                case f1: rModel.setIngredients(mCallback.getFilters().get(i).getContent());
-                    break;
-                case f2: rModel.setIngredients("$"+mCallback.getFilters().get(i).getContent());
-                    break;
-                case f3: rModel.setCategories(mCallback.getFilters().get(i).getContent());
-                    break;
-                case f4: rModel.setName(mCallback.getFilters().get(i).getContent());
-                    break;
-                case f5:
-                    String t[] = mCallback.getFilters().get(i).getContent().split(" ");
-                    int time = Integer.parseInt(t[0]);
-                    rModel.setTime(time);
-                    break;
-                case f6: rModel.setDifficulty(mCallback.getFilters().get(i).getContent());
-                    break;
-            }
+        Filter tmp;
+        if((tmp = mCallback.getFilterByName(f1)) != null){
+            rModel.setIngredients(tmp.getContent() + "-");
         }
+        else{
+            rModel.setIngredients("none-");
+        }
+
+        if((tmp = mCallback.getFilterByName(f2)) != null){
+            String ingre = rModel.getIngredients();
+            rModel.setIngredients(ingre + tmp.getContent());
+        }
+        else{
+            String ingre = rModel.getIngredients();
+            rModel.setIngredients(ingre + "none");
+        }
+
+        if((tmp = mCallback.getFilterByName(f3)) != null){
+            rModel.setCategories(tmp.getContent());
+        }
+        else{
+            rModel.setCategories("");
+        }
+
+        if((tmp = mCallback.getFilterByName(f4)) != null){
+            rModel.setName(tmp.getContent());
+        }
+        else{
+            rModel.setName("");
+        }
+
+
+        if((tmp = mCallback.getFilterByName(f5)) != null){
+            String[] t = tmp.getContent().split(" ");
+            rModel.setTime(Integer.parseInt(t[0]));
+        }
+        else{
+            rModel.setTime(0);
+        }
+
+
+        if((tmp = mCallback.getFilterByName(f6)) != null){
+            rModel.setDifficulty(tmp.getContent());
+        }
+        else{
+            rModel.setDifficulty("");
+        }
+
         return rModel;
     }
 

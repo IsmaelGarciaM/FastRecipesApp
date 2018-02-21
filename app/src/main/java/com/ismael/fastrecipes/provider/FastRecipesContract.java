@@ -34,7 +34,7 @@ public class FastRecipesContract {
         public static final String DATE = "date";
         public static final String IMAGE = "image";
         public static final String SOURCE = "source";
-        public static final String[] PROJECTION = new String[]{CONTENT_PATH+"."+NAME};
+        public static final String[] PROJECTION = new String[]{"*"};
 
     }
 

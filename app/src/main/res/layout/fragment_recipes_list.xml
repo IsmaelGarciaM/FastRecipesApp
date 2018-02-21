@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     tools:context="com.ismael.fastrecipes.RecipesListFragment">
 
-    <android.support.v7.widget.RecyclerView
+    <ListView
         android:id="@+id/lvRecipesList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

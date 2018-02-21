@@ -15,6 +15,9 @@ import android.widget.TextView;
 import com.ismael.fastrecipes.adapter.PagerAdapter;
 import com.ismael.fastrecipes.model.User;
 import com.squareup.picasso.Picasso;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
@@ -24,6 +27,13 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * También el acceso al perfil.
  */
 public class SocialActivityFragment extends Fragment{
+
+    @BindView(R.id.cd_civUserProfile)
+    CircleImageView imvUser;
+
+    @BindView(R.id.cd_txvUserName)
+    TextView txvUserName;
+
 
     private SocialActivityFragmentListener mCallback;
     static SocialActivityFragment safInstance;
@@ -70,32 +80,21 @@ public class SocialActivityFragment extends Fragment{
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView =  inflater.inflate(R.layout.fragment_social_activity, container, false);
-        //ButterKnife.bind(rootView);
-        NavigationView nav = rootView.findViewById(R.id.navigation_head);
-        nav.inflateHeaderView(R.layout.header_navigation_view);
-        View nav_header = LayoutInflater.from(getContext()).inflate(R.layout.header_navigation_view, container);
-        ((TextView) nav_header.findViewById(R.id.cd_txvUserName)).setText(mCallback.getUserName());
+        ButterKnife.bind(this, rootView);
 
         if(mCallback.getUser().getImage() != null){
             Picasso.with(getContext())
                     .load(mCallback.getUser().getImage())
-                    .into((CircleImageView) nav_header.findViewById(R.id.cd_civUserProfile));
+                    .into((CircleImageView) (imvUser));
         }
 
-        ( nav_header.findViewById(R.id.cd_civUserProfile)).setOnClickListener(new View.OnClickListener() {
+        imvUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mCallback.showProfile(null);
             }
         });;
-        nav_header.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mCallback.showProfile(null);
 
-            }
-        });
-        nav.addHeaderView(nav_header);
         tabLayout = (TabLayout) rootView.findViewById(R.id.tlSocialMenu);
         frame = (FrameLayout) rootView.findViewById(R.id.vpSocial);
 

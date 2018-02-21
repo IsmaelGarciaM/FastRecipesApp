@@ -130,7 +130,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
 
         Date c = Calendar.getInstance().getTime();
         SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
-        String formattedDate = df.format(c);
+        final String formattedDate = df.format(c);
 
         mAuth.createUserWithEmailAndPassword(mail,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override

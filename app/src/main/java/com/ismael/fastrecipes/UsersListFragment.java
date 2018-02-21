@@ -12,6 +12,7 @@ import android.widget.ListView;
 
 import com.ismael.fastrecipes.adapter.UsersAdapter;
 import com.ismael.fastrecipes.interfaces.ProfilePresenter;
+import com.ismael.fastrecipes.model.Recipe;
 import com.ismael.fastrecipes.model.User;
 import com.ismael.fastrecipes.presenter.ProfilePresenterImpl;
 
@@ -44,6 +45,11 @@ public class UsersListFragment extends Fragment implements ProfilePresenter.View
     public void setUserData(ArrayList<User> u) {
         adapter.addAll(u);
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void setUserRecipesData(ArrayList<Recipe> recs) {
+
     }
 
     interface UsersListListener{

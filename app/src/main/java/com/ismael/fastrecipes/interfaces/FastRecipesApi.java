@@ -28,42 +28,37 @@ import rx.Observable;
 
 public interface FastRecipesApi {
 
-    public static final String BASE_URL = "http://10.0.2.2/apifastrecipes/api/public/";
-
-/*
-    @POST("user/login/{token}")
-    Call<User> login(@Path("token") String token);*/
-
+    public static final String BASE_URL = "http://fastrecipesapp.com/apifastrecipes/api/public/";
 
     //RECETAS
     @GET("recipe/{id}")
     Observable<Result> getRecipeObservable(@Path("id") int id);
 
-    @GET("recipe/")
-    Observable<Result> getFiltRecipes(@Body Recipe rModel);
+    @POST("recipe/")
+    Observable<Result> getFiltRecipesObservable(@Body Recipe rModel);
 
     @POST("recipe/")
-    Observable<Result> addRecipe(@Body Recipe addR);
+    Observable<Result> addRecipeObservable(@Body Recipe addR);
 
     @PUT("recipe/")
-    Observable<Result> modifyRecipe(@Body Recipe addR);
+    Observable<Result> modifyRecipeObservable(@Body Recipe addR);
 
     @DELETE("recipe/{id}")
-    Observable<Result> removeRecipe(@Path("id") int idRecipe);
+    Observable<Result> removeRecipeObservable(@Path("id") int idRecipe);
 
     //FAVS
     @POST("recipe/setfav/{idu}/{idr}/{how}")
-    Observable<Result> setFavRecipe(@Path("idu") int idUser, @Path("idr") int idRecipe,@Path("how") int fav);
+    Observable<Result> setFavRecipeObservable(@Path("idu") int idUser, @Path("idr") int idRecipe,@Path("how") int fav);
 
     //COMENTARIOS
     @GET("comments/{id}")
     Observable<ResultComment> getCommentsObservable(@Path("idUser") int idUser);
 
     @POST("comments/{id}")
-    Observable<Result> sendComment(@Path("id") int idUser, @Body Comment com);
+    Observable<Result> sendCommentObservable(@Path("id") int idUser, @Body Comment com);
 
     @DELETE("comments/{id}")
-    Observable<Result> removeComment(@Path("id") int idComment);
+    Observable<Result> removeCommentObservable(@Path("id") int idComment);
 
     //USUARIOS
     @GET("user/comment/{id}")
@@ -76,5 +71,14 @@ public interface FastRecipesApi {
     Observable<ResultUser> getUsersFavObservable(@Path("idRecipe") int idRecipe);
 
     @POST("user/registro/{token}")
-    Observable<ResultUser> register(@Path("token") String token, @Body User user);
+    Observable<ResultUser> registerObservable(@Path("token") String token, @Body User user);
+
+    @GET("user/{id}")
+    Observable<ResultUser> getUserByIdObservable(@Path("id") int idUser);
+
+    @GET("user/recipes/{id}")
+    Observable<Result> getUserRecipesObservable(@Path("id") int idUser);
+
+    @PUT("/user")
+    Observable<ResultUser> updateUserObservable(@Body User userData);
 }

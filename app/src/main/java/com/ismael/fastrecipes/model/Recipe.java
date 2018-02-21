@@ -112,7 +112,9 @@ public class Recipe implements Parcelable, Serializable{
         this.rating = rating;
     }
 
-    public Recipe(int author, String name, String categories, String ingredients, String elaboration, int time, String difficulty,  int nPers, String date, String image, String source) {
+    public Recipe(int id, int author,String authorName, String name, String categories, String ingredients, String elaboration, int time, String difficulty,  int nPers, String date, String image, String source) {
+        this.id = id;
+        this.authorName = authorName;
         this.idAuthor = author;
         this.name = name;
         this.categories = categories;

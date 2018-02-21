@@ -30,5 +30,7 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
-    apply from: "./libraries.gradle"
+
+
+apply from: "./libraries.gradle"
 

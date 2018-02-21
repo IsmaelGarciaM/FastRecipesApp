@@ -38,7 +38,7 @@ public class CommentPresenterImpl implements CommentPresenter {
 
     @Override
     public void deleteComment(int idComment) {
-        int[] state = new int[1];
+        final int[] state = new int[1];
         mService.removeComment(idComment).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<Result>() {
