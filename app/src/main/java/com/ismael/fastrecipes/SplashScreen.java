@@ -3,9 +3,11 @@ package com.ismael.fastrecipes;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseUser;
 import com.ismael.fastrecipes.interfaces.LoginPresenter;
@@ -32,18 +34,20 @@ public class SplashScreen extends AppCompatActivity implements LoginPresenter.Vi
         setContentView(R.layout.activity_splash_screen);
         presenter = new LoginPresenterImpl(this, this.getApplicationContext());
         c = this;
+        Typeface font = Typeface.createFromAsset(getAssets(), "yummycupcakes.ttf");
+        TextView title = (TextView) findViewById(R.id.txvInit);
+        title.setTypeface(font);
 
-        TimerTask task = new TimerTask() {
+
+       TimerTask task = new TimerTask() {
             @Override
             public void run() {
 
                 // Envío a HomeActivity si el usuario está guardado y si no a LogInActivity
 
-                //presenter.logIn();
-                startActivity(new Intent().setClass(c, LoginActivity.class));
-                finish();
 
                 //if(user is preferences){
+                presenter.logIn("", "");
 
                     /*if (presenter.logIn(user from preferences)) {
                         Intent mainIntent = new Intent().setClass(SplashScreen.this, HomeActivity.class);
@@ -61,6 +65,7 @@ public class SplashScreen extends AppCompatActivity implements LoginPresenter.Vi
         // Simulate a long loading process on application startup.
         Timer timer = new Timer();
         timer.schedule(task, SPLASH_SCREEN_DELAY);
+
     }
 
     @Override
@@ -76,7 +81,8 @@ public class SplashScreen extends AppCompatActivity implements LoginPresenter.Vi
 
     @Override
     public void showLoginError(String s) {
-
+        startActivity(new Intent().setClass(c, LoginActivity.class));
+        finish();
     }
 
     @Override

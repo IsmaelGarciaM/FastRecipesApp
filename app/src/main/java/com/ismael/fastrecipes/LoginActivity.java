@@ -4,7 +4,10 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -80,7 +83,7 @@ public class LoginActivity extends Activity implements LoginPresenter.View{
                 }
                 else {
                     if (actionId == R.id.activity_login || actionId == EditorInfo.IME_NULL) {
-                        attemptLogin();
+                        //attemptLogin();
                         return true;
                     }
                     return false;
@@ -96,7 +99,7 @@ public class LoginActivity extends Activity implements LoginPresenter.View{
                     showNetworkError();
 
                 }else {
-                    attemptLogin();
+                    saveUser();
                 }
             }
         });
@@ -111,6 +114,7 @@ public class LoginActivity extends Activity implements LoginPresenter.View{
         tilForget.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mView = view;
                 tilMailL.setError(null);
                 tilMailL.setErrorEnabled(false);
                 String mail = String.valueOf(edtMail.getText());
@@ -129,13 +133,15 @@ public class LoginActivity extends Activity implements LoginPresenter.View{
                 }
                 //El presentador realiza el envío
                 else{
-                    showProgress(true);
-                    presenter.forgetPass(mail);
+                    showConfirmDialog(mail);
+
                 }
 
             }
         });
-
+        if(getIntent().getBooleanExtra("close", false)) {
+            presenter.closeFirebaseSession();
+        }
     }
 
     /**
@@ -231,7 +237,9 @@ public class LoginActivity extends Activity implements LoginPresenter.View{
      */
     @Override
     public void showLoginError(String msg){
-        Snackbar.make(mView, msg, Snackbar.LENGTH_LONG).show();
+        if(mView != null) {
+            Snackbar.make(mView, msg, Snackbar.LENGTH_LONG).show();
+        }
     }
 
     /**
@@ -278,4 +286,65 @@ public class LoginActivity extends Activity implements LoginPresenter.View{
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null && activeNetwork.isConnected();
     }
+
+    void saveUser(){
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.Theme_Dialog_Translucent);
+        dialog.setCancelable(false);
+        dialog.setTitle(R.string.titleSaveUser);
+        dialog.setMessage("Puedes volver a configurar esto en las preferencias de la app.");
+        dialog.setNegativeButton(getResources().getString(R.string.dontrem), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                getPreferences(MODE_PRIVATE).edit().putBoolean("remember_user", false).apply();
+                String m = String.valueOf(edtMail.getText());
+                if(m.endsWith(" ")){
+                    m = m.trim();
+                }
+                getSharedPreferences("fastrecipessp", MODE_PRIVATE).edit().putString("um", m).apply();
+                getSharedPreferences("fastrecipessp", MODE_PRIVATE).edit().putString("up", String.valueOf(edtPass.getText())).apply();
+                attemptLogin();
+
+            }
+        });
+
+        dialog.setPositiveButton(getResources().getString(R.string.rem), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                getSharedPreferences("fastrecipessp", MODE_PRIVATE).edit().putBoolean("remember_user", true).apply();
+                String m = String.valueOf(edtMail.getText());
+                if(m.endsWith(" ")){
+                    m = m.trim();
+                }
+                getSharedPreferences("fastrecipessp", MODE_PRIVATE).edit().putString("um", m).apply();
+                getSharedPreferences("fastrecipessp", MODE_PRIVATE).edit().putString("up", String.valueOf(edtPass.getText())).apply();
+                attemptLogin();
+
+            }
+        }).show();
+    }
+
+    private void showConfirmDialog(String email){
+        final String[] t = {email};
+
+        AlertDialog.Builder customDialog = new AlertDialog.Builder(this, R.style.Theme_Dialog_Translucent);
+        customDialog.setCancelable(false);
+        customDialog.setTitle("¿Enviar correo de recuperación a "+email+"?");
+        customDialog.setNegativeButton(getResources().getString(R.string.back), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                //cancel
+            }
+        });
+
+        customDialog.setPositiveButton(getResources().getString(R.string.accept), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                showProgress(true);
+                presenter.forgetPass(t[0]);
+
+            }
+        }).show();
+
+    }
+
 }

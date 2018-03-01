@@ -2,17 +2,22 @@ package com.ismael.fastrecipes.adapter;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.os.Bundle;
+import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.ismael.fastrecipes.R;
 import com.ismael.fastrecipes.model.Recipe;
+import com.ismael.fastrecipes.utils.Const;
 import com.squareup.picasso.Picasso;
-
-import java.security.spec.ECField;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -52,19 +57,19 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
         TextView txvRecipeDifficulty;
         @BindView(R.id.txvRecipeRating)
         TextView txvRecipeRating;
-        @BindView(R.id.txvRecipeLikes)
-        TextView txvRecipeLikes;
+        @BindView(R.id.txvRecipeNper)
+        TextView txvNPers;
 
 
-        public int getId() {
-            return id;
+        public int getIdr() {
+            return idr;
         }
 
-        public void setId(int id) {
-            this.id = id;
+        public void setIdr(int id) {
+            this.idr = id;
         }
 
-        int id;
+        int idr;
 
         public ViewHolder(View v) {
             super(v);
@@ -73,27 +78,47 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
 
         public void bind(final Recipe r, final OnItemClickListener listener){
 
-            String rating = String.valueOf(r.getRating())+ "/5";
             this.txvName.setText(r.getName());
             this.txvRecipeTime.setText(String.valueOf(r.getTime()));
             this.txvRecipeDifficulty.setText(r.getDifficulty());
-            this.txvRecipeRating.setText(rating);
-            try {
-                Picasso.with(context)
-                        .load(r.getImage())
-                        .into(this.imgRecipe);
-            }catch (Exception e){}
+            this.txvNPers.setText(r.getnPers());
+            this.txvRecipeRating.setText("-");
+
+            if(r.getImage().startsWith("gs")) {
+
+                StorageReference mStorageRefloadrec = FirebaseStorage.getInstance().getReference(Const.FIREBASE_IMAGE_RECIPE + "/" + String.valueOf(r.getIdr()));
+
+                mStorageRefloadrec.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Uri> task) {
+                        try {
+                            Picasso.with(context).load(task.getResult()).into(imgRecipe);
+                        } catch (Exception e) {
+                            imgRecipe.setImageDrawable(context.getResources().getDrawable(R.drawable.addrecipe));
+                        }
+                    }
+                });
+            } else if(r.getImage() != null && !r.getImage().equals("")) {
+                try {
+                    Picasso.with(context)
+                            .load(r.getImage())
+                            .into(this.imgRecipe);
+                } catch (Exception e) {
+                    this.imgRecipe.setImageDrawable(context.getResources().getDrawable(R.drawable.addrecipe));
+                }
+            }else
+                this.imgRecipe.setImageDrawable(context.getResources().getDrawable(R.drawable.addrecipe));
 
 
             if(r.getCategories() != null)
                 txvCategories.setText(r.getCategories()) ;
 
-            setId(r.getId());
+            this.setIdr(r.getIdr());
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    listener.onItemClick(r.getId());
+                    listener.onItemClick(r.getIdr());
                 }
             });
         };
@@ -156,8 +181,12 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
         getCursor().moveToPosition(position);
         Recipe pro = new Recipe(getCursor().getInt(0), getCursor().getInt(1), getCursor().getString(2), getCursor().getString(3),
                 getCursor().getString(4), getCursor().getString(5), getCursor().getString(6), getCursor().getInt(7),
-                getCursor().getString(8), getCursor().getInt(9),    getCursor().getString(10),getCursor().getString(11),
+                getCursor().getString(8), getCursor().getString(9),    getCursor().getString(10),getCursor().getString(11),
                 getCursor().getString(12));
+        try {
+            int fav = getCursor().getInt(13);
+            pro.setFav(fav);
+        }catch (Exception e){}
         return pro;
     }
 

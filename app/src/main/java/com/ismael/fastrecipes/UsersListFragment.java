@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.ismael.fastrecipes.adapter.UsersAdapter;
 import com.ismael.fastrecipes.interfaces.ProfilePresenter;
@@ -17,6 +18,8 @@ import com.ismael.fastrecipes.model.User;
 import com.ismael.fastrecipes.presenter.ProfilePresenterImpl;
 
 import java.util.ArrayList;
+
+import javax.xml.transform.Templates;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,6 +32,10 @@ public class UsersListFragment extends Fragment implements ProfilePresenter.View
 
     @BindView(R.id.lvUsers)
     ListView lvUsers;
+    @BindView(R.id.txvTitleUsers)
+    TextView txvTitle;
+    @BindView(R.id.txvEmptyUsers)
+    TextView txvEmpty;
     int idRecipe;
     ArrayList<User> users;
 
@@ -41,15 +48,32 @@ public class UsersListFragment extends Fragment implements ProfilePresenter.View
         // Required empty public constructor
     }
 
+
     @Override
-    public void setUserData(ArrayList<User> u) {
-        adapter.addAll(u);
-        adapter.notifyDataSetChanged();
+    public void setUserData(User u) {
+
     }
 
     @Override
     public void setUserRecipesData(ArrayList<Recipe> recs) {
 
+    }
+
+    @Override
+    public void updateCurrentUser(User u) {
+
+    }
+
+    @Override
+    public void setUserListData(ArrayList<User> u) {
+            adapter.addAll(u);
+            adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void cancelSearch() {
+        txvEmpty.setVisibility(View.VISIBLE);
+        lvUsers.setVisibility(View.GONE);
     }
 
     interface UsersListListener{
@@ -88,8 +112,8 @@ public class UsersListFragment extends Fragment implements ProfilePresenter.View
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         presenter = new ProfilePresenterImpl(this);
-        if(ulfInstance.getArguments().getInt("idRecipe") != -1){
-            idRecipe = ulfInstance.getArguments().getInt("idRecipe");
+        if(ulfInstance.getArguments()!= null && ulfInstance.getArguments().getInt("id") != 0){
+            idRecipe = ulfInstance.getArguments().getInt("id");
         }
     }
 
@@ -99,6 +123,7 @@ public class UsersListFragment extends Fragment implements ProfilePresenter.View
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_users_list, container, false);
         ButterKnife.bind(this, root);
+        users = new ArrayList<>();
         adapter = new UsersAdapter(getContext(), R.layout.user_item, users);
         return root;
     }

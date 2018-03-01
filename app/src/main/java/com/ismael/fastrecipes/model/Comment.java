@@ -4,6 +4,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by ismael on 17/05/17.
@@ -11,7 +14,8 @@ import java.io.Serializable;
 
 public class Comment implements Serializable, Parcelable{
     private int id;
-    private String idAuthor;
+    private int idAuthor;
+    private String nameAuthor;
     private int idRecipe;
     private String content;
     private String date;
@@ -20,7 +24,8 @@ public class Comment implements Serializable, Parcelable{
 
     protected Comment(Parcel in) {
         id = in.readInt();
-        idAuthor = in.readString();
+        idAuthor = in.readInt();
+        nameAuthor = in.readString();
         idRecipe = in.readInt();
         content = in.readString();
         date = in.readString();
@@ -58,14 +63,6 @@ public class Comment implements Serializable, Parcelable{
         this.id = id;
     }
 
-    public String getIdAuthor() {
-        return idAuthor;
-    }
-
-    public void setIdAuthor(String idUser) {
-        this.idAuthor = idUser;
-    }
-
     public int getIdRecipe() {
         return idRecipe;
     }
@@ -90,44 +87,53 @@ public class Comment implements Serializable, Parcelable{
         this.date = date;
     }
 
-    public String getUserImg() {
+
+    public int getIdAuthor() {
+        return idAuthor;
+    }
+
+    public void setIdAuthor(int idAuthor) {
+        this.idAuthor = idAuthor;
+    }
+
+    public String getImage() {
         return image;
     }
 
-    public void setUserImg(String userImg) {
-        this.image = userImg;
+    public void setImage(String image) {
+        this.image = image;
+    }
+    public String getNameAuthor() {
+        return nameAuthor;
     }
 
+    public void setNameAuthor(String nameAuthor) {
+        this.nameAuthor = nameAuthor;
+    }
 
+    public Comment(){}
 
-    public Comment(int id, String idUser, int idRecipe, String content, String date, int del, String userImg) {
+    public Comment(int id, int idAuthor, String nameAuthor, int idRecipe, String content, String img) {
         this.id = id;
-        this.idAuthor = idUser;
+        this.idAuthor = idAuthor;
+        this.nameAuthor = nameAuthor;
         this.idRecipe = idRecipe;
         this.content = content;
-        this.date = date;
-        this.image = userImg;
-        this.del = del;
+        this.date = getFormatedDate();
+        this.image = img;
     }
 
-    public Comment(String idUser, int idRecipe, String content, String date, int del, String userImg) {
-        this.id = id;
-        this.idAuthor = idUser;
+
+    public Comment(int idAuthor, String nameAuthor, int idRecipe, String content, String image) {
+        this.idAuthor = idAuthor;
+        this.nameAuthor = nameAuthor;
         this.idRecipe = idRecipe;
         this.content = content;
-        this.date = date;
-        this.image = userImg;
-        this.del = del;
+        this.date = getFormatedDate();
+        this.image = image;
     }
 
-    public Comment(String idUser, int idRecipe, String content, String date, int del) {
-        this.id = id;
-        this.idAuthor = idUser;
-        this.idRecipe = idRecipe;
-        this.content = content;
-        this.date = date;
-        this.del = del;
-    }
+
 
     @Override
     public int describeContents() {
@@ -137,15 +143,20 @@ public class Comment implements Serializable, Parcelable{
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeInt(id);
-        parcel.writeString(idAuthor);
+        parcel.writeInt(idAuthor);
+        parcel.writeString(nameAuthor);
         parcel.writeInt(idRecipe);
         parcel.writeString(content);
         parcel.writeString(date);
         parcel.writeInt(del);
         parcel.writeString(image);
+    }
 
+    private String getFormatedDate(){
 
-
-
+        Date c = Calendar.getInstance().getTime();
+        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+        String formattedDate = df.format(c);
+        return formattedDate;
     }
 }

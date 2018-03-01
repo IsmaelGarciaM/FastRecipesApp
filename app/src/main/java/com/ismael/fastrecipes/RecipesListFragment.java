@@ -3,6 +3,7 @@ package com.ismael.fastrecipes;
 
 import android.app.Activity;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,11 +12,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.ismael.fastrecipes.adapter.FilteredRecipeAdapter;
 import com.ismael.fastrecipes.interfaces.RecipesPresenter;
+import com.ismael.fastrecipes.model.Comment;
 import com.ismael.fastrecipes.model.Filter;
 import com.ismael.fastrecipes.model.Recipe;
+import com.ismael.fastrecipes.model.User;
 import com.ismael.fastrecipes.presenter.RecipesPresenterImpl;
 
 import java.util.ArrayList;
@@ -42,15 +46,17 @@ public class RecipesListFragment extends Fragment implements RecipesPresenter.Vi
 
     @BindView(R.id.lvRecipesList)
     ListView lvRecipes;
+    @BindView(R.id.filteredTitle)
+    TextView title;
+    @BindView(R.id.filteredEmpty)
+    TextView empty;
+
 
     static private RecipesListFragment rlfInstance;
     private RecipesListListener mCallback;
     RecipesPresenter presenter;
     FilteredRecipeAdapter adapter;
     ArrayList<Recipe> recList;
-
-    @Override
-    public void setCursorData(Cursor data) {}
 
     /**
      * Muestra la vista de la receta seleccionada
@@ -67,10 +73,9 @@ public class RecipesListFragment extends Fragment implements RecipesPresenter.Vi
     interface RecipesListListener{
         void showRecipesList(Bundle b);
         void showRecipe(Bundle args);
-
         ArrayList<Filter> getFilters();
-
         Filter getFilterByName(String s);
+        User getUser();
     }
 
     /**
@@ -90,8 +95,8 @@ public class RecipesListFragment extends Fragment implements RecipesPresenter.Vi
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        presenter = new RecipesPresenterImpl(this);
-
+        presenter = new RecipesPresenterImpl(this, 0);
+        recList = new ArrayList<>();
 
     }
 
@@ -102,6 +107,10 @@ public class RecipesListFragment extends Fragment implements RecipesPresenter.Vi
         View rootView = inflater.inflate(R.layout.fragment_recipes_list, container, false);
         ButterKnife.bind(this, rootView);
         adapter = new FilteredRecipeAdapter(getContext(), 0, recList);
+        empty.setVisibility(View.GONE);
+        lvRecipes.setVisibility(View.VISIBLE);
+        Typeface font = Typeface.createFromAsset(getContext().getAssets(), "yummycupcakes.ttf");
+        title.setTypeface(font);
         return rootView;
     }
 
@@ -112,7 +121,7 @@ public class RecipesListFragment extends Fragment implements RecipesPresenter.Vi
         lvRecipes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                presenter.getRecipe(adapter.getItem(i).getId());
+                presenter.getRecipe(adapter.getItem(i).getIdr(), mCallback.getUser().getId());
             }
         });
     }
@@ -184,7 +193,14 @@ public class RecipesListFragment extends Fragment implements RecipesPresenter.Vi
 
 
         if((tmp = mCallback.getFilterByName(f6)) != null){
+            /*if(tmp.getContent().equals("Fácil"))
+                rModel.setDifficulty("Facil");
+            else if(tmp.getContent().equals("Media"))
+                rModel.setDifficulty(tmp.getContent());
+            else if(tmp.getContent().equals("Difícil"))
+                rModel.setDifficulty("Dificil");*/
             rModel.setDifficulty(tmp.getContent());
+
         }
         else{
             rModel.setDifficulty("");
@@ -197,7 +213,19 @@ public class RecipesListFragment extends Fragment implements RecipesPresenter.Vi
     public void setFavState(Recipe recipe) {}
 
     @Override
-    public void setListData(ArrayList<Recipe> recs) {adapter.addAll(recs);}
+    public void setListData(ArrayList<Recipe> recs) {
+        adapter.clear();
+        adapter.addAll(recs);
+        adapter.notifyDataSetChanged();
+    }
 
+    @Override
+    public void cancelSearch() {
+        lvRecipes.setVisibility(View.GONE);
+        empty.setVisibility(View.VISIBLE);
+    }
 
+    @Override
+    public void addNewComment(ArrayList<Comment> newComment) {
+    }
 }

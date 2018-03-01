@@ -3,11 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/ic_launcher_background_testing"
+
     tools:context="com.ismael.fastrecipes.SearchByCategoriesFragment">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rcvCategories"
         android:layout_width="match_parent"
+        android:background="@color/ic_launcher_background_testing"
+
         android:layout_height="wrap_content"
         android:padding="@dimen/textPageBorder"
         tools:listitem="@layout/item_categories_list"

@@ -1,6 +1,7 @@
 package com.ismael.fastrecipes.adapter;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -9,8 +10,14 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.ismael.fastrecipes.R;
 import com.ismael.fastrecipes.model.User;
+import com.ismael.fastrecipes.utils.Const;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -20,7 +27,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Created by Ismael on 18/02/2018.
  */
 
-public class UsersAdapter extends ArrayAdapter {
+public class UsersAdapter extends ArrayAdapter<User> {
 
     Context context;
     List<User> usList;
@@ -47,7 +54,7 @@ public class UsersAdapter extends ArrayAdapter {
     @NonNull
     @Override
     public View getView(int position, View view, @NonNull ViewGroup parent) {
-        UserHolder uh;
+        final UserHolder uh;
         View item = view;
         if (item == null) {
             item = LayoutInflater.from(parent.getContext()).inflate(itemLayout, parent, false);
@@ -58,7 +65,18 @@ public class UsersAdapter extends ArrayAdapter {
             uh = (UserHolder) item.getTag();
 
 
-        //cargar imagen
+        if(getItem(position).getImage() != null && getItem(position).getImage().startsWith("gs")) {
+            StorageReference mStorageRefload = FirebaseStorage.getInstance().getReference(Const.FIREBASE_IMAGE_USER + "/" + String.valueOf(getItem(position).getId()));
+            //cargar imagen
+            mStorageRefload.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    Picasso.with(context).load(task.getResult()).into(uh.userImage);
+                }
+            });
+        }
+        else
+            uh.userImage.setImageDrawable(context.getResources().getDrawable(R.drawable.user_icon));
         uh.name.setText(getItem(position).getName());
 
         return item;

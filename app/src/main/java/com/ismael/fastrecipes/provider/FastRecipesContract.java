@@ -23,9 +23,11 @@ public class FastRecipesContract {
 
         public static final String CONTENT_PATH = "recipe";
         public static final Uri CONTENT_URI = Uri.withAppendedPath(AUTHORITY_URI, CONTENT_PATH);
-        public static final String AUTHOR = "author";
+        public static final String ID = "idr";
+        public static final String AUTHOR = "idAuthor";
         public static final String AUTHORNAME = "authorname";
         public static final String NAME = "name";
+        public static final String INGREDIENTS = "ingredients";
         public static final String CATEGORIES = "categories";
         public static final String ELABORATION= "elaboration";
         public static final String TIME = "time";
@@ -34,18 +36,8 @@ public class FastRecipesContract {
         public static final String DATE = "date";
         public static final String IMAGE = "image";
         public static final String SOURCE = "source";
-        public static final String[] PROJECTION = new String[]{"*"};
-
-    }
-
-    public static class Ingredient implements BaseColumns {
-
-        public static final String CONTENT_PATH = "ingredient";
-        public static final Uri CONTENT_URI = Uri.withAppendedPath(AUTHORITY_URI, CONTENT_PATH);
-        public static final String NAME = "name";
-        public static final String MEASUREMENT = "measurement";
-        public static final String[] PROJECTION = new String[]{BaseColumns._ID, NAME};
-        public static final String SELECTION =  "name LIKE ";
+        public static final String[] PROJECTION = new String[]{ID, AUTHOR, AUTHORNAME, NAME,  INGREDIENTS, CATEGORIES, ELABORATION, TIME, DIFFICULTY,
+        NPERS, DATE, IMAGE, SOURCE};
 
     }
 
@@ -53,7 +45,8 @@ public class FastRecipesContract {
 
         public static final String CONTENT_PATH = "favrecipes";
         public static final Uri CONTENT_URI = Uri.withAppendedPath(AUTHORITY_URI, CONTENT_PATH);
-        public static final String AUTHOR = "author";
+        public static final String ID = "idr";
+        public static final String AUTHOR = "idAuthor";
         public static final String AUTHORNAME = "authorname";
         public static final String NAME = "name";
         public static final String CATEGORIES = "categories";
@@ -65,7 +58,10 @@ public class FastRecipesContract {
         public static final String DATE = "date";
         public static final String IMAGE = "image";
         public static final String SOURCE = "source";
-        public static final String[] PROJECTION = new String[]{"*"};
+        public static final String FAV = "fav";
+
+        public static final String[] PROJECTION = new String[]{ID, AUTHOR, AUTHORNAME, NAME, CATEGORIES, INGREDIENTS, ELABORATION, TIME, DIFFICULTY,
+                NPERS, DATE, IMAGE, SOURCE, FAV};
 
     }
 

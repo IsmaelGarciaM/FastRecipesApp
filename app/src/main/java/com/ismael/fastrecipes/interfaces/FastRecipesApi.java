@@ -16,6 +16,7 @@ import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.Headers;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
@@ -30,29 +31,31 @@ public interface FastRecipesApi {
 
     public static final String BASE_URL = "http://fastrecipesapp.com/apifastrecipes/api/public/";
 
-    //RECETAS
-    @GET("recipe/{id}")
-    Observable<Result> getRecipeObservable(@Path("id") int id);
 
-    @POST("recipe/")
+
+    //RECETAS
+    @GET("recipe/id/{id}")
+    Observable<Result> getRecipeObservable(@Path("id") String id);
+
+    @POST("search")
     Observable<Result> getFiltRecipesObservable(@Body Recipe rModel);
 
-    @POST("recipe/")
+    @POST("recipe")
     Observable<Result> addRecipeObservable(@Body Recipe addR);
 
-    @PUT("recipe/")
+    @POST("recipe/update")
     Observable<Result> modifyRecipeObservable(@Body Recipe addR);
 
     @DELETE("recipe/{id}")
     Observable<Result> removeRecipeObservable(@Path("id") int idRecipe);
 
     //FAVS
-    @POST("recipe/setfav/{idu}/{idr}/{how}")
-    Observable<Result> setFavRecipeObservable(@Path("idu") int idUser, @Path("idr") int idRecipe,@Path("how") int fav);
+    @POST("recipe/fav/{id}")
+    Observable<Result> setFavRecipeObservable(@Path("id") String id);
 
     //COMENTARIOS
     @GET("comments/{id}")
-    Observable<ResultComment> getCommentsObservable(@Path("idUser") int idUser);
+    Observable<ResultComment> getCommentsObservable(@Path("id") int idUser);
 
     @POST("comments/{id}")
     Observable<Result> sendCommentObservable(@Path("id") int idUser, @Body Comment com);
@@ -64,11 +67,11 @@ public interface FastRecipesApi {
     @GET("user/comment/{id}")
     Observable<ResultUser> getUserObservable(@Path("id") int idComment);
 
-    @POST("user/login/{token}")
+    @GET("user/login/{token}")
     Observable<ResultUser> userLoginObservable(@Path("token") String token);
 
     @GET("user/recipefavs/{id}")
-    Observable<ResultUser> getUsersFavObservable(@Path("idRecipe") int idRecipe);
+    Observable<ResultUser> getUsersFavObservable(@Path("id") int idRecipe);
 
     @POST("user/registro/{token}")
     Observable<ResultUser> registerObservable(@Path("token") String token, @Body User user);
@@ -79,6 +82,15 @@ public interface FastRecipesApi {
     @GET("user/recipes/{id}")
     Observable<Result> getUserRecipesObservable(@Path("id") int idUser);
 
-    @PUT("/user")
+    @POST("user/update")
     Observable<ResultUser> updateUserObservable(@Body User userData);
+
+    @POST("rating/{id}")
+    Observable<Result> setRatingObservable(@Path("id")String rate);
+
+    @GET("recipe/user/{id}")
+    Observable<Result> getMyRecipesObservable(@Path("id") int idUser);
+
+    @GET("favs/{id}")
+    Observable<Result> getFavRecipesObservable(@Path("id") int idUser);
 }

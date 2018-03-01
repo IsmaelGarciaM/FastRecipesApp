@@ -28,6 +28,7 @@ import com.ismael.fastrecipes.db.DatabaseContract;
 import com.ismael.fastrecipes.interfaces.IngredientPresenter;
 import com.ismael.fastrecipes.model.Filter;
 import com.ismael.fastrecipes.presenter.IngredientsPresenterImpl;
+import com.ismael.fastrecipes.utils.Const;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,10 +43,10 @@ import static android.content.ContentValues.TAG;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SearchByIngredientFragment extends Fragment implements IngredientPresenter.View{
+public class SearchByIngredientFragment extends Fragment{
 
     @BindView(R.id.sacsi)
-    AutoCompleteTextView sacIngOk;
+    AutoCompleteTextView sacIng;
 
     @BindView(R.id.grvsi)
     GridView grvIngOk;
@@ -61,12 +62,11 @@ public class SearchByIngredientFragment extends Fragment implements IngredientPr
 
     static private SearchByIngredientFragment sbyfInstance;
     private SearchIngredientsListener mCallback;
-    IngredientPresenter presenter;
     ArrayAdapter<String> adapterGrvIngOk;
     ArrayAdapter<String> adapterGrvIngNot;
     ArrayList<String> ingredientsOk;
     ArrayList<String> ingredientsNot;
-    SimpleCursorAdapter adapterOk;
+    ArrayAdapter<String> adapterOk;
     TextWatcher tw;
     ArrayList<Filter> backup;
     int[] filtersPos;
@@ -82,16 +82,6 @@ public class SearchByIngredientFragment extends Fragment implements IngredientPr
 
     public SearchByIngredientFragment() {
         // Required empty public constructor
-    }
-
-    @Override
-    public void addIngredient(int list) {
-
-    }
-
-    @Override
-    public void setIngCursorData(Cursor data) {
-            adapterOk.swapCursor(data);
     }
 
     interface SearchIngredientsListener{
@@ -119,39 +109,24 @@ public class SearchByIngredientFragment extends Fragment implements IngredientPr
     @Override
     public void onStart() {
         super.onStart();
-        if(backup != null){
-            adapterGrvIngOk.addAll(backup.get(0).getContent().split(","));
-            adapterGrvIngOk.notifyDataSetChanged();
-
-            adapterGrvIngNot.addAll(backup.get(1).getContent().split(","));
-            adapterGrvIngNot.notifyDataSetChanged();
-        }
     }
 
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        presenter = new IngredientsPresenterImpl(this);
         //filtersPos = new int[]{10,10};
-        try {
-            backup = sbyfInstance.getArguments().getParcelableArrayList("filters");
-
-        }catch (NullPointerException npe){
-           // backup = new ArrayList<Filter>(){};
+        if(mCallback.getFilterByName(Const.f1) != null){
+                    Collections.addAll(ingredientsOk, mCallback.getFilterByName(Const.f1).getContent().split(", "));
         }
-        /*if (filters.size() > 0){
-            for (int i = 0; i < mCallback.getNFilters() ; i++){
-                if(mCallback.getFilter(i).getType().equals("Que contenga")) {
-                    Collections.addAll(ingredientsOk, mCallback.getFilter(i).getContent().split(", "));
-                    filtersPos[0] = i;
-                }
-                else if(mCallback.getFilter(i).getType().equals("Que no contenga")) {
-                    Collections.addAll(ingredientsNot, mCallback.getFilter(i).getContent().split(", "));
-                    filtersPos[0] = i;
-                }
-            }
-        }*/
+        else
+            ingredientsOk = new ArrayList<>();
+        if(mCallback.getFilterByName(Const.f2) != null) {
+                    Collections.addAll(ingredientsNot, mCallback.getFilterByName(Const.f2).getContent().split(", "));
+        }
+        else
+            ingredientsNot = new ArrayList<>();
+
     }
 
     @Override
@@ -161,12 +136,8 @@ public class SearchByIngredientFragment extends Fragment implements IngredientPr
         View rootView = inflater.inflate(R.layout.fragment_search_by_ingredient, container, false);
         ButterKnife.bind(this, rootView);
 
-        ingredientsOk = new ArrayList<>();
-        ingredientsNot = new ArrayList<>();
 
-        String[] columns = new String[] {DatabaseContract.IngredientEntry.COLUMN_NAME};
-        int[] to = new int[] { android.R.id.text1 };
-        adapterOk = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_dropdown_item_1line, null, columns, to);
+        adapterOk = new ArrayAdapter(getContext(), android.R.layout.simple_dropdown_item_1line, getResources().getStringArray(R.array.ingredients));
 
         adapterGrvIngOk = new ArrayAdapter<String>(this.getContext(), android.R.layout.simple_dropdown_item_1line, ingredientsOk);
         adapterGrvIngNot = new ArrayAdapter<String>(this.getContext(), android.R.layout.simple_dropdown_item_1line, ingredientsNot);
@@ -178,14 +149,10 @@ public class SearchByIngredientFragment extends Fragment implements IngredientPr
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        sacIngOk.setThreshold(1);
+        sacIng.setThreshold(1);
+        sacIng.setAdapter(adapterOk);
         grvIngOk.setAdapter(adapterGrvIngOk);
         grvIngNot.setAdapter(adapterGrvIngNot);
-
-
-
-
-
         fabSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -194,69 +161,51 @@ public class SearchByIngredientFragment extends Fragment implements IngredientPr
             }
         });
 
-        tw = new TextWatcher() {
-            String value = "";
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                try{
-                    if (String.valueOf(charSequence).length() != 0 && String.valueOf(charSequence).length() > value.length()){
-                        presenter.getIngredients(String.valueOf(charSequence));
-                    }
-                    value = String.valueOf(charSequence);
-                }catch (Exception e){
-                    Log.d("EXCTIONNOCONTROL", e.getMessage());
-                }
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
-
-
-        };
-
-
-        sacIngOk.addTextChangedListener(tw);
-        sacIngOk.setAdapter(adapterOk);
-        sacIngOk.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        sacIng.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if(adapterOk.getCursor() != null) {
                     if (!swtIn.isChecked()) {
-                        adapterGrvIngOk.add(adapterOk.getCursor().getString(1));
-                        adapterGrvIngOk.notifyDataSetChanged();
+                        if(!contains(adapterGrvIngOk, adapterOk.getItem(i))) {
+                            adapterGrvIngOk.add(adapterOk.getItem(i));
+                            adapterGrvIngOk.notifyDataSetChanged();
+                        }
                     } else {
-                        adapterGrvIngNot.add(adapterOk.getCursor().getString(1));
-                        adapterGrvIngNot.notifyDataSetChanged();
+                        if(!contains(adapterGrvIngNot, adapterOk.getItem(i))) {
+                            adapterGrvIngNot.add(adapterOk.getItem(i));
+                            adapterGrvIngNot.notifyDataSetChanged();
+                        }
                     }
-                    adapterOk.changeCursor(null);
-                    sacIngOk.setText("");
+                    sacIng.setText("");
                }
 
+        });
+
+        grvIngOk.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                adapterGrvIngOk.remove(adapterGrvIngOk.getItem(i));
+                adapterGrvIngOk.notifyDataSetChanged();
             }
         });
-/*
-        sacIngOk.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                adapterGrvIngOk.add(adapterOk.getItem(i).toString());
-                adapterGrvIngOk.notifyDataSetChanged();
-                //presenter.addIngredientToList(i);
-            }
 
+        grvIngNot.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-                //sacIngOk.getText();
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                adapterGrvIngNot.remove(adapterGrvIngNot.getItem(i));
+                adapterGrvIngNot.notifyDataSetChanged();
             }
-        });*/
+        });
     }
 
+    boolean contains(ArrayAdapter adapter, String value){
+        boolean exists = false;
+        for(int i = 0; i < adapter.getCount(); i++){
+            if (adapter.getItem(i).equals(value))
+                exists = true;
+            break;
+        }
+        return exists;
+    }
 
     @Override
     public void onDetach() {
@@ -272,10 +221,10 @@ public class SearchByIngredientFragment extends Fragment implements IngredientPr
             ingOk += adapterGrvIngOk.getItem(i) + " ";
 
         if (!ingOk.equals("")) {
-            if (mCallback.getFilterByName("Que contenga") != null)
-                mCallback.getFilterByName("Que contenga").setContent(ingOk);
+            if (mCallback.getFilterByName(Const.f1) != null)
+                mCallback.getFilterByName(Const.f1).setContent(ingOk);
             else {
-                Filter ingOkFilter = new Filter("Que contenga", ingOk);
+                Filter ingOkFilter = new Filter(Const.f1, ingOk);
                 mCallback.addFilter(ingOkFilter);
             }
         }
@@ -284,10 +233,10 @@ public class SearchByIngredientFragment extends Fragment implements IngredientPr
             ingNot += adapterGrvIngNot.getItem(i) + " ";
 
         if (!ingNot.equals("")) {
-            if (mCallback.getFilterByName("Que no lleve:") != null)
-                mCallback.getFilterByName("Que no lleve:").setContent(ingNot);
+            if (mCallback.getFilterByName(Const.f2) != null)
+                mCallback.getFilterByName(Const.f2).setContent(ingNot);
             else {
-                Filter ingNotFilter = new Filter("Que no lleve:", ingNot);
+                Filter ingNotFilter = new Filter(Const.f2, ingNot);
                 mCallback.addFilter(ingNotFilter);
             }
         }

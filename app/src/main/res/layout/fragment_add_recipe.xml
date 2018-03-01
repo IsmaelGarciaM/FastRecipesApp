@@ -8,7 +8,7 @@
 <RelativeLayout
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.ismael.fastrecipes.AddRecipeFragment">
     <android.support.v7.widget.CardView
@@ -24,7 +24,7 @@
         android:id="@+id/imvAddRecipeImage"
         android:layout_width="match_parent"
         android:layout_height="192dp"
-        android:src="@drawable/ic_add"/>
+        android:src="@drawable/addrecipe"/>
 
         <Button
             android:id="@+id/btnAddImg"
@@ -38,8 +38,27 @@
     </android.support.v7.widget.CardView>
 
     <android.support.design.widget.TextInputLayout
-        android:id="@+id/tilNameRecipe"
+        android:id="@+id/tilImageUrl"
         android:layout_below="@+id/crvAddRecipe"
+        android:layout_marginStart="@dimen/textPageBorder"
+        android:layout_marginTop="-12dp"
+        android:layout_marginEnd="@dimen/textPageBorder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/edtImageUrl"
+            android:layout_width="match_parent"
+            android:textSize="10sp"
+            android:hint="O bien introduce la url de la imagen"
+            android:layout_height="wrap_content" />
+
+    </android.support.design.widget.TextInputLayout>
+
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/tilNameRecipe"
+        android:layout_below="@+id/tilImageUrl"
         android:layout_marginStart="@dimen/textPageBorder"
         android:layout_marginEnd="@dimen/textPageBorder"
         android:layout_width="match_parent"
@@ -48,7 +67,7 @@
         <android.support.design.widget.TextInputEditText
             android:id="@+id/edtNameRecipe"
             android:layout_width="match_parent"
-            android:hint="Nombre:"
+            android:hint="Nombre de receta"
             android:layout_height="wrap_content" />
 
     </android.support.design.widget.TextInputLayout>
@@ -68,16 +87,37 @@
         android:layout_below="@id/tilNameRecipe"
         android:layout_toEndOf="@+id/btnAddCategories"
         android:text="Sin categorías."
+        android:layout_alignBaseline="@id/btnAddCategories"
         android:layout_marginStart="@dimen/textPageBorder"
         android:layout_marginTop="@dimen/textPageBorder"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+    <TextView
+        android:id="@+id/txvNPersadd"
+        android:layout_marginStart="@dimen/textPageBorder"
+        android:layout_below="@id/btnAddCategories"
+        android:layout_marginTop="30dp"
+        android:text="Personas:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <NumberPicker
+        android:id="@+id/npNpers"
+android:layout_below="@id/btnAddCategories"
+        android:layout_marginStart="@dimen/hbLines"
+        android:layout_marginTop="@dimen/textPageBorder"
+        android:layout_toEndOf="@id/txvNPersadd"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp">
+
+    </NumberPicker>
+
     <LinearLayout
         android:id="@+id/llSpn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/btnAddCategories"
+        android:layout_below="@+id/npNpers"
         android:layout_marginTop="@dimen/hbLines"
         android:orientation="horizontal">
 
@@ -88,7 +128,7 @@
             android:layout_marginStart="@dimen/textPageBorder"
             android:layout_height="50dp"
             android:layout_marginEnd="@dimen/textPageBorder"
-            android:background="@drawable/bg_button"
+            style="@style/Base.TextAppearance.AppCompat.Widget.Button.Borderless.Colored"
             android:text="Tiempo"
             />
 
@@ -100,43 +140,34 @@
             android:layout_height="50dp"
             android:layout_marginStart="@dimen/textPageBorder"
             android:layout_marginEnd="@dimen/textPageBorder"
-            android:background="@drawable/bg_button"
+            style="@style/Base.TextAppearance.AppCompat.Widget.Button.Borderless.Colored"
             android:text="Dificultad"
             />
-
     </LinearLayout>
 
 
 
     <TextView
-        android:id="@+id/txvAddIng"
+        android:id="@+id/txvIng"
         android:layout_below="@+id/llSpn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/textPageBorder"
         android:text="Ingredientes:"
-        android:textSize="16dp"/>
+        android:textSize="16sp"/>
 
-    <android.support.design.widget.TextInputLayout
-        android:layout_margin="@dimen/hbLines"
-        android:layout_below="@+id/txvAddIng"
-        android:id="@+id/tilAddIng"
-        android:hint="Elaboración: "
+    <TextView
+        android:id="@+id/txvAddIng"
+        android:layout_below="@id/txvIng"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:id="@+id/txvAddIngredients"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-    </android.support.design.widget.TextInputLayout>
-
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/textPageBorder"
+        android:textSize="14sp"/>
 
     <Button
         android:id="@+id/btnAddIngredient"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/tilAddIng"
+        android:layout_below="@id/txvAddIng"
         android:layout_width="wrap_content"
         android:text="Añadir ingredientes"
         android:layout_height="50dp"
@@ -144,20 +175,38 @@
 
 
     <android.support.design.widget.TextInputLayout
-        android:id="@+id/tilDetailsRecipe"
-        android:layout_below="@+id/btnAddIngredient"
+        android:id="@+id/tilElaborationRecipe"
+        android:layout_below="@id/btnAddIngredient"
         android:layout_marginStart="@dimen/textPageBorder"
+        android:layout_marginEnd="@dimen/textPageBorder"
+        android:layout_marginTop="@dimen/hbLines"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/edtElaborationRecipe"
+            android:layout_width="match_parent"
+            android:hint="Elaboración"
+            android:layout_height="match_parent" />
+    </android.support.design.widget.TextInputLayout>
+
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/tilSourceRecipe"
+        android:layout_below="@id/tilElaborationRecipe"
+        android:layout_marginStart="@dimen/textPageBorder"
+        android:layout_marginTop="@dimen/hbLines"
         android:layout_marginEnd="@dimen/textPageBorder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <android.support.design.widget.TextInputEditText
-            android:id="@+id/edtDetailsRecipe"
-            android:layout_width="wrap_content"
-            android:hint="Elaboración"
-            android:layout_height="wrap_content" />
+            android:id="@+id/edtSourceRecipe"
+            android:layout_width="match_parent"
+            android:textSize="12sp"
+            android:hint="Fuente"
+            android:layout_height="match_parent" />
     </android.support.design.widget.TextInputLayout>
-
 
 </RelativeLayout>
 </ScrollView>

@@ -1,12 +1,33 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.ismael.fastrecipes.RecipesListFragment">
 
+
+
+    <TextView
+        android:id="@+id/filteredTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textSize="16sp"
+        android:text="@string/searchRes"
+        android:layout_marginTop="@dimen/textPageBorder"/>
+    <TextView
+        android:layout_below="@id/filteredTitle"
+        android:id="@+id/filteredEmpty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textSize="12sp"
+        android:text="@string/norecipes"
+        android:layout_marginTop="@dimen/textPageBorder"/>
+
     <ListView
+        android:layout_below="@id/filteredTitle"
         android:id="@+id/lvRecipesList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-</FrameLayout>
+</RelativeLayout>

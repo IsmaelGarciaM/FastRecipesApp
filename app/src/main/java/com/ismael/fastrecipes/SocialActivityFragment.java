@@ -2,9 +2,12 @@ package com.ismael.fastrecipes;
 
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -12,8 +15,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.ismael.fastrecipes.adapter.PagerAdapter;
 import com.ismael.fastrecipes.model.User;
+import com.ismael.fastrecipes.utils.Const;
 import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
@@ -50,7 +59,7 @@ public class SocialActivityFragment extends Fragment{
      * Interfaz de escucha de la clase HomeAcivity
      */
     public interface SocialActivityFragmentListener{
-        void showSocialFragment();
+        void showSocialFragment(boolean show);
         String getUserName();
         void showProfile(Bundle b);
         User getUser();
@@ -82,19 +91,15 @@ public class SocialActivityFragment extends Fragment{
         View rootView =  inflater.inflate(R.layout.fragment_social_activity, container, false);
         ButterKnife.bind(this, rootView);
 
-        if(mCallback.getUser().getImage() != null){
+        if(mCallback.getUser().getImage() != null && !mCallback.getUser().getImage().equals("")) {
             Picasso.with(getContext())
                     .load(mCallback.getUser().getImage())
-                    .into((CircleImageView) (imvUser));
+                    .into(imvUser);
         }
-
-        imvUser.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mCallback.showProfile(null);
-            }
-        });;
-
+        else{
+            imvUser.setImageDrawable(getResources().getDrawable(R.drawable.user_icon));
+        }
+        txvUserName.setText(mCallback.getUserName());
         tabLayout = (TabLayout) rootView.findViewById(R.id.tlSocialMenu);
         frame = (FrameLayout) rootView.findViewById(R.id.vpSocial);
 
@@ -134,7 +139,6 @@ public class SocialActivityFragment extends Fragment{
         //tabLayout.setupWithViewPager(viewPager);
 
         tabLayout.addTab(tabLayout.newTab().setText(getContext().getResources().getString(R.string.myrecipes)));
-        tabLayout.addTab(tabLayout.newTab().setText(getContext().getResources().getString(R.string.mycomments)));
         //viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -142,8 +146,6 @@ public class SocialActivityFragment extends Fragment{
                 //viewPager.setCurrentItem(tab.getPosition());
                 if(tab.getPosition() == 0)
                     showMyRecipes();
-                else if(tab.getPosition() == 1)
-                    showMyComments();
             }
 
             @Override
@@ -156,7 +158,19 @@ public class SocialActivityFragment extends Fragment{
 
             }
         });
-        
+
+        imvUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle b = new Bundle();
+                b.putInt("id", mCallback.getUser().getId());
+                mCallback.showProfile(b);
+            }
+        });
+
+        if(safInstance.getArguments() != null && safInstance.getArguments().getBoolean("show") )
+            Snackbar.make(view, "Se ha añadido la receta.", Snackbar.LENGTH_LONG).show();
+
 
     }
 

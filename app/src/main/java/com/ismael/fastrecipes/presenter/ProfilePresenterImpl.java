@@ -47,7 +47,9 @@ public class ProfilePresenterImpl implements ProfilePresenter {
                 .subscribe(new Subscriber<ResultUser>() {
                     @Override
                     public void onCompleted() {
-                        view.setUserData(u);
+                        view.updateCurrentUser(u.get(0));
+                        view.setUserData(u.get(0));
+
                     }
 
                     @Override
@@ -70,9 +72,11 @@ public class ProfilePresenterImpl implements ProfilePresenter {
         mService.getUser(idUser).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<ResultUser>() {
+                    boolean cont = false;
                     @Override
                     public void onCompleted() {
-                        view.setUserData(u);
+                        if(cont)
+                            view.setUserData(u.get(0));
                     }
 
                     @Override
@@ -82,7 +86,10 @@ public class ProfilePresenterImpl implements ProfilePresenter {
 
                     @Override
                     public void onNext(ResultUser resultUser) {
-                        u.addAll(resultUser.getUsers());
+                        if(resultUser.getCode() && resultUser.getUsers() != null) {
+                            u.addAll(resultUser.getUsers());
+                            cont = true;
+                        }
                     }
                 });
     }
@@ -95,7 +102,10 @@ public class ProfilePresenterImpl implements ProfilePresenter {
                 .subscribe(new Subscriber<ResultUser>() {
                     @Override
                     public void onCompleted() {
-                        view.setUserData(u);
+                        if(u.size()>0)
+                            view.setUserListData(u);
+                        else
+                            view.cancelSearch();
                     }
 
                     @Override
@@ -116,9 +126,11 @@ public class ProfilePresenterImpl implements ProfilePresenter {
         mService.getUserRecipes(idUser).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<Result>() {
+                    boolean cont = false;
                     @Override
                     public void onCompleted() {
-                        view.setUserRecipesData(r);
+                        if (cont)
+                            view.setUserRecipesData(r);
                     }
 
                     @Override
@@ -128,7 +140,11 @@ public class ProfilePresenterImpl implements ProfilePresenter {
 
                     @Override
                     public void onNext(Result result) {
-                        r.addAll(result.getRecipes());
+                        if(result.getCode() && result.getRecipes() != null && result.getRecipes().size() > 0) {
+                            r.addAll(result.getRecipes());
+                            cont = true;
+                        }
+
                     }
                 });
     }
@@ -139,12 +155,14 @@ public class ProfilePresenterImpl implements ProfilePresenter {
     public void editProfile(User userData) {
         final ArrayList<User> u = new ArrayList<>();
         //Observable<Recipe> call = mService.getRecipe(id);
-        mService.updateProfile(userData).subscribeOn(Schedulers.io())
+        mService.updateProfile(userData).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<ResultUser>() {
+                    boolean cont = false;
                     @Override
                     public void onCompleted() {
-                        view.setUserData(u);
+                        if (cont)
+                        view.setUserData(u.get(0));
                     }
 
                     @Override
@@ -154,7 +172,10 @@ public class ProfilePresenterImpl implements ProfilePresenter {
 
                     @Override
                     public void onNext(ResultUser resultUser) {
-                        u.addAll(resultUser.getUsers());
+                        if(resultUser.getUsers() != null && resultUser.getUsers().size()>0) {
+                            u.addAll(resultUser.getUsers());
+                            cont = true;
+                        }
                     }
                 });
     }

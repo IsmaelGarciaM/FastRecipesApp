@@ -17,7 +17,8 @@
             android:layout_width="96dp"
             android:layout_height="96dp"
             android:layout_margin="@dimen/textPageBorder"
-            android:layout_above="@+id/rlContainer"
+            android:layout_marginTop="@dimen/textPageBorder"
+            android:layout_above="@id/rlContainer"
             android:layout_centerHorizontal="true"
             android:src="@drawable/user_icon" />
 
@@ -54,7 +55,8 @@
     <FrameLayout
         android:id="@+id/vpSocial"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="50dp"
         android:layout_alignStart="@id/tlSocialMenu"
         android:layout_below="@id/tlSocialMenu"/>
 </RelativeLayout>

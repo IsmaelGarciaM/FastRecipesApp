@@ -15,6 +15,7 @@ public interface LoginPresenter {
     void logIn(String email, String pass);
     void logInRest(FirebaseUser currentUser);
     void forgetPass(String email);
+    void closeFirebaseSession();
 
     interface View{
         void showProgress(boolean show);

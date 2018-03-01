@@ -138,7 +138,7 @@ public class User implements Parcelable, Serializable{
         this.uid = uid;
     }
 
-    public User(String userName, String userEmail, String userRegDate, String uid) {
+    public User(String userEmail, String userName, String userRegDate, String uid) {
         this.name = userName;
         this.regdate = userRegDate;
         this.email = userEmail;

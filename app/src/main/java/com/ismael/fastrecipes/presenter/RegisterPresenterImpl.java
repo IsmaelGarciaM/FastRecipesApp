@@ -149,7 +149,6 @@ public class RegisterPresenterImpl implements RegisterPresenter {
                         }
                         }
                     });
-                    vista.showLogin();
                 } else {
                     Log.w(TAG, "createUserWithEmail:failure", task.getException());
                     Toast.makeText(context, "Authentication failed.",
@@ -175,19 +174,23 @@ public class RegisterPresenterImpl implements RegisterPresenter {
         mService.registerUser(idToken, u).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<ResultUser>() {
+                    boolean cont = false;
                     @Override
                     public void onCompleted() {
+                        if(cont) vista.showLogin();
+                        else vista.showInputError("Error en servidor rest, CODIGO OK, PERO ERROR");
 
                     }
 
                     @Override
                     public void onError(Throwable e) {
-
+                        vista.showInputError("Error en servidor rest");
                     }
 
                     @Override
                     public void onNext(ResultUser result) {
-                           // vista.doLogin();
+                        if(result.getCode() && result.getUsers() != null && result.getUsers().size() > 0)
+                            cont = true;
 
                     }
                 });

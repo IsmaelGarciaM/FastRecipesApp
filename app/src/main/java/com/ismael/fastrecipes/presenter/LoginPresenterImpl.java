@@ -8,7 +8,10 @@ import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.EmailAuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
@@ -22,6 +25,7 @@ import com.ismael.fastrecipes.model.User;
 import com.ismael.fastrecipes.utils.FastRecipesService;
 import com.ismael.fastrecipes.utils.ResultUser;
 
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -114,25 +118,55 @@ public class LoginPresenterImpl implements LoginPresenter {
     @Override
     public void logIn(String email, String pass) {
 
-        mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
-                    Log.d(TAG, "signInWithEmail:success");
-                    FirebaseUser user = mAuth.getCurrentUser();
-                    //if(user.isEmailVerified())
-                    vista.updateUI(user);
-                    //else
-                    //vista.updateUI(null);
-                } else {
-                    Log.d(TAG, "signInWithEmail:failure", task.getException());
-                    vista.showProgress(false);
-                    vista.showLoginError(context.getResources().getString(R.string.login_error));
-                }
-            }
-        });
+        if(email.equals("") && pass.equals("")) {
+                if (context.getSharedPreferences("fastrecipessp", Context.MODE_PRIVATE).getBoolean("remember_user", false)) {
+                    email = context.getSharedPreferences("fastrecipessp", Context.MODE_PRIVATE).getString("um", "");
+                    pass = context.getSharedPreferences("fastrecipessp", Context.MODE_PRIVATE).getString("up", "");
+                    mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                Log.d(TAG, "signInWithEmail:success");
+                                FirebaseUser user = mAuth.getCurrentUser();
+                                //if(user.isEmailVerified())
+                                vista.updateUI(user);
 
+                                //else
+                                //vista.updateUI(null);
+                            } else {
+                                Log.d(TAG, "signInWithEmail:failure", task.getException());
+                                vista.showProgress(false);
+                                vista.showLoginError(context.getResources().getString(R.string.login_error));
+                            }
+                        }
+                    });
+                } else {
+                    vista.showLoginError("");
+                }
+        }
+        else{
+            
+            mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "signInWithEmail:success");
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        //if(user.isEmailVerified())
+                        vista.updateUI(user);
+
+                        //else
+                        //vista.updateUI(null);
+                    } else {
+                        Log.d(TAG, "signInWithEmail:failure", task.getException());
+                        vista.showProgress(false);
+                        vista.showLoginError(context.getResources().getString(R.string.login_error));
+                    }
+                }
+            });
+        }
     }
+
 
     /**
      * Obtiene el token de Firebase del usuario para la autenticación el el servidor rest
@@ -145,13 +179,54 @@ public class LoginPresenterImpl implements LoginPresenter {
                 if(task.isSuccessful()){
                     String idToken = task.getResult().getToken();
                     //Enviar al backend
-                    //(http://api.fastrecipes.com/v1/user/login/idToken) en el token ya va el uid
-                    //userLogin(idToken);
-                    vista.showHome(null);
-
+                    Log.d(TAG, idToken );
+                    userLogin(idToken);
                 }
             }
         });
+    }
+
+    /**
+     * Realiza la conexión y login con el servidor rest
+     * @param token Token de firebase para autenticación
+     */
+    private void userLogin(String token){
+        final Bundle b = new Bundle();
+        Log.d("token", token);
+
+        mService.getUser(token).subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<ResultUser>() {
+                    Boolean cont = false;
+                    @Override
+                    public void onCompleted() {
+                        if(cont) {
+                            vista.showProgress(false);
+                            vista.showHome(b);
+                        }
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        vista.showProgress(false);
+                        Log.d("SUBSCRIBER FAILED", e.getMessage());
+                        vista.showLoginError(e.getMessage());
+                    }
+
+                    @Override
+                    public void onNext(ResultUser user) {
+                        if(user.getCode()) {
+                            b.putParcelable("user", user.getUsers().get(0));
+                            cont = true;
+                        } else{
+                            vista.showProgress(false);
+                            vista.showLoginError(user.getMessage());
+                            Log.d("SUBSCRIBER FAILED NEXT", user.getMessage());
+
+                        }
+                    }
+                });
     }
 
     /**
@@ -174,6 +249,13 @@ public class LoginPresenterImpl implements LoginPresenter {
 
             }
         });
+    }
+
+    @Override
+    public void closeFirebaseSession() {
+        if(mAuth.getCurrentUser() != null){
+            mAuth.signOut();
+        }
     }
 
 
@@ -230,33 +312,5 @@ public class LoginPresenterImpl implements LoginPresenter {
         }
     };*/
 
-    /**
-     * Realiza la conexión y login con el servidor rest
-     * @param token Token de firebase para autenticación
-     */
-    private void userLogin(String token){
-        final Bundle b = new Bundle();
 
-        mService.getUser(token).subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<ResultUser>() {
-                    @Override
-                    public void onCompleted() {
-                        vista.showProgress(false);
-                        vista.showHome(b);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        vista.showProgress(false);
-                        vista.showLoginError(context.getResources().getString(R.string.login_error));
-                    }
-
-                    @Override
-                    public void onNext(ResultUser user) {
-                        b.putParcelable("user", user.getUsers().get(0));
-
-                    }
-                });
-    }
 }

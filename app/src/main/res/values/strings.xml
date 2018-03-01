@@ -2,7 +2,7 @@
     <string name="app_name">FastRecipes</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="strqqc">Búsqueda avanzada de recetas</string>
+    <string name="strqqc">Búsqueda \nde recetas</string>
     <string name="strFilters">AÑADIR FILTROS</string>
 
     <!-- TODO: Remove or change this placeholder text -->
@@ -24,6 +24,24 @@
     <string name="published_recipes">Recetas publicadas</string>
     <string name="camera">Cámara</string>
     <string name="gallery">Galería</string>
+    <string name="source">Fuente:</string>
+    <string name="rate">Valorar</string>
+    <string name="bad">¡Mal!</string>
+    <string name="titleSaveUser">¿Recordar usuario?</string>
+    <string name="emptyMyRecs">Aún no has publicado recetas.</string>
+    <string name="favourites">Recetas favoritas</string>
+    <string name="empty_favs">No has añadido ninguna receta a favoritos.</string>
+    <string name="nameAuthorTile">Autor de esta receta</string>
+    <string name="add_quantity">Añade la cantidad</string>
+    <string name="addrecipe">Añadir receta</string>
+    <string name="searchRes">Resultado de búsqueda</string>
+    <string name="norecipes">No hay recetas que coincidan con tu búsqueda</string>
+    <string name="time">Tiempo</string>
+    <string name="searchIngre">Buscar ingredientes</string>
+    <string name="dontrem">No recordar</string>
+    <string name="rem">Recordar</string>
+    <string name="nofavs">Nadie a marcado esta receta como favorita.</string>
+    <string name="favs">Favoritos</string>
 
 
     <string-array name="categories_array">
@@ -42,12 +60,262 @@
         <item>Para llevar</item>
     </string-array>
 
+    <string-array name="ingredients">
+        <item>Albahaca</item>
+        <item>Anís</item>
+        <item>Apio</item>
+        <item>Azafrán</item>
+        <item>Canela</item>
+        <item>Cardamomo</item>
+        <item>Cebolla deshidratada</item>
+        <item>Cebollino</item>
+        <item>Cilantro</item>
+        <item>Clavo</item>
+        <item>Comino</item>
+        <item>Cúrcuma</item>
+        <item>Enebro</item>
+        <item>Estragón</item>
+        <item>Habas</item>
+        <item>Hierbabuena</item>
+        <item>Hinojo</item>
+        <item>Jengibre</item>
+        <item>Laurel</item>
+        <item>Mango</item>
+        <item>Mejorana</item>
+        <item>Menta</item>
+        <item>Mostaza</item>
+        <item>Nueces</item>
+        <item>Nuez moscada</item>
+        <item>Orégano</item>
+        <item>Perejil</item>
+        <item>Pimentón</item>
+        <item>Pimienta negra</item>
+        <item>Pimienta blanca</item>
+        <item>Pimienta verde</item>
+        <item>Romero</item>
+        <item>Sal</item>
+        <item>Salvia</item>
+        <item>Sésamo</item>
+        <item>Tamarindo</item>
+        <item>Tomillo</item>
+        <item>Vainilla</item>
+        <item>Curry</item>
+        <item>Aceite de almendras</item>
+        <item>Aceite de coco</item>
+        <item>Aceite de soja</item>
+        <item>Aceite de oliva</item>
+        <item>Agua</item>
+        <item>Agua de azahar</item>
+        <item>Ajo en polvo</item>
+        <item>Ajo negro</item>
+        <item>Ajo</item>
+        <item>Almidón</item>
+        <item>Anacardos</item>
+        <item>Arroz</item>
+        <item>Azúcar de palma</item>
+        <item>Azúcar blanco</item>
+        <item>Azúcar moreno</item>
+        <item>Brotes de soja</item>
+        <item>Castañas</item>
+        <item>Cebolla</item>
+        <item>Chile</item>
+        <item>Coco</item>
+        <item>Cuscús</item>
+        <item>Nata</item>
+        <item>Levadura</item>
+        <item>Leche</item>
+        <item>Queso</item>
+        <item>Cuajada</item>
+        <item>Coles de bruselas</item>
+        <item>Alubias</item>
+        <item>Garbanzos</item>
+        <item>Lentejas</item>
+        <item>Soja</item>
+        <item>Patatas</item>
+        <item>Lechuga</item>
+        <item>Acelgas</item>
+        <item>Alcachofas</item>
+        <item>Batatas</item>
+        <item>Berenjenas</item>
+        <item>Brócoli</item>
+        <item>Brécol</item>
+        <item>Calabacín</item>
+        <item>Calabaza</item>
+        <item>Cardo</item>
+        <item>Cebolleta</item>
+        <item>Coliflor</item>
+        <item>Envidia</item>
+        <item>Tomates</item>
+        <item>Zanahorias</item>
+        <item>Escarola</item>
+        <item>Espinacas</item>
+        <item>Espárragos</item>
+        <item>Guisantes</item>
+        <item>Judías</item>
+        <item>Maíz</item>
+        <item>Palmito</item>
+        <item>Pepino</item>
+        <item>Pimiento</item>
+        <item>Puerro</item>
+        <item>Remolacha</item>
+        <item>Miel</item>
+        <item>Albaricoque</item>
+        <item>Aguacate</item>
+        <item>Cereza</item>
+        <item>Mango</item>
+        <item>Melocotón(es)</item>
+        <item>Nectarina</item>
+        <item>Ciruelas</item>
+        <item>Frutas del bosque</item>
+        <item>Membrillo</item>
+        <item>Peras</item>
+        <item>Manzanas</item>
+        <item>Uvas</item>
+        <item>Frambuesa</item>
+        <item>Fresa</item>
+        <item>Granada</item>
+        <item>Higos</item>
+        <item>Kiwi</item>
+        <item>Limón</item>
+        <item>Mandarina</item>
+        <item>Melón(es)</item>
+        <item>Naranja</item>
+        <item>Piña</item>
+        <item>Plátano</item>
+        <item>Pomelo</item>
+        <item>Sandía</item>
+        <item>Pasta</item>
+        <item>Atún</item>
+        <item>Anchoa</item>
+        <item>Bacalao</item>
+        <item>Bonito</item>
+        <item>Boquerón</item>
+        <item>Caballa</item>
+        <item>Chicharro</item>
+        <item>Corvina</item>
+        <item>Dorada</item>
+        <item>Lenguado</item>
+        <item>Lubina</item>
+        <item>Brócoli</item>
+        <item>Repollo</item>
+        <item>Champiñones</item>
+        <item>Berza</item>
+        <item>Chirimoya</item>
+        <item>Berza</item>
+        <item>Papaya</item>
+        <item>Pasiflora</item>
+        <item>Gelatina</item>
+        <item>Rúcula</item>
+        <item>Fruta de la pasión</item>
+        <item>Setas</item>
+        <item>Merluza</item>
+        <item>Mero</item>
+        <item>Palometa</item>
+        <item>Pejerrey</item>
+        <item>Rape</item>
+        <item>Rodaballo</item>
+        <item>Salmón</item>
+        <item>Sardina</item>
+        <item>Trucha</item>
+        <item>Camarón</item>
+        <item>Cigalas</item>
+        <item>Gambas</item>
+        <item>Langostinos</item>
+        <item>Percebes</item>
+        <item>Almejas</item>
+        <item>Calamares</item>
+        <item>Mejillones</item>
+        <item>Ostras</item>
+        <item>Pulpo</item>
+        <item>Sepia</item>
+        <item>Vieira</item>
+        <item>Cordero</item>
+        <item>Oveja</item>
+        <item>Ternera</item>
+        <item>Buey</item>
+        <item>Caballo</item>
+        <item>Cabra</item>
+        <item>Cerdo</item>
+        <item>Vaca</item>
+        <item>Avestruz</item>
+        <item>Perdiz</item>
+        <item>Pato</item>
+        <item>Pavo</item>
+        <item>Oca</item>
+        <item>Gallina</item>
+        <item>Pollo</item>
+        <item>Huevo(s)</item>
+        <item>Yema de Huevo</item>
+        <item>Clara de huevo</item>
+        <item>Conejo</item>
+        <item>Liebre</item>
+        <item>Ciervo</item>
+        <item>Jabalí</item>
+        <item>Faisán</item>
+        <item>Ancas de rana</item>
+        <item>Caracoles</item>
+        <item>Cerveza</item>
+        <item>Vino blanco</item>
+        <item>Sidra</item>
+        <item>Vino tinto</item>
+        <item>Vino rosado</item>
+        <item>Whisky</item>
+        <item>Ron</item>
+        <item>Vodka</item>
+        <item>Ginebra</item>
+        <item>Café</item>
+        <item>Zumo de naranja</item>
+        <item>Té</item>
+        <item>Almendras</item>
+        <item>Avellanas</item>
+        <item>Cacahuetes</item>
+        <item>Nueces de Macadamia</item>
+        <item>Piñones</item>
+        <item>Pistachos</item>
+        <item>Dátiles</item>
+        <item>Pasas</item>
+        <item>Harina de trigo</item>
+        <item>Escanda</item>
+        <item>Harina de centeno</item>
+        <item>Harina de espelta</item>
+        <item>Sémola de trigo</item>
+        <item>Sémola de maíz</item>
+        <item>Harina de maíz</item>
+        <item>Avena</item>
+        <item>Harina de trigo</item>
+        <item>Macarrones</item>
+        <item>Espaguetis</item>
+        <item>Tallarines</item>
+        <item>Zumo de limón</item>
+        <item>Tabasco</item>
+        <item>Mantequilla </item>
+        <item>Margarina</item>
+        <item>Aceitunas</item>
+        <item>Ketchup</item>
+        <item>Vinagre blanco</item>
+        <item>Vinagre balsámico</item>
+        <item>Vinagre de manzana</item>
+        <item>Vinagre de arroz</item>
+        <item>Vinagre de Jerez</item>
+        <item>Cacao</item>
+        <item>Queso fresco</item>
+        <item>Sal gorda</item>
+        <item>Ralladura de limón</item>
+        <item>Bizcocho</item>
+        <item>Masa de hojaldre</item>
+        <item>Cebada perlada</item>
+        <item>Quinoa</item>
+        <item>Masa quebrada</item>
+        <item>Masa filo</item>
+
+
+    </string-array>
+
 
     <string-array name="diff_array">
-        <item>Tirado</item>
-        <item>Facil</item>
-        <item>Medio</item>
-        <item>Dificil</item>
+        <item>Fácil</item>
+        <item>Media</item>
+        <item>Difícil</item>
     </string-array>
 
     <integer-array name="icons_cat">

@@ -1,8 +1,12 @@
 package com.ismael.fastrecipes;
 
 import android.app.Dialog;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,8 +14,18 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.ismael.fastrecipes.interfaces.IngredientPresenter;
 import com.ismael.fastrecipes.model.Filter;
 import com.ismael.fastrecipes.model.User;
+import com.ismael.fastrecipes.presenter.IngredientsPresenterImpl;
+import com.ismael.fastrecipes.provider.FastRecipesContract;
+import com.ismael.fastrecipes.utils.Const;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -21,6 +35,7 @@ import java.util.ArrayList;
  */
 public class HomeActivity extends AppCompatActivity implements UsersListFragment.UsersListListener, AddIngredientsFragment.AddIngredientsListener, AddRecipeFragment.AddRecipeFragmentListener, RecipeFragment.RecipeFragmentListener, RecipesListFragment.RecipesListListener, ProfileFragment.ProfileListener, MyRecipesFragment.MyRecipeFragmentListener, MyCommentsFragment.MyCommentsFragmentListener, SettingsPreferences.PrefsListener, FavRecipesFragment.FavRecipesListener, SearchRecipeFragment.SearchFragmentListener, SocialActivityFragment.SocialActivityFragmentListener, SearchByIngredientFragment.SearchIngredientsListener, SearchByCategoriesFragment.SearchCategoriesListener{
 
+    IngredientPresenter presenter;
     //int para gestionar OnBackPressed de algunas vistas
     int where = -1;
     //longs para gestionar la salida de la aplicacion mediante OnBacPressed
@@ -58,8 +73,19 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
         return user;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(User us) {
+        this.user = us;
+        try {
+            StorageReference mStorageRefload = FirebaseStorage.getInstance().getReference(Const.FIREBASE_IMAGE_USER + "/" + String.valueOf(user.getId()));
+            if (us.getImage().startsWith("gs")) {
+                mStorageRefload.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Uri> task) {
+                        user.setImage(task.getResult().toString());
+                    }
+                });
+            }
+        }catch(Exception e){}
     }
 
     User user;
@@ -72,13 +98,25 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
             setContentView(R.layout.activity_home);
             bnvTabMenu = (BottomNavigationView) findViewById(R.id.bottom_navigation);
             filters = new ArrayList<>();
-            Log.d( "BACKSTACKCOUNT", String.valueOf(getSupportFragmentManager().getBackStackEntryCount()));
-        user = new User(20,"ismagm94@gmail.com", "Ismael ", "García", "Málaga", "09/01/18", 2, null, "uid");
-
+        Log.d( "BACKSTACKCOUNT", String.valueOf(getSupportFragmentManager().getBackStackEntryCount()));
 
             try {
                 if(getIntent().getExtras().getParcelable("user") != null) {
                     user = getIntent().getExtras().getParcelable("user");
+                    StorageReference mStorageRefload = FirebaseStorage.getInstance().getReference(Const.FIREBASE_IMAGE_USER+"/"+String.valueOf(user.getId()));
+
+                    try {
+                        if (user.getImage() != null && !user.getImage().equals("")) {
+                            if (user.getImage().startsWith("gs")) {
+                                mStorageRefload.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Uri> task) {
+                                        user.setImage(task.getResult().toString());
+                                    }
+                                });
+                            }
+                        }
+                    }catch (Exception e){}
                 }else{
                     user = new User("Anónimo", "email", "dd/mm/aa", "uid");
                 }
@@ -100,7 +138,7 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
                             break;
                             //muestra el fragment con el perfil, las recetas y los comentarios
                         case R.id.action_social:
-                            showSocialFragment();
+                            showSocialFragment(false);
                             break;
 
                         //muestra el listado de favoritos
@@ -146,7 +184,7 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
 
             else if(getSupportFragmentManager().findFragmentByTag("profile") != null){
                 getSupportFragmentManager().popBackStackImmediate();
-                showSocialFragment();
+                showSocialFragment(false);
             }
 
             else if(getSupportFragmentManager().findFragmentByTag("recipe") != null){
@@ -154,7 +192,7 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
                 switch (where){
                     case 1:
                         where = -1;
-                        showSocialFragment();
+                        showSocialFragment(false);
                         break;
                     case 2:
                         where = -1;
@@ -167,7 +205,7 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
 
             }else if(getSupportFragmentManager().findFragmentByTag("add") != null){
                 getSupportFragmentManager().popBackStackImmediate();
-                showSocialFragment();
+                showSocialFragment(false);
             }
 
         }
@@ -194,7 +232,7 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
     public void showAddIngredients(Bundle b) {
         addingFr = AddIngredientsFragment.getInstance(b);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.framehome, addingFr).addToBackStack("");
+        ft.replace(R.id.framehome, addingFr, "adding").addToBackStack("");
         ft.commit();
     }
 
@@ -218,12 +256,17 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
 
 
     @Override
-    public void showSocialFragment() {
+    public void showSocialFragment(boolean show) {
         where = 1;
         bnvTabMenu.setVisibility(View.VISIBLE);
         Bundle b = new Bundle();
         b.putParcelable("user", user);
+        if(show){
+            b.putBoolean("show",show);
+        }
         socialFragment = SocialActivityFragment.getInstance(b);
+        if(getSupportFragmentManager().findFragmentByTag("recipe") != null)
+            getSupportFragmentManager().popBackStackImmediate();
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.framehome, socialFragment);
         setSettingsOp(false);
@@ -287,7 +330,7 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
     public void showUsersList(Bundle args) {
         ulfFragment = UsersListFragment.getInstance(args);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.framehome, profileFr).addToBackStack("");
+        ft.replace(R.id.framehome, ulfFragment, "ulist").addToBackStack("");
         ft.commit();
     }
 
@@ -333,6 +376,8 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
     public void showRecipe(Bundle recipe) {
         bnvTabMenu.setVisibility(View.GONE);
         recipeFrg = RecipeFragment.getInstance(recipe);
+        if(getSupportFragmentManager().findFragmentByTag("ulist") != null)
+            getSupportFragmentManager().popBackStackImmediate();
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.framehome, recipeFrg, "recipe").addToBackStack("");
         ft.commit();
@@ -347,6 +392,9 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
         bnvTabMenu.setVisibility(View.GONE);
         addRecipeFr = AddRecipeFragment.getInstance(b);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        if (getSupportFragmentManager().findFragmentByTag("adding") != null || getSupportFragmentManager().findFragmentByTag("cat") != null ) {
+            getSupportFragmentManager().popBackStackImmediate();
+        }
         ft.replace(R.id.framehome, addRecipeFr, "add").addToBackStack("");
         ft.commit();
 
@@ -363,6 +411,12 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
         ft.commit();
         setSettingsOp(true);
         getFragmentManager().beginTransaction().replace(R.id.framehome, new SettingsPreferences()).commit();
+    }
+
+    @Override
+    public void closeSession() {
+        startActivity(new Intent().setClass(this, LoginActivity.class).putExtra("close", true));
+        finish();
     }
 
     public void closeConfig() {
@@ -442,8 +496,10 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
      */
     @Override
     public void deleteFilters() {
-        for(int i = 0; i< filters.size(); i++){
-            removeFilter(i);
+
+        int lenght =  filters.size();
+        for(int i = 0; i < lenght; i++){
+            removeFilter(0);
         }
     }
 
@@ -457,5 +513,6 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
      * @param v True para mostrar la vista, false para no mostrarla
      */
     void setSettingsOp(boolean v){settingsOp = v;}
+
 
 }

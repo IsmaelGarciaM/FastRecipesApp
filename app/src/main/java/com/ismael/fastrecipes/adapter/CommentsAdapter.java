@@ -15,24 +15,129 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ismael.fastrecipes.R;
+import com.ismael.fastrecipes.interfaces.RecipesPresenter;
 import com.ismael.fastrecipes.model.Comment;
 import com.ismael.fastrecipes.model.User;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static com.ismael.fastrecipes.FastRecipesApplication.getContext;
+
 /**
  * Created by Ismael on 23/01/2018.
  */
 
-public class CommentsAdapter extends ArrayAdapter<Comment>{
+public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHolder>{
 
     Context context;
-    List<Comment> comList;
+    View vista;
+    List<Comment> comments;
+
+    public CommentsAdapter(Context context, List<Comment> com) {
+        this.comments = com;
+        this.context = context;
+    }
+
+    class ViewHolder extends RecyclerView.ViewHolder{
+        @BindView(R.id.imgCommentItem)
+        ImageView imgUserComment;
+
+        @BindView(R.id.txtCommentaristName)
+        TextView txvNameUserComment;
+
+        @BindView(R.id.txtComment)
+        TextView txvComment;
+
+        @BindView(R.id.txtCommentDate)
+        TextView txvComDate;
+
+
+        public ViewHolder(View v){
+            super(v);
+            ButterKnife.bind(this, v);
+        }
+    }
+
+    @Override
+    public void onBindViewHolder(ViewHolder holder, final int position) {
+
+        Comment cTmp = getItem(position);
+        /*Picasso.with(context)
+                .load("")
+                .into(holder.imgUserComment);*/
+        holder.txvNameUserComment.setText(cTmp.getNameAuthor());
+        holder.txvComment.setText(cTmp.getContent());
+        holder.txvComDate.setText(cTmp.getDate());
+
+
+
+    }
+
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
+        View rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_comment, parent, false);
+        return new ViewHolder(rootView);
+    }
+    @Override
+    public int getItemCount() {
+        return comments.size();
+    }
+
+    public Comment getItem(int pos) {
+        return comments.get(pos);
+    }/*
+    public CommentsAdapter(View itemView) {
+        super(itemView);
+        vista = itemView;
+        context = itemView.getContext();
+        //itemView.setOnClickListener(this);
+
+    }
+
+
+
+
+    public void bindComment(Comment comment) {
+
+        TextView txvNameUser = (TextView)vista.findViewById(R.id.txtCommentaristName);
+        TextView txvComment = (TextView)vista.findViewById(R.id.txtComment);
+        TextView txvCommentDate = (TextView)vista.findViewById(R.id.txtCommentDate);
+        CircleImageView civUser = (CircleImageView)vista.findViewById(R.id.imgCommentItem);
+
+        // Set their text
+        String s = comment.getNameAuthor();
+        txvNameUser.setText(s);
+        txvComment.setText(comment.getContent());
+        txvCommentDate.setText(comment.getDate());
+
+        if(comment.getImage() != null && !comment.getImage().equals(""))
+            Picasso.with(getContext())
+                    .load(comment.getImage())
+                    .centerCrop()
+                    .into(civUser);
+        else
+            civUser.setImageDrawable(getContext().getResources().getDrawable(R.drawable.user_icon));
+    }
+
+/*
+
+    @Override
+    public void onClick(View v){
+        //SHOW COMMENTS AUTHOR PROFILE
+    }
+*/
+
+
+
+
+   /* List<Comment> comList;
     int itemLayout;
 
     public CommentsAdapter(@NonNull Context context, int resource, List<Comment> comlist) {
@@ -69,7 +174,7 @@ public class CommentsAdapter extends ArrayAdapter<Comment>{
 
 
         //cargar imagen
-        ch.nameAuthor.setText(getItem(position).getIdAuthor());
+        ch.nameAuthor.setText(getItem(position).getNameAuthor());
         ch.comment.setText(getItem(position).getContent());
         ch.date.setText(getItem(position).getDate());
 

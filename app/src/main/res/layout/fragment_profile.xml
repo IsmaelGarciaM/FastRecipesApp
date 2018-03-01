@@ -54,6 +54,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
+
                 android:layout_marginBottom="@dimen/textPageBorder"
 
                 >
@@ -65,6 +66,7 @@
                     android:layout_width="wrap_content"
                     android:background="@android:color/transparent"
                     android:textAlignment="center"
+                    android:enabled="false"
                     android:layout_height="wrap_content"
                     android:maxLines="1"
                     android:textSize="18sp"/>
@@ -83,7 +85,6 @@
 
                 <android.support.design.widget.TextInputEditText
                     android:id="@+id/edtEmailProfile"
-                    android:text="Anonymouse@whoareyou.who"
                     android:layout_width="wrap_content"
                     android:background="@android:color/transparent"
                     android:textAlignment="center"
@@ -97,11 +98,10 @@
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/tilLocationProfile"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="75dp"
                 android:minWidth="150dp"
                 android:textColorHint="@color/colorPrimary"
                 android:hint="Ubicación"
-
                 android:layout_below="@id/layout_dataPro">
 
                 <android.support.design.widget.TextInputEditText
@@ -114,6 +114,7 @@
                     android:textColor="@color/textColorPrimary"
                     android:drawablePadding="5dp"
                     android:textSize="18sp"
+                    android:enabled="false"
                     android:layout_marginStart="@dimen/activity_horizontal_margin"
                     android:layout_marginEnd="@dimen/activity_vertical_margin"
                     android:layout_marginTop="10dp"
@@ -125,19 +126,18 @@
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/tilRegDateProfile"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="75dp"
                 android:layout_below="@id/layout_dataPro"
                 android:layout_toEndOf="@id/tilLocationProfile"
                 android:hint="Fecha de registro:"
                 android:textColorHint="@color/colorPrimary"
-                android:layout_alignBaseline="@id/tilLocationProfile"
-                android:layout_alignParentEnd="true"
                 >
                 <android.support.design.widget.TextInputEditText
                     android:id="@+id/edtRegdateProfile"
                     android:layout_width="wrap_content"
                     android:layout_marginStart="@dimen/activity_horizontal_margin"
-                    android:layout_height="wrap_content"
+                    android:layout_marginTop="50dp"
+                    android:layout_height="32dp"
                     android:background="@android:color/transparent"
                     android:minWidth="150dp"
                     android:textSize="18sp"
@@ -147,6 +147,7 @@
             </android.support.design.widget.TextInputLayout>
 
         <TextView
+            android:id="@+id/txvlvcomprotitle"
             android:layout_marginStart="@dimen/textPageBorder"
             android:layout_below="@id/tilLocationProfile"
             android:layout_width="wrap_content"

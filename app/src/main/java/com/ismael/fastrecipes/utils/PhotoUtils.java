@@ -1,5 +1,6 @@
 package com.ismael.fastrecipes.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -16,7 +17,7 @@ import java.io.InputStream;
 /**
  * Created by Ismael on 20/02/2018.
  */
-public class PhotoUtils {
+public class PhotoUtils extends Activity {
     private static Context mContext;
     private BitmapFactory.Options generalOptions;
 

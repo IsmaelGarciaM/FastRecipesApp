@@ -1,13 +1,33 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.ismael.fastrecipes.FavRecipesFragment">
 
+    <TextView
+        android:id="@+id/txvFavRecsTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/favourites"
+        android:layout_marginTop="@dimen/textPageBorder"
+        android:textAlignment="center"
+        android:textSize="22sp"/>
     <!-- TODO: Update blank fragment layout -->
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rcvfavList"
+    <ListView
+        android:layout_below="@id/txvFavRecsTitle"
+        android:layout_marginTop="@dimen/textPageBorder"
+        android:id="@+id/lvfavList"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/emptyFavs"
+        android:layout_below="@id/txvFavRecsTitle"
+        android:layout_marginTop="@dimen/textPageBorder"
+        android:textAlignment="center"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/empty_favs"/>
+
+</RelativeLayout>

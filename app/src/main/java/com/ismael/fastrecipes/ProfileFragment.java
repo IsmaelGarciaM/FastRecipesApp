@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -20,13 +21,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.ismael.fastrecipes.adapter.FilteredRecipeAdapter;
 import com.ismael.fastrecipes.exceptions.DataEntryException;
 import com.ismael.fastrecipes.interfaces.ProfilePresenter;
 import com.ismael.fastrecipes.model.Recipe;
 import com.ismael.fastrecipes.model.User;
 import com.ismael.fastrecipes.presenter.ProfilePresenterImpl;
+import com.ismael.fastrecipes.provider.GenericFileProvider;
+import com.ismael.fastrecipes.utils.Const;
 import com.ismael.fastrecipes.utils.PhotoUtils;
 import com.squareup.picasso.Picasso;
 
@@ -47,25 +58,6 @@ import static android.app.Activity.RESULT_OK;
  */
 public class ProfileFragment extends Fragment implements ProfilePresenter.View{
 
-    private ProfileListener mCallback;
-    private boolean edit;
-    int idUser;
-    ProfilePresenter presenter;
-    FilteredRecipeAdapter adapter;
-    ArrayList<Recipe> userRecipes;
-    String urlImageEditTmp;
-    private AlertDialog photoDialog;
-    private Uri mImageUri;
-    private static final int ACTIVITY_SELECT_IMAGE = 1020,
-            ACTIVITY_SELECT_FROM_CAMERA = 1040, ACTIVITY_SHARE = 1030;
-    private PhotoUtils photoUtils;
-
-    private static ProfileFragment instance;
-    public ProfileFragment() {
-        // Required empty public constructor
-    }
-
-
     @BindView(R.id.imgProfileFragm)
     CircleImageView imgUser;
 
@@ -78,23 +70,43 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
     @BindView(R.id.edtLocationProfile)
     TextInputEditText edtLocation;
 
-
-   @BindView(R.id.edtRegdateProfile)
+    @BindView(R.id.edtRegdateProfile)
     TextInputEditText edtRegdate;
 
-     @BindView(R.id.tilEmailProfile)
+    @BindView(R.id.tilEmailProfile)
     TextInputLayout tilEmailProfile;
 
     @BindView(R.id.tilNameProfile)
     TextInputLayout tilNameProfile;
 
+
+    @BindView(R.id.txvlvcomprotitle)
+    TextView edtTitleRecipes;
     @BindView(R.id.edtEmailProfile)
     TextInputEditText edtEmailProfile;
 
-
-
     @BindView(R.id.fabEditProfile)
     FloatingActionButton fabEditProfile;
+
+    private ProfileListener mCallback;
+    private boolean edit;
+    int idUser;
+    ProfilePresenter presenter;
+    FilteredRecipeAdapter adapter;
+    ArrayList<Recipe> userRecipes;
+    String urlImageEditTmp;
+    private AlertDialog photoDialog;
+    private Uri mImageUri;
+    private static final int ACTIVITY_SELECT_IMAGE = 1020,
+            ACTIVITY_SELECT_FROM_CAMERA = 1040, ACTIVITY_SHARE = 1030;
+    private PhotoUtils photoUtils;
+    boolean imageChanged;
+    private StorageReference mStorageRef;
+
+    private static ProfileFragment instance;
+    public ProfileFragment() {
+        // Required empty public constructo
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -103,14 +115,6 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
         edit = false;
         userRecipes = new ArrayList<>();
         photoUtils = new PhotoUtils(getContext());
-
-        try{
-            instance.getArguments().getInt("id");
-        }catch (NullPointerException npe){
-            fabEditProfile.setEnabled(false);
-            fabEditProfile.setVisibility(View.INVISIBLE);
-            idUser = -1;
-        }
     }
 
     @Override
@@ -120,6 +124,20 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
         View rootView =  inflater.inflate(R.layout.fragment_profile, container, false);
         ButterKnife.bind(this, rootView);
         adapter = new FilteredRecipeAdapter(getContext(), R.layout.item_recipes_list, userRecipes);
+        idUser = instance.getArguments().getInt("id");
+        if(idUser != mCallback.getUser().getId()) {
+            fabEditProfile.setEnabled(false);
+            fabEditProfile.setVisibility(View.GONE);
+            edtTitleRecipes.setVisibility(View.VISIBLE);
+            lvUserRecipes.setVisibility(View.VISIBLE);
+        }
+        else {
+            edtTitleRecipes.setVisibility(View.GONE);
+            lvUserRecipes.setVisibility(View.GONE);
+            fabEditProfile.setEnabled(true);
+            fabEditProfile.setVisibility(View.VISIBLE);
+        }
+
         return rootView;
     }
 
@@ -132,6 +150,12 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
             throw new ClassCastException(activity.getClass()
                     + " must implement ProfileListener");
         }
+    }
+
+    public void onStart() {
+        super.onStart();
+        presenter.getUser(idUser);
+        presenter.getUserRecipes(idUser);
     }
 
     @Override
@@ -153,6 +177,8 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
     public interface ProfileListener {
         void showProfile(Bundle b);
         User getUser();
+
+        void setUser(User u);
     }
 
 
@@ -164,40 +190,28 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        if(idUser != -1) {
-            presenter.getUser(idUser);
-            presenter.getUserRecipes(idUser);
-        }
-        {
-            presenter.getUserRecipes(mCallback.getUser().getId());
-        }
-    }
-
-    @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         fabEditProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                edit=!edit;
-
                 if (edit){
+                    edit = false;
                     edtName.setEnabled(false);
                     edtLocation.setEnabled(false);
-                    edtEmailProfile.setEnabled(false);
                     view.setBackgroundColor(getResources().getColor(R.color.backgroundEdit));
                     fabEditProfile.setImageResource(R.drawable.ic_edit);
+                    presenter.editProfile(getUserData());
+
                 }else{
+                    edit = true;
                     edtName.setEnabled(true);
-                    edtEmailProfile.setEnabled(true);
+                    edtName.setTextColor(getResources().getColor(R.color.colorPrimary));
                     view.setBackgroundColor(getResources().getColor(R.color.backgroundEdit));
                     edtLocation.setEnabled(true);
+                    edtLocation.setTextColor(getResources().getColor(R.color.colorPrimary));
                     fabEditProfile.setImageResource(R.drawable.ic_save);
-                    presenter.editProfile(getUserData());
                 }
             }
         });
@@ -205,42 +219,73 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
             @Override
             public void onClick(View view) {
                 if(edit){
-                    if(!getPhotoDialog().isShowing() && getActivity().isFinishing())
-                        getPhotoDialog().show();
+                    if(!getActivity().isFinishing())
+                        getPhotoDialog();
                 }
             }
         });
     }
 
     @Override
-    public void setUserData(ArrayList<User> us){
-        User u = us.get(0);
-        String n = u.getName() + " " + u.getSurname();
+    public void updateCurrentUser(User u){
+        mCallback.setUser(u);
+    }
+
+    @Override
+    public void setUserListData(ArrayList<User> u) {
+
+    }
+
+    @Override
+    public void cancelSearch() {
+
+    }
+
+    @Override
+    public void setUserData(User u){
+        String n = u.getName();
         edtName.setText(n);
-        edtLocation.setText(u.getLocation());
+        if(u.getLocation() != null && !u.getLocation().equals("")) edtLocation.setText(u.getLocation());
+        else edtLocation.setText("-");
         edtRegdate.setText(u.getRegdate());
-        Picasso.with(this.getContext()).load(u.getImage()).into(imgUser);
+
+        StorageReference mStorageRefload = FirebaseStorage.getInstance().getReference(Const.FIREBASE_IMAGE_USER+"/"+String.valueOf(mCallback.getUser().getId()));
+
+        if(u.getImage() != null && !u.getImage().equals("") && !imageChanged) {
+            if(mCallback.getUser().getId() == u.getId()){
+                Picasso.with(getContext()).load(mCallback.getUser().getImage()).into(imgUser);
+
+            }
+            else{
+                mStorageRefload.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Uri> task) {
+                        Picasso.with(getContext()).load(task.getResult()).into(imgUser);
+                    }
+                });
+            }
+
+        }
+        else if(imageChanged){}
+        else
+            imgUser.setImageDrawable(getContext().getResources().getDrawable(R.drawable.user_icon));
     }
 
     @Override
     public void setUserRecipesData(ArrayList<Recipe> recs) {
-        userRecipes.addAll(recs);
+        adapter.addAll(recs);
         adapter.notifyDataSetChanged();
     }
 
     User getUserData(){
-
-
-
         tilNameProfile.setErrorEnabled(false);
         tilNameProfile.setError(null);
 
         tilEmailProfile.setErrorEnabled(false);
         tilEmailProfile.setError(null);
-
+        String image;
         String mail = String.valueOf(edtEmailProfile.getText());
         String name = String.valueOf(edtName.getText());
-
         //si aparece un error se cancela el login; cancel = true
         boolean cancel = false;
         View focusView = null;
@@ -264,18 +309,46 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
             cancel = true;
         }
 
-        User tmp = new User(mCallback.getUser().getId(), mCallback.getUser().getEmail(), name, "", edtLocation.getText().toString(), mCallback.getUser().getRegdate(), adapter.getCount(), mCallback.getUser().getImage(), mCallback.getUser().getUid());
+        if(imageChanged) {
+             loadImage();
+            image = "gs://fastrecipes-26c3c.appspot.com/USER/"+String.valueOf(mCallback.getUser().getId());
+
+        }
+        else {
+            if(mCallback.getUser().getImage() != null)
+                image = mCallback.getUser().getImage();
+            else
+                image = "";
+        }
+
+
+        User tmp = new User(mCallback.getUser().getId(), mCallback.getUser().getEmail(), name, "", edtLocation.getText().toString(), mCallback.getUser().getRegdate(), 0, image, "");
         return tmp;
     }
 
-    void loadImage(){
+    String loadImage(){
        // Intent i = new Intent(Intent.ACTION_PICK, android.provider.)
+        final String[] newImage = new String[1];
+        mStorageRef = FirebaseStorage.getInstance().getReference(Const.FIREBASE_IMAGE_USER+"/"+String.valueOf(mCallback.getUser().getId()));
+        mStorageRef.putFile(mImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+               taskSnapshot.getDownloadUrl();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("ERROR FIREASE STORAGE", e.getMessage());
+            }
+        });
+
+        return "";
     }
 
-    private AlertDialog getPhotoDialog() {
-        if (photoDialog == null) {
+    private void getPhotoDialog() {
+
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            builder.setTitle("/");
+            builder.setTitle("Elige una acción");
             builder.setPositiveButton(R.string.camera, new DialogInterface.OnClickListener() {
 
                 @Override
@@ -290,7 +363,8 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
                     } catch (Exception e) {
                         Log.v(getClass().getSimpleName(),"Can't create file to take picture!");
                     }
-                    mImageUri = Uri.fromFile(photo);
+                    //mImageUri = Uri.fromFile(photo);
+                    mImageUri = GenericFileProvider.getUriForFile(getContext(), "com.ismael.fastrecipesphoto", photo);
                     intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri);
                     startActivityForResult(intent, ACTIVITY_SELECT_FROM_CAMERA);
 
@@ -307,11 +381,7 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
                 }
 
             });
-            photoDialog = builder.create();
-
-        }
-        return photoDialog;
-
+            builder.show();
     }
 
     @Override
@@ -324,8 +394,10 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
-        if (savedInstanceState.containsKey("Uri")) {
-            mImageUri = Uri.parse(savedInstanceState.getString("Uri"));
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey("Uri")) {
+                mImageUri = Uri.parse(savedInstanceState.getString("Uri"));
+            }
         }
     }
 
@@ -335,9 +407,11 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
         if (requestCode == ACTIVITY_SELECT_IMAGE && resultCode == RESULT_OK) {
             mImageUri = data.getData();
             getImage(mImageUri);
+            imageChanged = true;
         } else if (requestCode == ACTIVITY_SELECT_FROM_CAMERA
                 && resultCode == RESULT_OK) {
             getImage(mImageUri);
+            imageChanged = true;
         }
     }
 

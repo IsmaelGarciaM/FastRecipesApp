@@ -49,8 +49,8 @@ public class MyCommentsFragment extends Fragment implements CommentPresenter.Vie
 
     @Override
     public void setCommentsData(ArrayList<Comment> comments) {
-        adapter.addAll(comments);
-        adapter.notifyDataSetChanged();
+        //adapter.addAll(comments);
+        //adapter.notifyDataSetChanged();
     }
 
     interface MyCommentsFragmentListener{
@@ -61,8 +61,8 @@ public class MyCommentsFragment extends Fragment implements CommentPresenter.Vie
     @Override
     public void onStart() {
         super.onStart();
-        //presenter.showMyComments(1);//mCallback.getUser().getId());
-        adapter.add(new Comment(0, "Ismael García", 1, "Excelente receta, la recomiendo :)", "18/02/18", 0, ""));
+        //presenter.showMyComments(1);//mCallback.getUser().getIdr());
+        //adapter.add(new Comment(0, "Ismael García", 1, "Excelente receta, la recomiendo :)", "18/02/18", 0, ""));
     }
 
     public static MyCommentsFragment getInstance(Bundle args){
@@ -87,21 +87,21 @@ public class MyCommentsFragment extends Fragment implements CommentPresenter.Vie
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_my_comments, container, false);
         ButterKnife.bind(this, rootView);
-        adapter = new CommentsAdapter(this.getContext(),R.layout.item_comment, myCom);
+        //adapter = new CommentsAdapter(this.getContext(),R.layout.item_comment, myCom);
         return rootView;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        lvMyComments.setAdapter(adapter);
-        lvMyComments.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        //lvMyComments.setAdapter(adapter);
+        /*lvMyComments.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                presenter.deleteComment(adapter.getItem(i).getId());
+                presenter.deleteComment(adapter.getItem(i).getIdr());
                 return false;
             }
-        });
+        });*/
 
     }
 

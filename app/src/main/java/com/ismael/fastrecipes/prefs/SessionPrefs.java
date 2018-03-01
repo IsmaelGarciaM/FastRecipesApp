@@ -38,7 +38,7 @@ public class SessionPrefs {
     public void saveUser(Client cliente) {
         if (cliente != null) {
             SharedPreferences.Editor editor = mPrefs.edit();
-            editor.putInt(PREF_USER_ID, cliente.getId());
+            editor.putInt(PREF_USER_ID, cliente.getIdr());
             editor.putString(PREF_USER_TOKEN, cliente.getType());
             editor.apply();
             mIsLoggedIn = true;

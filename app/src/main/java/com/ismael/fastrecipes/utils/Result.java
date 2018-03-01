@@ -1,5 +1,7 @@
 package com.ismael.fastrecipes.utils;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import com.ismael.fastrecipes.model.Comment;
 import com.ismael.fastrecipes.model.Recipe;
 
@@ -16,7 +18,6 @@ public class Result implements Serializable {
     int status;
     String message;
     List<Recipe> recipes;
-    List<Comment> comments;
     int last;
     int fav;
 
@@ -30,13 +31,6 @@ public class Result implements Serializable {
     public void setRecipes(List<Recipe> recipes) { this.recipes = recipes; }
     public int getLast() { return last; }
     public void setLast(int last) { this.last = last; }
-    public List<Comment> getComments() { return comments; }
-    public void setComments(List<Comment> comments) { this.comments = comments; }
-    public int getFav() {
-        return fav;
-    }
-
-    public void setFav(int fav) {
-        this.fav = fav;
-    }
+    public int getFav() {return fav;}
+    public void setFav(int fav) {this.fav = fav;}
 }

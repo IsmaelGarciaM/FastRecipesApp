@@ -4,6 +4,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by Ismael on 23/01/2018.
@@ -11,19 +14,32 @@ import java.io.Serializable;
 
 public class Recipe implements Parcelable, Serializable{
 
-    private int id;
+    private int idr;
+
     private int idAuthor;
+
     private String authorName;
+
     private String name;
+
     private String categories;
+
     private String ingredients;
+
     private String elaboration;
+
     private int time;
+
     private String difficulty;
-    private int nPers;
+
+    private String nPers;
+
     private String date;
+
     private String image;
+
     private String source;
+
     private float rating;
 
     public int getFav() {
@@ -36,7 +52,9 @@ public class Recipe implements Parcelable, Serializable{
 
     private int fav;
 
-    public Recipe() {}
+    public Recipe() {
+        this.date = getFormatedDate();
+    }
 
     public int getAuthor() {
         return idAuthor;
@@ -79,8 +97,8 @@ public class Recipe implements Parcelable, Serializable{
     }
 
 
-    public Recipe(int id, int idAuthor, String authorName, String name, String categories, String ingredients, String elaboration, int time, String difficulty,  int nPers, String date, String image, String source,  float rating, int fav) {
-        this.id = id;
+    public Recipe(int idr, int idAuthor, String authorName, String name, String categories, String ingredients, String elaboration, int time, String difficulty, String nPers, String date, String image, String source, float rating, int fav) {
+        this.idr = idr;
         this.idAuthor = idAuthor;
         this.authorName = authorName;
         this.name = name;
@@ -97,7 +115,25 @@ public class Recipe implements Parcelable, Serializable{
         this.fav = fav;
     }
 
-    public Recipe(int idAuthor, String name, String categories, String ingredients, String elaboration, int time, String difficulty,  int nPers, String date, String image, String source,  float rating) {
+    public Recipe(int idr, int idAuthor, String authorName, String name, String categories, String ingredients, String elaboration, int time, String difficulty, String nPers, String date, String image, String source, float rating) {
+        this.idr = idr;
+        this.idAuthor = idAuthor;
+        this.authorName = authorName;
+        this.name = name;
+        this.categories = categories;
+        this.ingredients = ingredients;
+        this.elaboration = elaboration;
+        this.time = time;
+        this.difficulty = difficulty;
+        this.nPers = nPers;
+        this.date = date;
+        this.image = image;
+        this.source = source;
+        this.rating = rating;
+    }
+
+
+    public Recipe(int idAuthor, String name, String categories, String ingredients, String elaboration, int time, String difficulty,  String nPers, String date, String image, String source,  float rating) {
         this.idAuthor = idAuthor;
         this.name = name;
         this.categories = categories;
@@ -112,8 +148,8 @@ public class Recipe implements Parcelable, Serializable{
         this.rating = rating;
     }
 
-    public Recipe(int id, int author,String authorName, String name, String categories, String ingredients, String elaboration, int time, String difficulty,  int nPers, String date, String image, String source) {
-        this.id = id;
+    public Recipe(int idr, int author, String authorName, String name, String categories, String ingredients, String elaboration, int time, String difficulty, String nPers, String date, String image, String source) {
+        this.idr = idr;
         this.authorName = authorName;
         this.idAuthor = author;
         this.name = name;
@@ -129,7 +165,7 @@ public class Recipe implements Parcelable, Serializable{
     }
 
 
-    public Recipe(String name, String categories, String ingredients, String elaboration, int time, String difficulty,  int nPers, String date, String image, String source) {
+    public Recipe(String name, String categories, String ingredients, String elaboration, int time, String difficulty,  String nPers, String date, String image, String source) {
         this.name = name;
         this.categories = categories;
         this.ingredients = ingredients;
@@ -144,7 +180,7 @@ public class Recipe implements Parcelable, Serializable{
 
 
     protected Recipe(Parcel in) {
-        id = in.readInt();
+        idr = in.readInt();
         idAuthor = in.readInt();
         authorName = in.readString();
         name = in.readString();
@@ -153,14 +189,14 @@ public class Recipe implements Parcelable, Serializable{
         elaboration = in.readString();
         time = in.readInt();
         difficulty = in.readString();
-        nPers = in.readInt();
+        nPers = in.readString();
         date =in.readString();
         image = in.readString();
         source = in.readString();
         rating = in.readFloat();
         fav = in.readInt();
     }
-
+    @SuppressWarnings({"unchecked"})
     public static final Creator<Recipe> CREATOR = new Creator<Recipe>() {
         @Override
         public Recipe createFromParcel(Parcel in) {
@@ -173,12 +209,12 @@ public class Recipe implements Parcelable, Serializable{
         }
     };
 
-    public int getId() {
-        return id;
+    public int getIdr() {
+        return idr;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setIdr(int idr) {
+        this.idr = idr;
     }
 
     public String getName() {
@@ -207,11 +243,11 @@ public class Recipe implements Parcelable, Serializable{
     }
 
 
-    public int getnPers() {
+    public String getnPers() {
         return nPers;
     }
 
-    public void setnPers(int nPers) {
+    public void setnPers(String nPers) {
         this.nPers = nPers;
     }
 
@@ -248,13 +284,13 @@ public class Recipe implements Parcelable, Serializable{
 
     @Override
     public int describeContents() {
-        return hashCode();
+        return 0;
     }
 
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeInt(id);
+        parcel.writeInt(idr);
         parcel.writeInt(idAuthor);
         parcel.writeString(authorName);
         parcel.writeString(name);
@@ -263,11 +299,19 @@ public class Recipe implements Parcelable, Serializable{
         parcel.writeString(elaboration);
         parcel.writeInt(time);
         parcel.writeString(difficulty);
-        parcel.writeInt(nPers);
+        parcel.writeString(nPers);
         parcel.writeString(date);
         parcel.writeString(image);
         parcel.writeString(source);
         parcel.writeFloat(rating);
         parcel.writeInt(fav);
+    }
+
+    private String getFormatedDate(){
+
+        Date c = Calendar.getInstance().getTime();
+        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+        String formattedDate = df.format(c);
+        return formattedDate;
     }
 }

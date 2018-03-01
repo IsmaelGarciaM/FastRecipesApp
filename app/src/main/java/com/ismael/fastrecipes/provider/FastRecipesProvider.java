@@ -25,8 +25,7 @@ import com.ismael.fastrecipes.db.DatabaseHelper;
 public class FastRecipesProvider extends ContentProvider {
 
     public static final int RECIPE = 1;
-    public static final int INGREDIENT = 2;
-    public static final int FAVRECIPES = 3;
+    public static final int FAVRECIPES = 2;
 
     public static final int RECIPE_ID= 11;
     public static final int FAVRECIPE_ID= 12;
@@ -38,9 +37,6 @@ public class FastRecipesProvider extends ContentProvider {
     static {
         uriMatcher.addURI(FastRecipesContract.AUTHORITY, FastRecipesContract.Recipe.CONTENT_PATH, RECIPE);
         uriMatcher.addURI(FastRecipesContract.AUTHORITY, FastRecipesContract.Recipe.CONTENT_PATH+"/#", RECIPE_ID);
-
-        uriMatcher.addURI(FastRecipesContract.AUTHORITY, FastRecipesContract.Ingredient.CONTENT_PATH, INGREDIENT);
-
         uriMatcher.addURI(FastRecipesContract.AUTHORITY, FastRecipesContract.FavRecipe.CONTENT_PATH, FAVRECIPES);
         uriMatcher.addURI(FastRecipesContract.AUTHORITY, FastRecipesContract.FavRecipe.CONTENT_PATH+"/#", FAVRECIPE_ID);
     }
@@ -67,17 +63,11 @@ public class FastRecipesProvider extends ContentProvider {
 
             case RECIPE_ID:
                 rowId = uri.getPathSegments().get(1);
-                selection = DatabaseContract.RecipeEntry._ID+"="+rowId;
+                selection = DatabaseContract.RecipeEntry.COLUMN_ID+"="+rowId;
+                projection = FastRecipesContract.Recipe.PROJECTION;
                 builder.setTables(DatabaseContract.RecipeEntry.TABLE_NAME);
 
                 break;
-
-            case INGREDIENT:
-                builder.setTables(DatabaseContract.IngredientEntry.TABLE_NAME);
-                projection = FastRecipesContract.Ingredient.PROJECTION;
-                selection = FastRecipesContract.Ingredient.SELECTION + selectionArgs[0] ;
-                break;
-
             case FAVRECIPES:
                 builder.setTables(DatabaseContract.FavouriteRecipeEntry.TABLE_NAME);
                 projection = FastRecipesContract.FavRecipe.PROJECTION;
@@ -87,7 +77,7 @@ public class FastRecipesProvider extends ContentProvider {
                 rowId = uri.getPathSegments().get(1);
                 builder.setTables(DatabaseContract.FavouriteRecipeEntry.TABLE_NAME);
                 projection = FastRecipesContract.FavRecipe.PROJECTION;
-                selection = DatabaseContract.RecipeEntry._ID+"="+rowId;
+                selection = DatabaseContract.RecipeEntry.COLUMN_ID+"="+rowId;
                 break;
 
             case UriMatcher.NO_MATCH:
@@ -110,10 +100,6 @@ public class FastRecipesProvider extends ContentProvider {
                 break;
             case RECIPE_ID:
                 res = "vnd.android.cursor.item/vnd.ismael.fastrecipesprovider.recipe";
-                break;
-
-            case INGREDIENT:
-                res = "vnd.android.cursor.dir/vnd.ismael.fastrecipesprovider.ingredient";
                 break;
 
             case FAVRECIPES:
@@ -158,11 +144,11 @@ public class FastRecipesProvider extends ContentProvider {
         int nRows = -1;
         switch (uriMatcher.match(uri)){
             case RECIPE:
-                s = FastRecipesContract.Recipe._ID+"="+uri.getLastPathSegment();
+                s = FastRecipesContract.Recipe.ID+"="+uri.getLastPathSegment();
                 nRows = _database.delete(DatabaseContract.RecipeEntry.TABLE_NAME, s, null);
                 break;
             case FAVRECIPES:
-                s = FastRecipesContract.FavRecipe._ID+"="+uri.getLastPathSegment();
+                s = FastRecipesContract.FavRecipe.ID+"="+uri.getLastPathSegment();
                 nRows = _database.delete(DatabaseContract.FavouriteRecipeEntry.TABLE_NAME, s, null);
                 break;
         }
@@ -183,18 +169,6 @@ public class FastRecipesProvider extends ContentProvider {
             case RECIPE_ID:
                 affected = _database.update(DatabaseContract.RecipeEntry.TABLE_NAME, contentValues, selection, selectionArgs);
                 break;
- /*
-            case INGREDIENT:
-                affected = _database.update(DatabaseContract.IngredientEntry.TABLE_NAME, contentValues, selection, selectionArgs);
-                break;
-
-
-            case FAVRECIPES_ID:
-                rowId = uri.getLastPathSegment();
-                selection = DatabaseContract.RecipeIngredientsEntry._ID+"=";
-                selectionArgs = new String[]{rowId};
-                affected = _database.update(DatabaseContract.RecipeIngredientsEntry.TABLE_NAME, contentValues, selection, selectionArgs);
-                break;*/
         }
 
         if(affected != -1){

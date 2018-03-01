@@ -5,16 +5,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.ismael.fastrecipes.MyRecipesFragment">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rcvMyRecipes"
+    <ListView
+        android:id="@+id/lvMyRecipes"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
+    <TextView
+        android:id="@+id/emptyListMyRec"
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/textPageBorder"
+        android:textAlignment="center"
+        android:visibility="gone"
         android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
-        android:layout_marginBottom="30dp">
+        android:text="@string/emptyMyRecs"/>
+
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabAddRecipe"
@@ -22,6 +26,9 @@
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/ic_add"
         app:backgroundTint="@color/colorPrimary"
-        android:layout_margin="@dimen/textPageBorder"/>
-    </RelativeLayout>
+        android:layout_gravity="end"
+        android:layout_marginBottom="50dp"
+        android:tag="@string/addrecipe"
+        android:layout_marginTop="@dimen/textPageBorder"
+        android:layout_marginEnd="@dimen/textPageBorder"/>
 </android.support.design.widget.CoordinatorLayout>

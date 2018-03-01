@@ -4,13 +4,13 @@
     <item
         android:id="@+id/action_search_recipes"
         android:enabled="true"
-        android:icon="@drawable/ic_search_black_24dp"
+        android:icon="@drawable/fridge_filled"
         android:title="Buscar"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_social"
         android:enabled="true"
-        android:icon="@drawable/fridge_filled"
+        android:icon="@drawable/ic_social"
         android:title="Social"
         app:showAsAction="ifRoom" />
     <item

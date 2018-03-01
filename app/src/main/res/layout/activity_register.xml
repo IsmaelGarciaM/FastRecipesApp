@@ -21,37 +21,33 @@
     <android.support.v7.widget.CardView
         android:id="@+id/crvIconR"
         android:layout_width="match_parent"
-        android:layout_height="172dp">
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        android:layout_height="120dp">
+
             <ImageView
                 android:id="@+id/imgIconR"
                 android:contentDescription="@string/app_name"
                 android:background="@color/ic_launcher_background_testing"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@mipmap/ic_launcher_testing"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/imgIconR"
-                android:layout_marginTop="-30dp"
-                android:text="@string/register"
-                android:textSize="20sp"
-                android:layout_centerHorizontal="true"
-                />
-        </RelativeLayout>
-
+                android:src="@drawable/iconbig"/>
     </android.support.v7.widget.CardView>
 
+    <TextView
+        android:id="@+id/regTit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/crvIconR"
+        android:layout_marginTop="@dimen/textPageBorder"
+        android:text="@string/register"
+        android:textSize="20sp"
+        android:layout_centerHorizontal="true"
+        />
 
     <android.support.design.widget.TextInputLayout
         android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:layout_marginTop="@dimen/hbLines"
         android:layout_width="match_parent"
-        android:layout_below="@+id/crvIconR"
+        android:layout_below="@+id/regTit"
         android:background="@drawable/border"
         android:layout_height="wrap_content"
         android:id="@+id/tilNameRegister"

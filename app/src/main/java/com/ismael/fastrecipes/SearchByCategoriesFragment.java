@@ -20,7 +20,9 @@ import com.ismael.fastrecipes.adapter.CategoryAdapter;
 import com.ismael.fastrecipes.interfaces.CategoriesPresenter;
 import com.ismael.fastrecipes.model.Category;
 import com.ismael.fastrecipes.model.Filter;
+import com.ismael.fastrecipes.model.Recipe;
 import com.ismael.fastrecipes.presenter.CategoriesPresenterImpl;
+import com.ismael.fastrecipes.utils.Const;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,7 +46,6 @@ public class SearchByCategoriesFragment extends Fragment implements CategoriesPr
 
     @BindView(R.id.btnSaveCategories)
     FloatingActionButton fabSave;
-    int pos =10;
     CategoryAdapter adapter;
 
 
@@ -55,6 +56,8 @@ public class SearchByCategoriesFragment extends Fragment implements CategoriesPr
     CategoriesPresenter presenter;
     ArrayList<Category> catList;
     String[] cats;
+    boolean adding = false;
+    Recipe tmp;
 
     interface SearchCategoriesListener{
         void showSearchByCategories(Bundle data);
@@ -66,6 +69,8 @@ public class SearchByCategoriesFragment extends Fragment implements CategoriesPr
         int getNFilters();
 
         Filter getFilterByName(String s);
+
+        void showAddRecipe(Bundle b);
     }
 
     public static SearchByCategoriesFragment getInstance(Bundle args){
@@ -83,11 +88,6 @@ public class SearchByCategoriesFragment extends Fragment implements CategoriesPr
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         presenter = new CategoriesPresenterImpl(this);
-        try {
-            cats = ((Filter)sbcfInstance.getArguments().getParcelable("filter")).getContent().split(", ");
-
-        }catch (NullPointerException npe){}
-
     }
 
     @Override
@@ -97,6 +97,17 @@ public class SearchByCategoriesFragment extends Fragment implements CategoriesPr
         View rootView = inflater.inflate(R.layout.fragment_search_by_categories, container, false);
         ButterKnife.bind(this, rootView);
         RecyclerView.LayoutManager lm = new GridLayoutManager(this.getContext(), 3);
+
+        if(sbcfInstance.getArguments() != null && sbcfInstance.getArguments().getParcelable("recipe") != null){
+            tmp = sbcfInstance.getArguments().getParcelable("recipe");
+            adding = true;
+            if(tmp!=null && tmp.getCategories() != null && !tmp.getCategories().equals("Sin categorías."))
+                cats = tmp.getCategories().split(", ");
+        }
+        else {
+            if(mCallback.getFilterByName(Const.f3) != null)
+                cats = mCallback.getFilterByName(Const.f3).getContent().split(", ");
+        }
         rcvCategories.setLayoutManager(lm);
         catList = new ArrayList<>();
         catList.addAll(presenter.getCategories(false));
@@ -122,8 +133,13 @@ public class SearchByCategoriesFragment extends Fragment implements CategoriesPr
         fabSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                save();
-                mCallback.showSearchFragment(null);
+                if(!adding) {
+                    save();
+                    mCallback.showSearchFragment(null);
+                }
+                else{
+                    mCallback.showAddRecipe(addCats());
+                }
                 //rcvCategories.setAdapter(new CategoryAdapter(getParentFragment().getContext(), presenter.getCategories()));
             }
 
@@ -131,6 +147,24 @@ public class SearchByCategoriesFragment extends Fragment implements CategoriesPr
         });
 
 
+    }
+
+    Bundle addCats(){
+        Bundle response = new Bundle();
+        String content = "";
+        for (int i = 0; i < adapter.getCats().size(); i++) {
+            if (adapter.getCats().get(i).isState()) {
+                content += adapter.getItem(i).getName() + ", ";
+            }
+        }
+
+        if(content.length()>0)
+            tmp.setCategories(content.substring(0, content.length() - 2));
+        else
+            tmp.setCategories("");
+
+        response.putParcelable("recipe", tmp);
+        return response;
     }
 
     @Override
@@ -158,11 +192,11 @@ public class SearchByCategoriesFragment extends Fragment implements CategoriesPr
         }
 
         if(content.length()>0) {
-            if (mCallback.getFilterByName("Dentro de:") != null)
-                mCallback.getFilterByName("Dentro de:").setContent(content.substring(0, content.length() - 2));
+            if (mCallback.getFilterByName(Const.f3) != null)
+                mCallback.getFilterByName(Const.f3).setContent(content.substring(0, content.length() - 2));
 
             else {
-                Filter ftmp = new Filter("Dentro de:", content.substring(0, content.length() - 2));
+                Filter ftmp = new Filter(Const.f3, content.substring(0, content.length() - 2));
                 mCallback.addFilter(ftmp);
             }
         }

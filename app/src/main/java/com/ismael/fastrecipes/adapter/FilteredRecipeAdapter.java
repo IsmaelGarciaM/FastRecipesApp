@@ -1,6 +1,7 @@
 package com.ismael.fastrecipes.adapter;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -9,8 +10,13 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.ismael.fastrecipes.R;
 import com.ismael.fastrecipes.model.Recipe;
+import com.ismael.fastrecipes.utils.Const;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -46,7 +52,7 @@ public class FilteredRecipeAdapter extends ArrayAdapter<Recipe> {
     @NonNull
     @Override
     public View getView(final int position, View view, @NonNull ViewGroup parent) {
-        FiltRecipeHolder frh;
+        final FiltRecipeHolder frh;
         View item = view;
         if (item == null) {
             item = LayoutInflater.from(getContext()).inflate(R.layout.item_recipes_list, parent, false);
@@ -56,17 +62,39 @@ public class FilteredRecipeAdapter extends ArrayAdapter<Recipe> {
         else
             frh = (FiltRecipeHolder)item.getTag();
 
-        try {
-            Picasso.with(context)
-                    .load(getItem(position).getImage())
-                    .into(frh.imgRecipe);
-        }catch (Exception e){}
+        if(getItem(position).getImage().startsWith("gs")) {
 
-        frh.txvName.setText(getItem(position).getName());
+            StorageReference mStorageRefloadrec = FirebaseStorage.getInstance().getReference(Const.FIREBASE_IMAGE_RECIPE + "/" + String.valueOf(getItem(position).getIdr()));
+
+            mStorageRefloadrec.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    try {
+                        Picasso.with(context).load(task.getResult()).into(frh.imgRecipe);
+                    } catch (Exception e) {
+                        frh.imgRecipe.setImageDrawable(context.getResources().getDrawable(R.drawable.addrecipe));
+                    }
+                }
+            });
+        }else if(getItem(position).getImage() != null && !getItem(position).getImage().equals("")) {
+                try {
+                    Picasso.with(context)
+                            .load(getItem(position).getImage())
+                            .into(frh.imgRecipe);
+
+                } catch (Exception e) {
+                    frh.imgRecipe.setImageDrawable(context.getResources().getDrawable(R.drawable.addrecipe));
+                }
+            }else
+                frh.imgRecipe.setImageDrawable(context.getResources().getDrawable(R.drawable.addrecipe));
+
+
+            frh.txvName.setText(getItem(position).getName());
         frh.txvCategories.setText(getItem(position).getCategories());
         frh.txvRecipeTime.setText(String.valueOf(getItem(position).getTime()) + " min.");
         frh.txvRecipeDifficulty.setText(getItem(position).getDifficulty());
         frh.txvRecipeRating.setText(String.valueOf(getItem(position).getRating()));
+        frh.txvRecipeNPers.setText(String.valueOf(getItem(position).getnPers()));
 
         return item;
     }
@@ -83,7 +111,7 @@ public class FilteredRecipeAdapter extends ArrayAdapter<Recipe> {
 
         TextView txvRecipeDifficulty;
         TextView txvRecipeRating;
-        TextView txvRecipeLikes;
+        TextView txvRecipeNPers;
 
         public FiltRecipeHolder(View v){
             imgRecipe = (CircleImageView) v.findViewById(R.id.imvRecipeImg);
@@ -92,7 +120,7 @@ public class FilteredRecipeAdapter extends ArrayAdapter<Recipe> {
             txvRecipeTime = (TextView) v.findViewById(R.id.txvTimeRecipe);
             txvRecipeDifficulty = (TextView) v.findViewById(R.id.txvRecipeDifficult);
             txvRecipeRating = (TextView) v.findViewById(R.id.txvRecipeRating);
-            txvRecipeLikes = (TextView) v.findViewById(R.id.txvRecipeLikes);
+            txvRecipeNPers = (TextView) v.findViewById(R.id.txvRecipeNper);
 
         }
     }
@@ -112,7 +140,7 @@ public class FilteredRecipeAdapter extends ArrayAdapter<Recipe> {
     public Recipe getRecipeById(int id){
         Recipe frtmp = null;
         for (int i = 0; i < relist.size(); i++){
-            if(relist.get(i).getId() == id){
+            if(relist.get(i).getIdr() == id){
                 frtmp = relist.get(i);
                 break;
             }

@@ -13,6 +13,12 @@ public class Errors {
     public static final int PASSCAPLETTER_EXCEPTION = 14;
     public static final int PASSNUMBER_EXCEPTION = 15;
     public static final int PHONE_EXCEPTION = 16;
+    public static final int EMPTYTIME_EXCEPTION = 101;
+    public static final int EMPTYDIF_EXCEPTION = 102;
+    public static final int EMPTYNAME_EXCEPTION = 103;
+    public static final int EMPTYING_EXCEPTION = 104;
+    public static final int EMPTYELABORATION_EXCEPTION = 105;
+
 
     public static String message;
     public static int code;

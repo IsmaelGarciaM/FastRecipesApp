@@ -22,7 +22,13 @@ public interface ProfilePresenter {
 
     interface View{
         Context getContext();
-        void setUserData(ArrayList<User> u);
+        void setUserData(User u);
         void setUserRecipesData(ArrayList<Recipe> recs);
+
+        void updateCurrentUser(User u);
+
+        void setUserListData(ArrayList<User> u);
+
+        void cancelSearch();
     }
 }

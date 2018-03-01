@@ -15,7 +15,7 @@
     <RelativeLayout
         android:id="@+id/login_data_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></RelativeLayout>
+        android:layout_height="match_parent">
 
     <ProgressBar
         android:id="@+id/pgbLoading"
@@ -28,7 +28,7 @@
     <android.support.v7.widget.CardView
         android:id="@+id/crvIcon"
         android:layout_width="match_parent"
-        android:layout_height="190dp">
+        android:layout_height="150dp">
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -38,26 +38,27 @@
             android:layout_width="match_parent"
             android:background="@color/ic_launcher_background_testing"
             android:layout_height="match_parent"
-            android:src="@mipmap/ic_launcher_testing"/>
+            android:src="@drawable/iconbig"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/imgIcon"
-            android:layout_marginTop="-30dp"
-            android:text="@string/singin"
-            android:textSize="20sp"
-            android:layout_centerHorizontal="true"
-            />
+
         </RelativeLayout>
 
     </android.support.v7.widget.CardView>
 
-
+        <TextView
+            android:id="@+id/logintitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/crvIcon"
+            android:layout_marginTop="@dimen/hbLines"
+            android:text="@string/singin"
+            android:textSize="20sp"
+            android:layout_centerHorizontal="true"
+            />
     <android.support.design.widget.TextInputLayout
         android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:layout_marginTop="@dimen/hbLines"
-        android:layout_below="@id/crvIcon"
+        android:layout_below="@id/logintitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/tilMailLogin"
@@ -68,8 +69,7 @@
             android:id="@+id/edtMailLogin"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:inputType="textEmailAddress"
-            android:text="ismagm94@gmail.com" />
+            android:inputType="textEmailAddress" />
 
     </android.support.design.widget.TextInputLayout>
 
@@ -87,9 +87,7 @@
             android:id="@+id/edtPasswordLogin"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="@string/password"
-            android:inputType="textPassword"
-            android:text="Holacaracola8" />
+            android:inputType="textPassword" />
 
     </android.support.design.widget.TextInputLayout>
 
@@ -148,4 +146,5 @@
             android:text="@string/register"
             android:layout_gravity="center"/>
     </LinearLayout>
+    </RelativeLayout>
 </RelativeLayout>

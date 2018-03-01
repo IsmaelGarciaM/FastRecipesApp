@@ -3,9 +3,12 @@ package com.ismael.fastrecipes;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -46,6 +49,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterPrese
     @BindView(R.id.btnSeePass)
     Button btnSeePass;
     RegisterPresenter presenter;
+    View mView = null;
 
 
     @Override
@@ -57,8 +61,8 @@ public class RegisterActivity extends AppCompatActivity implements RegisterPrese
         btnOkRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                attemptRegister();
-            }
+                saveUser();
+                }
         });
         btnSeePass.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -107,6 +111,9 @@ public class RegisterActivity extends AppCompatActivity implements RegisterPrese
         //obtener valores
         String name = String.valueOf(edtNameRegister.getText());
         String mail = String.valueOf(edtEmailRegister.getText());
+        if(mail.endsWith(" ")){
+            mail = mail.trim();
+        }
         String pass = String.valueOf(edtPasswordRegister.getText());
 
         boolean cancel = false;
@@ -152,8 +159,8 @@ public class RegisterActivity extends AppCompatActivity implements RegisterPrese
 
 
     @Override
-    public void showInputError() {
-
+    public void showInputError(String msg) {
+        Snackbar.make(btnOkRegister, msg, Snackbar.LENGTH_LONG).show();
     }
 
     /**
@@ -161,7 +168,44 @@ public class RegisterActivity extends AppCompatActivity implements RegisterPrese
      */
     @Override
     public void showLogin() {
-        startActivity(new Intent().setClass(this, LoginActivity.class).putExtra("registrado", true));
+        startActivity(new Intent().setClass(this, SplashScreen.class));
         finish();
+    }
+
+    void saveUser(){
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.Theme_Dialog_Translucent);
+        dialog.setCancelable(false);
+        dialog.setTitle(R.string.titleSaveUser);
+        dialog.setMessage("Puedes volver a configurar esto en las preferencias de la app.");
+        dialog.setNegativeButton(getResources().getString(R.string.dontrem), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                getPreferences(MODE_PRIVATE).edit().putBoolean("remember_user", false).apply();
+                String m = String.valueOf(edtEmailRegister.getText());
+                if(m.endsWith(" ")){
+                    m = m.trim();
+                }
+                getSharedPreferences("fastrecipessp", MODE_PRIVATE).edit().putString("um", m).apply();
+                getSharedPreferences("fastrecipessp", MODE_PRIVATE).edit().putString("up", String.valueOf(edtPasswordRegister.getText())).apply();
+                attemptRegister();
+
+            }
+        });
+
+        dialog.setPositiveButton(getResources().getString(R.string.rem), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                getSharedPreferences("fastrecipessp", MODE_PRIVATE).edit().putBoolean("remember_user", true).apply();
+                String m = String.valueOf(edtEmailRegister.getText());
+                if(m.endsWith(" ")){
+                    m = m.trim();
+                }
+
+                getSharedPreferences("fastrecipessp", MODE_PRIVATE).edit().putString("um",m).apply();
+                getSharedPreferences("fastrecipessp", MODE_PRIVATE).edit().putString("up", String.valueOf(edtPasswordRegister.getText())).apply();
+                attemptRegister();
+
+            }
+        }).show();
     }
 }

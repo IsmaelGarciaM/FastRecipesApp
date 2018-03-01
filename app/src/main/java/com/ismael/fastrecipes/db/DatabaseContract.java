@@ -12,8 +12,9 @@ public class DatabaseContract {
     public static class RecipeEntry implements BaseColumns {
         public static final String CONTENT_PATH = "recipe";
         public static final String TABLE_NAME = "recipe";
-        public static final String COLUMN_AUTHOR = "author";
-        public static final String COLUMN_AUTHORNAME = "authorname";
+        public static final String COLUMN_ID = "idr";
+        public static final String COLUMN_AUTHOR = "idAuthor";
+        public static final String COLUMN_AUTHORNAME = "authorName";
         public static final String COLUMN_NAME = "name";
         public static final String COLUMN_CATEGORIES = "categories";
         public static final String COLUMN_INGREDIENTS = "ingredients";
@@ -25,7 +26,7 @@ public class DatabaseContract {
         public static final String COLUMN_IMAGE = "image";
         public static final String COLUMN_SOURCE = "source";
 
-        public static final String SQL_CREATE_ENTRIES = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, " +
+        public static final String SQL_CREATE_ENTRIES = String.format("CREATE TABLE %s ( %s INTEGER UNIQUE, " +
                 "%s INTEGER NOT NULL," +
                 "%s TEXT NOT NULL," +
                 "%s TEXT NOT NULL," +
@@ -34,11 +35,11 @@ public class DatabaseContract {
                 "%s TEXT NOT NULL," +
                 "%s INTEGER," +
                 "%s TEXT," +
-                "%s INTEGER," +
+                "%s TEXT," +
                 "%s TEXT NOT NULL," +
                 "%s TEXT NOT NULL," +
                 "%s TEXT NOT NULL" +
-                        ")", TABLE_NAME, BaseColumns._ID,COLUMN_AUTHOR, COLUMN_AUTHORNAME, COLUMN_NAME, COLUMN_CATEGORIES, COLUMN_INGREDIENTS,COLUMN_ELABORATION, COLUMN_TIME,
+                        ")", TABLE_NAME, COLUMN_ID,COLUMN_AUTHOR, COLUMN_AUTHORNAME, COLUMN_NAME, COLUMN_CATEGORIES, COLUMN_INGREDIENTS,COLUMN_ELABORATION, COLUMN_TIME,
                 COLUMN_DIFFICULTY, COLUMN_NPERS, COLUMN_DATE,COLUMN_IMAGE, COLUMN_SOURCE);
 
 
@@ -47,61 +48,19 @@ public class DatabaseContract {
 
 
 
-        public static final String[] ALL_COLUMNS = new String[]{BaseColumns._ID, COLUMN_AUTHOR, COLUMN_AUTHORNAME, COLUMN_NAME, COLUMN_CATEGORIES, COLUMN_INGREDIENTS,COLUMN_ELABORATION, COLUMN_TIME,
+        public static final String[] ALL_COLUMNS = new String[]{COLUMN_ID, COLUMN_AUTHOR, COLUMN_AUTHORNAME, COLUMN_NAME, COLUMN_CATEGORIES, COLUMN_INGREDIENTS,COLUMN_ELABORATION, COLUMN_TIME,
                 COLUMN_DIFFICULTY, COLUMN_NPERS, COLUMN_DATE,COLUMN_IMAGE, COLUMN_SOURCE};
         public static final String DEFAULT_SORT = COLUMN_NAME;
 
 
     }
 
-    public static class IngredientEntry implements BaseColumns {
-        public static final String CONTENT_PATH = "ingredient";
-        public static final String TABLE_NAME = "ingredient";
-        public static final String COLUMN_NAME = "name";
-        public static final String COLUMN_MEASUREMENT = "measurement";
-
-
-
-        public static final String SQL_CREATE_ENTRIES = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        "%s TEXT NOT NULL," +
-                        "%s TEXT NOT NULL" +
-                        ")", TABLE_NAME, BaseColumns._ID, COLUMN_NAME, COLUMN_MEASUREMENT);
-
-
-        public static final String SQL_DELETE_ENTRIES = String.format("DROP TABLE IF EXISTS %s", TABLE_NAME);
-
-
-        public static final String[] ALL_COLUMNS = new String[]{BaseColumns._ID, COLUMN_NAME, COLUMN_MEASUREMENT};
-        public static final String DEFAULT_SORT = COLUMN_NAME;
-    }
-
-    public static class RecipeIngredientsEntry implements BaseColumns {
-        public static final String CONTENT_PATH = "recipeingredients";
-        public static final String TABLE_NAME = "recipeingredients";
-        public static final String COLUMN_IDRECIPE = "id_recipe";
-        public static final String COLUMN_IDINGREDIENT = "id_ingredient";
-        public static final String COLUMN_QUANTITY= "quantity";
-
-
-
-        public static final String SQL_CREATE_ENTRIES = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "%s INTEGER NOT NULL," +
-                "%s INTEGER NOT NULL," +
-                "%s REAL NOT NULL" +
-                ")", TABLE_NAME, BaseColumns._ID, COLUMN_IDRECIPE, COLUMN_IDINGREDIENT, COLUMN_QUANTITY);
-
-
-        public static final String SQL_DELETE_ENTRIES = String.format("DROP TABLE IF EXISTS %s", TABLE_NAME);
-
-        public static final String[] ALL_COLUMNS = new String[]{BaseColumns._ID, COLUMN_IDRECIPE, COLUMN_IDINGREDIENT, COLUMN_QUANTITY};
-    }
-
-
     public static class FavouriteRecipeEntry implements BaseColumns {
         public static final String CONTENT_PATH = "favrecipes";
         public static final String TABLE_NAME = "favrecipes";
-        public static final String COLUMN_AUTHOR = "author";
-        public static final String COLUMN_AUTHORNAME = "authorname";
+        public static final String COLUMN_ID = "idr";
+        public static final String COLUMN_AUTHOR = "idAuthor";
+        public static final String COLUMN_AUTHORNAME = "authorName";
         public static final String COLUMN_NAME = "name";
         public static final String COLUMN_CATEGORIES = "categories";
         public static final String  COLUMN_INGREDIENTS = "ingredients";
@@ -112,10 +71,12 @@ public class DatabaseContract {
         public static final String COLUMN_DATE = "date";
         public static final String COLUMN_IMAGE = "image";
         public static final String COLUMN_SOURCE = "source";
+        public static final String COLUMN_FAV = "fav";
 
 
 
-        public static final String SQL_CREATE_ENTRIES = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, " +
+
+        public static final String SQL_CREATE_ENTRIES = String.format("CREATE TABLE %s (%s INTEGER UNIQUE, " +
                         "%s INTEGER NOT NULL," +
                         "%s TEXT NOT NULL," +
                         "%s TEXT NOT NULL," +
@@ -124,12 +85,13 @@ public class DatabaseContract {
                         "%s TEXT NOT NULL," +
                         "%s INTEGER," +
                         "%s TEXT," +
-                        "%s INTEGER," +
+                        "%s TEXT," +
                         "%s TEXT," +
                         "%s TEXT, " +
-                        "%s TEXT" +
-                        ")", TABLE_NAME, BaseColumns._ID,COLUMN_AUTHOR, COLUMN_AUTHORNAME, COLUMN_NAME, COLUMN_CATEGORIES, COLUMN_INGREDIENTS, COLUMN_ELABORATION, COLUMN_TIME,
-                COLUMN_DIFFICULTY, COLUMN_NPERS, COLUMN_DATE,COLUMN_IMAGE, COLUMN_SOURCE );
+                        "%s TEXT," +
+                        "%s INTEGER NOT NULL" +
+                        ")", TABLE_NAME, COLUMN_ID,COLUMN_AUTHOR, COLUMN_AUTHORNAME, COLUMN_NAME, COLUMN_CATEGORIES, COLUMN_INGREDIENTS, COLUMN_ELABORATION, COLUMN_TIME,
+                COLUMN_DIFFICULTY, COLUMN_NPERS, COLUMN_DATE,COLUMN_IMAGE, COLUMN_SOURCE, COLUMN_FAV );
 
 
 
@@ -137,7 +99,7 @@ public class DatabaseContract {
 
 
 
-        public static final String[] ALL_COLUMNS = new String[]{BaseColumns._ID, COLUMN_NAME};
+        public static final String[] ALL_COLUMNS = new String[]{COLUMN_ID, COLUMN_NAME};
         public static final String DEFAULT_SORT = COLUMN_NAME;
 
 

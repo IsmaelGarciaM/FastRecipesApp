@@ -11,4 +11,9 @@ public class Const {
     public static final String f4 = "Por su nombre:";
     public static final String f5 = "Tiempo máximo:";
     public static final String f6 = "Dificultad:";
+    public static final String FIREBASE_CHILD_COMMENTS = "COMMENT";
+    public static final String FIREBASE_IMAGE_USER = "USER";
+    public static final String FIREBASE_IMAGE_RECIPE = "RECIPE";
+
+
 }

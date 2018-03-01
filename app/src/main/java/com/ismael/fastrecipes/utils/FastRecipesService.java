@@ -73,7 +73,7 @@ public class FastRecipesService {
      * @param id Id de la receta a obtener
      * @return Devuelve un objeto Observable con un array de Result, que es la clase que recoge los datos del json de la respuesta del servidor
      */
-    public Observable<Result> getRecipe(int id){
+    public Observable<Result> getRecipe(String id){
         return fastRecipesApi.getRecipeObservable(id);//FastRecipesApplication.getToken(),
     }
 
@@ -98,12 +98,11 @@ public class FastRecipesService {
 
     /**
      * Añade o borra una receta como favorita de un usuario
-     * @param idUser Id del usuario que marca o desmarca
-     * @param idRecipe Id de la receta marcada o desmarcada
+     * @param idfav String que contiene los datos de receta y usuario para cambiar la asgnación de favorito
      * @return Devuelve la receta marcada o desmarcada
      */
-    public Observable<Result> setFavouriteRec(int idUser, int idRecipe, int fav) {
-        return fastRecipesApi.setFavRecipeObservable(idUser, idRecipe, fav);
+    public Observable<Result> setFavouriteRec(String idfav) {
+        return fastRecipesApi.setFavRecipeObservable(idfav);
     }
 
 
@@ -151,6 +150,19 @@ public class FastRecipesService {
     public Observable<ResultUser> updateProfile(User userData) {
         return fastRecipesApi.updateUserObservable(userData);
 
+    }
+
+    public Observable<Result> setRating(String idRating) {
+        return fastRecipesApi.setRatingObservable(idRating);
+
+    }
+
+    public Observable<Result> getMyRecipes(int idUser) {
+        return fastRecipesApi.getMyRecipesObservable(idUser);
+    }
+
+    public Observable<Result> getFavsRecipes(int idUser) {
+        return fastRecipesApi.getFavRecipesObservable(idUser);
     }
 
 

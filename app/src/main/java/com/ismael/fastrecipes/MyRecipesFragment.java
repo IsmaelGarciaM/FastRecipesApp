@@ -12,16 +12,24 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.TextView;
 
+import com.ismael.fastrecipes.adapter.FilteredRecipeAdapter;
 import com.ismael.fastrecipes.adapter.RecipeAdapter;
 import com.ismael.fastrecipes.interfaces.RecipesPresenter;
+import com.ismael.fastrecipes.model.Comment;
 import com.ismael.fastrecipes.model.Recipe;
+import com.ismael.fastrecipes.model.User;
 import com.ismael.fastrecipes.presenter.RecipesPresenterImpl;
 
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static android.view.View.GONE;
 
 
 /**
@@ -33,26 +41,26 @@ public class MyRecipesFragment extends Fragment implements RecipesPresenter.View
     public MyRecipesFragment() {
         // Required empty public constructor
     }
-    @BindView(R.id.rcvMyRecipes)
-    RecyclerView rcvMyRecipes;
+    @BindView(R.id.lvMyRecipes)
+    ListView lvMyRecipes;
 
+    @BindView(R.id.emptyListMyRec)
+    TextView txvEmpty;
     @BindView(R.id.fabAddRecipe)
     FloatingActionButton fabAddRecipe;
 
     static private MyRecipesFragment mrfInstance;
     private MyRecipeFragmentListener mCallback;
     RecipesPresenter presenter;
-    RecipeAdapter rAdapter;
-
-    @Override
-    public void setCursorData(Cursor data) {
-        rAdapter.swapCursor(data);
-    }
+    FilteredRecipeAdapter rAdapter;
+    ArrayList<Recipe> myRecs;
 
     interface MyRecipeFragmentListener{
         void showMyRecipes();
         void showRecipe(Bundle args);
         void showAddRecipe(Bundle b);
+
+        User getUser();
     }
 
     public static MyRecipesFragment getInstance(Bundle args){
@@ -67,7 +75,8 @@ public class MyRecipesFragment extends Fragment implements RecipesPresenter.View
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        presenter = new RecipesPresenterImpl(this);
+        presenter = new RecipesPresenterImpl(this, 0);
+        myRecs = new ArrayList<>();
     }
 
     @Override
@@ -77,29 +86,28 @@ public class MyRecipesFragment extends Fragment implements RecipesPresenter.View
         View rootView = inflater.inflate(R.layout.fragment_my_recipes, container, false);
         ButterKnife.bind(this, rootView);
 
-        rAdapter = new RecipeAdapter(getContext(), new RecipeAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(int idRecipe) {
-                presenter.getMyRecipe(idRecipe);
-            }
-        });
-                RecyclerView.LayoutManager lm = new GridLayoutManager(getContext(), 1);
-        rcvMyRecipes.setLayoutManager(lm);
+        rAdapter = new FilteredRecipeAdapter(getContext(), 0, myRecs);
+
         return rootView;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        rcvMyRecipes.setAdapter(rAdapter);
+        lvMyRecipes.setAdapter(rAdapter);
         fabAddRecipe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Bundle b = new Bundle();
-                b.putParcelable("newR", new Recipe());
-                mCallback.showAddRecipe(b);
+                mCallback.showAddRecipe(null);
             }
         });
+        lvMyRecipes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                presenter.getRecipe(rAdapter.getItem(i).getIdr(), mCallback.getUser().getId());
+            }
+        });
+
 
     }
 
@@ -122,7 +130,7 @@ public class MyRecipesFragment extends Fragment implements RecipesPresenter.View
     @Override
     public void onStart() {
         super.onStart();
-        presenter.getMyRecipesList();
+        presenter.getMyRecipesList(mCallback.getUser().getId());
     }
 
     @Override
@@ -131,16 +139,23 @@ public class MyRecipesFragment extends Fragment implements RecipesPresenter.View
     }
 
     @Override
-    public void setFavState(Recipe recipe) {
-
-    }
+    public void setFavState(Recipe recipe) {}
 
     @Override
     public void setListData(ArrayList<Recipe> recs) {
-
+            rAdapter.clear();
+            rAdapter.addAll(recs);
+            rAdapter.notifyDataSetChanged();
     }
 
-    Recipe getRecipe(){
-        return null;
+    @Override
+    public void cancelSearch() {
+        rAdapter.clear();
+        lvMyRecipes.setVisibility(GONE);
+        txvEmpty.setVisibility(View.VISIBLE);
+    }
+    @Override
+    public void addNewComment(ArrayList<Comment> newComment) {
+
     }
 }

@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -32,6 +33,7 @@ import static com.ismael.fastrecipes.utils.Const.f6;
 
 /**
  * SearchRecipeFragment.class - Vista del buscador de recetas. Gestiona los filtros por los que se va a buscar una receta.
+ * @author Ismael Garcia
  */
 public class SearchRecipeFragment extends Fragment{
 
@@ -46,6 +48,9 @@ public class SearchRecipeFragment extends Fragment{
 
     @BindView(R.id.txvfilterEmptyList)
     TextView txvEmpty;
+
+    @BindView(R.id.txvQqc)
+    TextView title;
 
     @BindView(R.id.rcvFilterList)
     ListView lvFilters;
@@ -113,6 +118,8 @@ public class SearchRecipeFragment extends Fragment{
         if(mCallback.getFilters().size() == 0){
             txvEmpty.setVisibility(View.VISIBLE);
         }
+        Typeface font = Typeface.createFromAsset(getContext().getAssets(), "yummycupcakes.ttf");
+        title.setTypeface(font);
         return rootView;
     }
 
@@ -153,25 +160,13 @@ public class SearchRecipeFragment extends Fragment{
 
                 switch (type){
                     case f1:
-                        Filter ingnot = mCallback.getFilterByName(f2);
-                        ArrayList<Filter> tmp = new ArrayList<>();
-                        tmp.add(filterAdapter.getItem(i));
-                        tmp.add(ingnot);
-                        b.putParcelableArrayList("filters", tmp);
-                        mCallback.showSearchByIngredients(b);
+                        mCallback.showSearchByIngredients(null);
                         break;
                     case f2:
-                        Filter ingok = mCallback.getFilterByName(f1);
-                        ArrayList<Filter> tmp2 = new ArrayList<>();
-                        tmp2.add(filterAdapter.getItem(i));
-                        tmp2.add(ingok);
-                        b.putParcelableArrayList("filters", tmp2);
-                        mCallback.showSearchByIngredients(b);
+                        mCallback.showSearchByIngredients(null);
                         break;
                     case f3:
-                        Filter ftmp3 = mCallback.getFilterByName(f3);
-                        b.putParcelable("filter", ftmp3);
-                        mCallback.showSearchByCategories(b);
+                        mCallback.showSearchByCategories(null);
                         break;
                     case f4:
                         showNameDialog();
@@ -249,11 +244,9 @@ public class SearchRecipeFragment extends Fragment{
         final String[] t = new String[1];
 
         customDialog = new AlertDialog.Builder(this.getContext(), R.style.Theme_Dialog_Translucent);
-        // obligamos al usuario a pulsar los botones para cerrarlo
-        //customDialog.setCancelable(false);
-        //establecemos el contenido de nuestro dialog
+        customDialog.setTitle("Tiempo máximo en minutos.");
+        customDialog.setCancelable(false);
         customDialog.setView(R.layout.dialog_time_picker);
-
         customDialog.setNegativeButton(getResources().getString(R.string.back), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -266,18 +259,19 @@ public class SearchRecipeFragment extends Fragment{
             public void onClick(DialogInterface dialogInterface, int i) {
                 //add filtro de tiempo
                 EditText edtTime = ((Dialog)dialogInterface).findViewById(R.id.edtTime);
-                t[0] = edtTime.getText().toString() + getResources().getString(R.string.minutes);
-                if (mCallback.getFilterByName(f5) != null) {
-                    mCallback.getFilterByName(f5).setContent(t[0]);
-                    filterAdapter.refreshList();
-                }
-                else {
-                    Filter ftmp = new Filter(f5, t[0]);
-                    mCallback.addFilter(ftmp);
-                    filterAdapter.refreshList();
-                    if(txvEmpty.getVisibility() == View.VISIBLE)
-                        hideEmpty();
+                if(!t[0].equals("")) {
+                    t[0] = edtTime.getText().toString() + " " + getResources().getString(R.string.minutes);
+                    if (mCallback.getFilterByName(f5) != null) {
+                        mCallback.getFilterByName(f5).setContent(t[0]);
+                        filterAdapter.refreshList();
+                    } else {
+                        Filter ftmp = new Filter(f5, t[0]);
+                        mCallback.addFilter(ftmp);
+                        filterAdapter.refreshList();
+                        if (txvEmpty.getVisibility() == View.VISIBLE)
+                            hideEmpty();
 
+                    }
                 }
             }
         });
@@ -307,8 +301,6 @@ public class SearchRecipeFragment extends Fragment{
                             case 1: content = getResources().getStringArray(R.array.diff_array)[1];
                                 break;
                             case 2:  content = getResources().getStringArray(R.array.diff_array)[2];
-                                break;
-                            case 3:  content = getResources().getStringArray(R.array.diff_array)[3];
                                 break;
                         }
 
@@ -341,6 +333,8 @@ public class SearchRecipeFragment extends Fragment{
 
         customDialog = new AlertDialog.Builder(this.getContext(), R.style.Theme_Dialog_Translucent);
         customDialog.setCancelable(false);
+        customDialog.setTitle("Busca por el nombre de la receta:");
+
         customDialog.setView(R.layout.item_search);
         customDialog.setNegativeButton(getResources().getString(R.string.back), new DialogInterface.OnClickListener() {
             @Override
@@ -354,16 +348,17 @@ public class SearchRecipeFragment extends Fragment{
             public void onClick(DialogInterface dialogInterface, int i) {
                 EditText edtTime = ((Dialog)dialogInterface).findViewById(R.id.edtNameRecSearch);
                 t[0] = edtTime.getText().toString();
-                if (mCallback.getFilterByName(f4) != null) {
-                    mCallback.getFilterByName(f4).setContent(t[0]);
-                    filterAdapter.refreshList();
-                }
-                else {
-                    Filter ftmp = new Filter(f4, t[0]);
-                    mCallback.addFilter(ftmp);
-                    if(txvEmpty.getVisibility() == View.VISIBLE)
-                        hideEmpty();
-                    filterAdapter.refreshList();
+                if(!t[0].equals("")) {
+                    if (mCallback.getFilterByName(f4) != null) {
+                        mCallback.getFilterByName(f4).setContent(t[0]);
+                        filterAdapter.refreshList();
+                    } else {
+                        Filter ftmp = new Filter(f4, t[0]);
+                        mCallback.addFilter(ftmp);
+                        if (txvEmpty.getVisibility() == View.VISIBLE)
+                            hideEmpty();
+                        filterAdapter.refreshList();
+                    }
                 }
             }
         }).show();

@@ -3,6 +3,7 @@ package com.ismael.fastrecipes;
 
 import android.app.Activity;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,10 +12,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.TextView;
 
+import com.ismael.fastrecipes.adapter.FilteredRecipeAdapter;
 import com.ismael.fastrecipes.adapter.RecipeAdapter;
 import com.ismael.fastrecipes.interfaces.RecipesPresenter;
+import com.ismael.fastrecipes.model.Comment;
 import com.ismael.fastrecipes.model.Recipe;
+import com.ismael.fastrecipes.model.User;
 import com.ismael.fastrecipes.presenter.RecipesPresenterImpl;
 
 import java.util.ArrayList;
@@ -28,12 +35,17 @@ import butterknife.ButterKnife;
  */
 public class FavRecipesFragment extends Fragment implements RecipesPresenter.View {
 
-    @BindView(R.id.rcvfavList)
-    RecyclerView rcvFavRecipes;
+    @BindView(R.id.lvfavList)
+    ListView lvFavRecipes;
+    @BindView(R.id.emptyFavs)
+    TextView emptyList;
+    @BindView(R.id.txvFavRecsTitle)
+    TextView title;
     FavRecipesListener mCallback;
     RecipesPresenter presenter;
     static FavRecipesFragment frfInstance;
-    RecipeAdapter adapterFavRec;
+    FilteredRecipeAdapter adapterFavRec;
+    ArrayList<Recipe> favRecs;
 
 
     public FavRecipesFragment() {
@@ -41,8 +53,10 @@ public class FavRecipesFragment extends Fragment implements RecipesPresenter.Vie
     }
 
     @Override
-    public void setCursorData(Cursor data) {
-        adapterFavRec.swapCursor(data);
+    public void setListData(ArrayList<Recipe> data) {
+            adapterFavRec.clear();
+            adapterFavRec.addAll(data);
+            adapterFavRec.notifyDataSetChanged();
     }
 
     public static FavRecipesFragment getInstance(Bundle args){
@@ -69,12 +83,15 @@ public class FavRecipesFragment extends Fragment implements RecipesPresenter.Vie
     public interface FavRecipesListener{
         void showFavRecipes();
         void showRecipe(Bundle recipe);
+
+        User getUser();
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        presenter = new RecipesPresenterImpl(this);
+        presenter = new RecipesPresenterImpl(this, 0);
+        favRecs = new ArrayList<>();
     }
 
     @Override
@@ -83,16 +100,12 @@ public class FavRecipesFragment extends Fragment implements RecipesPresenter.Vie
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_fav_recipes, container, false);
         ButterKnife.bind(this, root);
-        RecyclerView.LayoutManager lm = new LinearLayoutManager(getContext());
-        rcvFavRecipes.setLayoutManager(lm);
-        adapterFavRec = new RecipeAdapter(getContext(), new RecipeAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(int idRecipe) {
-                presenter.getFavRecipe(idRecipe);
-            }
-        });
+        adapterFavRec = new FilteredRecipeAdapter(getContext(), 0, favRecs);
 
-        rcvFavRecipes.setAdapter(adapterFavRec);
+
+        Typeface font = Typeface.createFromAsset(getContext().getAssets(), "yummycupcakes.ttf");
+        title.setTypeface(font);
+        lvFavRecipes.setAdapter(adapterFavRec);
 
 
         return root;
@@ -101,12 +114,20 @@ public class FavRecipesFragment extends Fragment implements RecipesPresenter.Vie
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        lvFavRecipes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                presenter.getRecipe(favRecs.get(i).getIdr(), mCallback.getUser().getId());
+            }
+        });
+
+
 
     }
     @Override
     public void onStart() {
         super.onStart();
-        presenter.getFavRecipes();
+        presenter.getFavRecipes(mCallback.getUser().getId());
     }
 
     @Override
@@ -131,7 +152,14 @@ public class FavRecipesFragment extends Fragment implements RecipesPresenter.Vie
     }
 
     @Override
-    public void setListData(ArrayList<Recipe> recs) {
+    public void cancelSearch() {
+        adapterFavRec.clear();
+        emptyList.setVisibility(View.VISIBLE);
+        lvFavRecipes.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void addNewComment(ArrayList<Comment> newComment) {
 
     }
 

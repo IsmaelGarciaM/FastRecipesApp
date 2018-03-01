@@ -8,6 +8,12 @@
     <entry key="14">password_case</entry>
     <entry key="15">password_number</entry>
     <entry key="16">phone_error</entry>
+    <entry key="101">empty_time</entry>
+    <entry key="102">empty_dif</entry>
+    <entry key="103">empty_name</entry>
+    <entry key="104">empty_ing</entry>
+    <entry key="105">empty_elaboration</entry>
+
 
 
 </map>

@@ -14,7 +14,7 @@ public interface RegisterPresenter {
 
 
     interface View{
-        void showInputError();
+        void showInputError(String msg);
         void showLogin();
     }
 }

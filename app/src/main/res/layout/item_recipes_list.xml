@@ -15,7 +15,7 @@
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/imvRecipeImg"
             android:layout_width="92dp"
-            android:src="@drawable/heart_outline"
+            android:src="@drawable/addrecipe"
             android:layout_height="match_parent"
             android:layout_alignParentStart="true"
             android:layout_marginEnd="@dimen/textPageBorder"
@@ -106,6 +106,7 @@ android:layout_alignBaseline="@id/difficultIcon"
             android:layout_height="wrap_content"
             android:id="@+id/txvRecipeRating"
             android:textSize="10sp"
+            android:layout_marginStart="@dimen/elevation"
             android:layout_toEndOf="@id/ratingIcon"
             android:layout_alignBaseline="@id/ratingIcon"
             />
@@ -113,36 +114,23 @@ android:layout_alignBaseline="@id/difficultIcon"
         <ImageView
             android:layout_width="16dp"
             android:layout_height="16dp"
-            android:id="@+id/likesIcon"
+            android:id="@+id/imvNpersicon"
             android:layout_marginStart="@dimen/textPageBorder"
-            android:src="@drawable/heart_outline"
+            android:src="@drawable/user_icon"
             android:layout_toEndOf="@+id/txvRecipeRating"/>
 
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBaseline="@id/likesIcon"
-            android:id="@+id/txvRecipeLikes"
+            android:layout_alignBaseline="@id/imvNpersicon"
+            android:id="@+id/txvRecipeNper"
             android:textSize="10sp"
-            android:layout_toEndOf="@id/likesIcon"
-            android:text="240"
+            android:layout_marginStart="@dimen/elevation"
+            android:layout_toEndOf="@id/imvNpersicon"
+            android:text="-"
             />
 
         </RelativeLayout>
-
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginEnd="@dimen/hbLines"
-        android:layout_below="@id/rllInformation"
-        android:background="@color/textColorPrimary"/>
-
-
-
-
     </RelativeLayout>
-
 </android.support.v7.widget.CardView>
