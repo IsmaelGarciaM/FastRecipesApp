@@ -1,5 +1,7 @@
 package com.ismael.fastrecipes;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -74,18 +76,9 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
     }
 
     public void setUser(User us) {
-        this.user = us;
-        try {
-            StorageReference mStorageRefload = FirebaseStorage.getInstance().getReference(Const.FIREBASE_IMAGE_USER + "/" + String.valueOf(user.getId()));
-            if (us.getImage().startsWith("gs")) {
-                mStorageRefload.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Uri> task) {
-                        user.setImage(task.getResult().toString());
-                    }
-                });
-            }
-        }catch(Exception e){}
+        this.user.setLocation(us.getLocation());
+        this.user.setName(us.getName());
+        this.user.setImage(us.getImage());
     }
 
     User user;
@@ -513,6 +506,8 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
      * @param v True para mostrar la vista, false para no mostrarla
      */
     void setSettingsOp(boolean v){settingsOp = v;}
+
+
 
 
 }

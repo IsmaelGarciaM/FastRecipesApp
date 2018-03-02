@@ -12,8 +12,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -189,8 +191,8 @@ public class RecipesPresenterImpl implements RecipesPresenter{
                     public void onCompleted() {
                         Log.d("SUBSCRIBER ADD INFO", "RECIPE ADDED");
                         //view.showSocialFragment();
-                        if(r[0].getImage().startsWith("gs"))
-                            loadImage(r[0].getIdr(), mImageUri);
+                        if(r[0].getImage().equals("add") && mImageUri != null)
+                            loadImage(r[0], mImageUri);
 
                     }
 
@@ -218,8 +220,8 @@ public class RecipesPresenterImpl implements RecipesPresenter{
                     public void onCompleted() {
                         Log.d("SUBSCRIBER ADD INFO", "RECIPE ADDED");
                         //view.showSocialFragment();
-                        if(r[0].getImage().startsWith("gs") && mImageUri != null)
-                            loadImage(r[0].getIdr(), mImageUri);
+                        if(r[0].getImage().equals("add") && mImageUri != null)
+                            loadImage(r[0], mImageUri);
 
                     }
 
@@ -442,13 +444,19 @@ public class RecipesPresenterImpl implements RecipesPresenter{
     }
 
     @Override
-    public void loadImage(int idRecipe, Uri mImageUri){
+    public void loadImage(final Recipe rTmp, Uri mImageUri){
         // Intent i = new Intent(Intent.ACTION_PICK, android.provider.)
-        mStorageRef = FirebaseStorage.getInstance().getReference(Const.FIREBASE_IMAGE_RECIPE+"/"+String.valueOf(idRecipe));
+        mStorageRef = FirebaseStorage.getInstance().getReference(Const.FIREBASE_IMAGE_RECIPE+"/"+String.valueOf(rTmp.getIdr()));
         mStorageRef.putFile(mImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                taskSnapshot.getDownloadUrl();
+                mStorageRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Uri> task) {
+                        rTmp.setImage(task.getResult().toString());
+                        modifyRecipe(rTmp, null);
+                    }
+                });
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override

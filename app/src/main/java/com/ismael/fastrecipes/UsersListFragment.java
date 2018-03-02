@@ -60,6 +60,11 @@ public class UsersListFragment extends Fragment implements ProfilePresenter.View
     }
 
     @Override
+    public void showProgress(boolean show) {
+        
+    }
+
+    @Override
     public void updateCurrentUser(User u) {
 
     }

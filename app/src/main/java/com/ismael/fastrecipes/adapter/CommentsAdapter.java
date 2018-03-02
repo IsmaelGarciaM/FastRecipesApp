@@ -2,6 +2,7 @@ package com.ismael.fastrecipes.adapter;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -14,10 +15,15 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.ismael.fastrecipes.R;
 import com.ismael.fastrecipes.interfaces.RecipesPresenter;
 import com.ismael.fastrecipes.model.Comment;
 import com.ismael.fastrecipes.model.User;
+import com.ismael.fastrecipes.utils.Const;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -38,13 +44,21 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHo
     Context context;
     View vista;
     List<Comment> comments;
+    OnItemClickListener rListener;
 
-    public CommentsAdapter(Context context, List<Comment> com) {
-        this.comments = com;
-        this.context = context;
+    public interface OnItemClickListener {
+        void onItemClick(int idUser);
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder{
+
+    public CommentsAdapter(Context context, List<Comment> com, OnItemClickListener rListener) {
+        this.comments = com;
+        this.context = context;
+        this.rListener = rListener;
+
+    }
+
+    class ViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.imgCommentItem)
         ImageView imgUserComment;
 
@@ -57,25 +71,44 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHo
         @BindView(R.id.txtCommentDate)
         TextView txvComDate;
 
-
-        public ViewHolder(View v){
+        public ViewHolder(View v) {
             super(v);
             ButterKnife.bind(this, v);
         }
+
+        public void bind(final Comment cTmp, final OnItemClickListener listener) {
+            txvNameUserComment.setText(cTmp.getNameAuthor());
+            txvComment.setText(cTmp.getContent());
+            txvComDate.setText(cTmp.getDate());
+
+            try {
+                StorageReference mStorageRefloadrec = FirebaseStorage.getInstance().getReference(Const.FIREBASE_IMAGE_USER + "/" + String.valueOf(cTmp.getIdAuthor()));
+
+                mStorageRefloadrec.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Uri> task) {
+                        Picasso.with(context).load(task.getResult()).into(imgUserComment);
+
+                    }
+                });
+            } catch (Exception e) {
+                imgUserComment.setImageDrawable(context.getResources().getDrawable(R.drawable.user_icon));
+            }
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    listener.onItemClick(cTmp.getIdAuthor());
+                }
+            });
+        }
     }
+
 
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
 
         Comment cTmp = getItem(position);
-        /*Picasso.with(context)
-                .load("")
-                .into(holder.imgUserComment);*/
-        holder.txvNameUserComment.setText(cTmp.getNameAuthor());
-        holder.txvComment.setText(cTmp.getContent());
-        holder.txvComDate.setText(cTmp.getDate());
-
-
+        holder.bind(cTmp, rListener);
 
     }
 
@@ -83,15 +116,28 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHo
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_comment, parent, false);
+        final ViewHolder holder = new ViewHolder(rootView);
+        rootView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
         return new ViewHolder(rootView);
     }
     @Override
     public int getItemCount() {
-        return comments.size();
+        if(comments != null)
+            return comments.size();
+        else
+            return  0;
     }
 
     public Comment getItem(int pos) {
-        return comments.get(pos);
+        if(comments != null)
+            return comments.get(pos);
+        else
+            return null;
     }/*
     public CommentsAdapter(View itemView) {
         super(itemView);

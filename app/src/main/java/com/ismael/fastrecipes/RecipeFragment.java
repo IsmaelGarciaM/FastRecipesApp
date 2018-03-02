@@ -109,39 +109,18 @@ public class RecipeFragment extends Fragment implements RecipesPresenter.View{
     private CommentsAdapter adapterCommentFirebase;
 
     public void setRecipeData(Recipe r){
-        StorageReference mStorageRefload = FirebaseStorage.getInstance().getReference(Const.FIREBASE_IMAGE_USER+"/"+String.valueOf(r.getAuthor()));
-        mStorageRefload.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
-            @Override
-            public void onComplete(@NonNull Task<Uri> task) {
-                try {
-                    Picasso.with(getContext()).load(task.getResult()).into(imvRecipeUser);
-                }
-                catch (RuntimeExecutionException ree){
-                    try {
-                        imvRecipeUser.setImageDrawable(getResources().getDrawable(R.drawable.user_icon));
-                    }catch (Exception e){}
-                }
-                catch (Exception e){}
-            }
-        });
-        final String img = r.getImage();
+
+
         try {
-            if(img.startsWith("gs")) {
+            if(r.getImage() != null && !r.getImage().equals("")) {
 
-                StorageReference mStorageRefloadrec = FirebaseStorage.getInstance().getReference(Const.FIREBASE_IMAGE_RECIPE + "/" + String.valueOf(r.getIdr()));
-
-                mStorageRefloadrec.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Uri> task) {
-                        try {
-                            Picasso.with(getContext()).load(task.getResult()).into(imvRecipe);
-                        } catch (Exception e) {
-
-                        }
-                    }
-                });
-            } else if(r.getImage() != null && !r.getImage().equals(""))
+                try {
                     Picasso.with(getContext()).load(r.getImage()).into(imvRecipe);
+                } catch (Exception e) {
+                    imvRecipe.setImageDrawable(getResources().getDrawable(R.drawable.addrecipe));
+                }
+
+            }
             else
                 imvRecipe.setImageDrawable(getResources().getDrawable(R.drawable.addrecipe));
 
@@ -194,13 +173,9 @@ public class RecipeFragment extends Fragment implements RecipesPresenter.View{
 
     interface RecipeFragmentListener{
         void showRecipe(Bundle recipe);
-
         User getUser();
-
         void showAddRecipe(Bundle b);
-
         void showProfile(Bundle b);
-
         void showUsersList(Bundle b);
     }
 
@@ -243,7 +218,14 @@ public class RecipeFragment extends Fragment implements RecipesPresenter.View{
         ratingBar.setNameForSmile(BaseRating.GOOD, "Me gusta");//R.string.bad);
         ratingBar.setNameForSmile(BaseRating.GREAT, "¡Me encanta!");//R.string.bad);
 
-        adapterCommentFirebase = new CommentsAdapter(getContext(), comments);
+        adapterCommentFirebase = new CommentsAdapter(getContext(), comments, new CommentsAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int idUser) {
+                Bundle b = new Bundle();
+                b.putInt("id", idUser);
+                mCallback.showProfile(b);
+            }
+        });
 
         lvComments.setHasFixedSize(true);
         lvComments.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -295,12 +277,11 @@ public class RecipeFragment extends Fragment implements RecipesPresenter.View{
         });
 
         lvComments.setAdapter(adapterCommentFirebase);
+
        /*lvComments.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Bundle b = new Bundle();
-                b.putInt("id", adapterCommentFirebase.getItem(i).getIdr());
-                mCallback.showProfile(b);
+
             }
         });*/
 

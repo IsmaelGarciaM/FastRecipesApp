@@ -62,34 +62,21 @@ public class FilteredRecipeAdapter extends ArrayAdapter<Recipe> {
         else
             frh = (FiltRecipeHolder)item.getTag();
 
-        if(getItem(position).getImage().startsWith("gs")) {
 
-            StorageReference mStorageRefloadrec = FirebaseStorage.getInstance().getReference(Const.FIREBASE_IMAGE_RECIPE + "/" + String.valueOf(getItem(position).getIdr()));
+        if(getItem(position).getImage() != null && !getItem(position).getImage().equals("")) {
+            try {
+                Picasso.with(context)
+                        .load(getItem(position).getImage())
+                        .into(frh.imgRecipe);
 
-            mStorageRefloadrec.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
-                @Override
-                public void onComplete(@NonNull Task<Uri> task) {
-                    try {
-                        Picasso.with(context).load(task.getResult()).into(frh.imgRecipe);
-                    } catch (Exception e) {
-                        frh.imgRecipe.setImageDrawable(context.getResources().getDrawable(R.drawable.addrecipe));
-                    }
-                }
-            });
-        }else if(getItem(position).getImage() != null && !getItem(position).getImage().equals("")) {
-                try {
-                    Picasso.with(context)
-                            .load(getItem(position).getImage())
-                            .into(frh.imgRecipe);
-
-                } catch (Exception e) {
-                    frh.imgRecipe.setImageDrawable(context.getResources().getDrawable(R.drawable.addrecipe));
-                }
-            }else
+            } catch (Exception e) {
                 frh.imgRecipe.setImageDrawable(context.getResources().getDrawable(R.drawable.addrecipe));
+            }
+        }else
+            frh.imgRecipe.setImageDrawable(context.getResources().getDrawable(R.drawable.addrecipe));
 
 
-            frh.txvName.setText(getItem(position).getName());
+        frh.txvName.setText(getItem(position).getName());
         frh.txvCategories.setText(getItem(position).getCategories());
         frh.txvRecipeTime.setText(String.valueOf(getItem(position).getTime()) + " min.");
         frh.txvRecipeDifficulty.setText(getItem(position).getDifficulty());

@@ -24,7 +24,7 @@ public interface RecipesPresenter {
     void validateField(String field);
     void validateName(String name);
     void validateEla(String elaboration);
-    void loadImage(int id, Uri mImageUri);
+    void loadImage(Recipe tmp, Uri mImageUri);
 
     interface View{
         Context getContext();

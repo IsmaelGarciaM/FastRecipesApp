@@ -246,13 +246,8 @@ public class AddRecipeFragment extends Fragment implements RecipesPresenter.View
         //imagen
         if(imageChanged) {
             //
-            if(recipeTmp != null && recipeTmp.getIdr() > 0){
-                presenter.loadImage(recipeTmp.getIdr(), mImageUri);
-                newR.setImage("gs://fastrecipes-26c3c.appspot.com/RECIPE/"+String.valueOf(recipeTmp.getIdr()));
-            }
-            else {
-                newR.setImage("addin");
-            }
+                newR.setImage("add");
+
         }else if(recipeTmp != null && recipeTmp.getImage() != null && !recipeTmp.getImage().equals("")){
             newR.setImage(recipeTmp.getImage());
         } else if (!String.valueOf(edtImageUrl.getText()).equals("")) {
@@ -351,7 +346,7 @@ public class AddRecipeFragment extends Fragment implements RecipesPresenter.View
     }
 
     private void showError(String msg) {
-        Snackbar.make(getActivity().findViewById(android.R.id.content), msg, Snackbar.LENGTH_LONG).show();
+        Snackbar.make(edtElaboration, msg, Snackbar.LENGTH_LONG).show();
     }
 
     void setRecipeData(){
@@ -363,13 +358,8 @@ public class AddRecipeFragment extends Fragment implements RecipesPresenter.View
         //imagen
         edtNameRecipe.setText(recipeTmp.getName());
 
-        if(recipeTmp.getImage() != null && recipeTmp.getImage().startsWith("gs") && !imageChanged) {
-            mStorageRefload.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
-                @Override
-                public void onComplete(@NonNull Task<Uri> task) {
-                    Picasso.with(getContext()).load(task.getResult()).into(imvImageRecipe);
-                }
-            });
+        if(recipeTmp.getImage() != null && !recipeTmp.getImage().equals("") && !imageChanged) {
+                    Picasso.with(getContext()).load(recipeTmp.getImage()).into(imvImageRecipe);
 
         }
         else if ( mImageUri != null) {
@@ -468,7 +458,7 @@ public class AddRecipeFragment extends Fragment implements RecipesPresenter.View
                     Log.v(getClass().getSimpleName(),"Can't create file to take picture!");
                 }
                 //mImageUri = Uri.fromFile(photo);
-                mImageUri = GenericFileProvider.getUriForFile(getContext(), "com.ismael.fastrecipesphoto", photo);
+                mImageUri = GenericFileProvider.getUriForFile(getContext(), "com.ismael.fastrecipes", photo);
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri);
                 startActivityForResult(intent, ACTIVITY_SELECT_FROM_CAMERA);
 

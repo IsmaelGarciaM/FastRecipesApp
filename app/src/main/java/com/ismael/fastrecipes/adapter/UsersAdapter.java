@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -65,15 +66,15 @@ public class UsersAdapter extends ArrayAdapter<User> {
             uh = (UserHolder) item.getTag();
 
 
-        if(getItem(position).getImage() != null && getItem(position).getImage().startsWith("gs")) {
-            StorageReference mStorageRefload = FirebaseStorage.getInstance().getReference(Const.FIREBASE_IMAGE_USER + "/" + String.valueOf(getItem(position).getId()));
+        if(getItem(position).getImage() != null && !getItem(position).getImage().equals("")) {
             //cargar imagen
-            mStorageRefload.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
-                @Override
-                public void onComplete(@NonNull Task<Uri> task) {
-                    Picasso.with(context).load(task.getResult()).into(uh.userImage);
-                }
-            });
+            try {
+                Picasso.with(context).load(getItem(position).getImage()).into(uh.userImage);
+
+            }
+            catch (Exception e){
+                uh.userImage.setImageDrawable(context.getResources().getDrawable(R.drawable.user_icon));
+            }
         }
         else
             uh.userImage.setImageDrawable(context.getResources().getDrawable(R.drawable.user_icon));

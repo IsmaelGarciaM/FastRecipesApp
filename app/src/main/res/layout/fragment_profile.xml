@@ -178,5 +178,11 @@
         app:srcCompat="@drawable/ic_edit"
         app:backgroundTint="@color/colorPrimary"/>
 
+    <ProgressBar
+        android:id="@+id/pbUpdateUser"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        />
 
 </android.support.design.widget.CoordinatorLayout>

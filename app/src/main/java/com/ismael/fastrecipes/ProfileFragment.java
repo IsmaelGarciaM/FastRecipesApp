@@ -1,5 +1,7 @@
 package com.ismael.fastrecipes;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -60,6 +63,9 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
 
     @BindView(R.id.imgProfileFragm)
     CircleImageView imgUser;
+
+    @BindView(R.id.pbUpdateUser)
+    ProgressBar pbUpdate;
 
     @BindView(R.id.edtNameProfile)
     TextInputEditText edtName;
@@ -101,7 +107,6 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
             ACTIVITY_SELECT_FROM_CAMERA = 1040, ACTIVITY_SHARE = 1030;
     private PhotoUtils photoUtils;
     boolean imageChanged;
-    private StorageReference mStorageRef;
 
     private static ProfileFragment instance;
     public ProfileFragment() {
@@ -130,6 +135,7 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
             fabEditProfile.setVisibility(View.GONE);
             edtTitleRecipes.setVisibility(View.VISIBLE);
             lvUserRecipes.setVisibility(View.VISIBLE);
+
         }
         else {
             edtTitleRecipes.setVisibility(View.GONE);
@@ -202,7 +208,13 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
                     edtLocation.setEnabled(false);
                     view.setBackgroundColor(getResources().getColor(R.color.backgroundEdit));
                     fabEditProfile.setImageResource(R.drawable.ic_edit);
-                    presenter.editProfile(getUserData());
+                    showProgress(true);
+                    User uTmp = getUserData();
+                    if(uTmp != null && mImageUri != null)
+                        presenter.editProfile(uTmp, imageChanged, mImageUri);
+                    else if(uTmp != null){
+                        presenter.editProfile(uTmp, imageChanged, null);
+                    }
 
                 }else{
                     edit = true;
@@ -226,9 +238,14 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
         });
     }
 
+
+
+
     @Override
     public void updateCurrentUser(User u){
         mCallback.setUser(u);
+        showProgress(false);
+        Snackbar.make(edtName, "Perfil actualizado", Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
@@ -248,27 +265,14 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
         if(u.getLocation() != null && !u.getLocation().equals("")) edtLocation.setText(u.getLocation());
         else edtLocation.setText("-");
         edtRegdate.setText(u.getRegdate());
+        if (u.getImage() != null && !u.getImage().equals("") && !imageChanged) {
+            try {
+                Picasso.with(getContext()).load(u.getImage()).into(imgUser);
+            }catch (Exception e ){}
+            } else if (imageChanged) {
+            } else
+                imgUser.setImageDrawable(getContext().getResources().getDrawable(R.drawable.user_icon));
 
-        StorageReference mStorageRefload = FirebaseStorage.getInstance().getReference(Const.FIREBASE_IMAGE_USER+"/"+String.valueOf(mCallback.getUser().getId()));
-
-        if(u.getImage() != null && !u.getImage().equals("") && !imageChanged) {
-            if(mCallback.getUser().getId() == u.getId()){
-                Picasso.with(getContext()).load(mCallback.getUser().getImage()).into(imgUser);
-
-            }
-            else{
-                mStorageRefload.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Uri> task) {
-                        Picasso.with(getContext()).load(task.getResult()).into(imgUser);
-                    }
-                });
-            }
-
-        }
-        else if(imageChanged){}
-        else
-            imgUser.setImageDrawable(getContext().getResources().getDrawable(R.drawable.user_icon));
     }
 
     @Override
@@ -283,22 +287,22 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
 
         tilEmailProfile.setErrorEnabled(false);
         tilEmailProfile.setError(null);
-        String image;
-        String mail = String.valueOf(edtEmailProfile.getText());
+        String image = "";
+        //String mail = String.valueOf(edtEmailProfile.getText());
         String name = String.valueOf(edtName.getText());
         //si aparece un error se cancela el login; cancel = true
         boolean cancel = false;
         View focusView = null;
 
         //El presentador comprueba los datos
-        try {
+       /* try {
             presenter.validateMail(mail);
         } catch (DataEntryException exc) {
             tilEmailProfile.setErrorEnabled(true);
             tilEmailProfile.setError(exc.getMessage());
             focusView = tilEmailProfile;
             cancel = true;
-        }
+        }*/
 
         try {
             presenter.validateName(name);
@@ -308,42 +312,19 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
             focusView = tilNameProfile;
             cancel = true;
         }
-
-        if(imageChanged) {
-             loadImage();
-            image = "gs://fastrecipes-26c3c.appspot.com/USER/"+String.valueOf(mCallback.getUser().getId());
-
+        User tmp = null;
+        if(cancel){
+            tmp=null;
+            focusView.requestFocus();
+            showProgress(false);
         }
         else {
-            if(mCallback.getUser().getImage() != null)
-                image = mCallback.getUser().getImage();
-            else
-                image = "";
+            tmp = new User(mCallback.getUser().getId(), mCallback.getUser().getEmail(), name, "", edtLocation.getText().toString(), mCallback.getUser().getRegdate(), 0, image, "");
         }
-
-
-        User tmp = new User(mCallback.getUser().getId(), mCallback.getUser().getEmail(), name, "", edtLocation.getText().toString(), mCallback.getUser().getRegdate(), 0, image, "");
         return tmp;
     }
 
-    String loadImage(){
-       // Intent i = new Intent(Intent.ACTION_PICK, android.provider.)
-        final String[] newImage = new String[1];
-        mStorageRef = FirebaseStorage.getInstance().getReference(Const.FIREBASE_IMAGE_USER+"/"+String.valueOf(mCallback.getUser().getId()));
-        mStorageRef.putFile(mImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-               taskSnapshot.getDownloadUrl();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.d("ERROR FIREASE STORAGE", e.getMessage());
-            }
-        });
 
-        return "";
-    }
 
     private void getPhotoDialog() {
 
@@ -364,7 +345,7 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
                         Log.v(getClass().getSimpleName(),"Can't create file to take picture!");
                     }
                     //mImageUri = Uri.fromFile(photo);
-                    mImageUri = GenericFileProvider.getUriForFile(getContext(), "com.ismael.fastrecipesphoto", photo);
+                    mImageUri = GenericFileProvider.getUriForFile(getContext(), "com.ismael.fastrecipes", photo);
                     intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri);
                     startActivityForResult(intent, ACTIVITY_SELECT_FROM_CAMERA);
 
@@ -423,5 +404,31 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
             Log.d("Error IMAGEN", "Error al cargar la imagen");
 
         }
+    }
+
+    @Override
+    public void showProgress(final boolean show) {
+        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
+        // for very easy animations. If available, use these APIs to fade-in
+        // the progress spinner.
+        int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+        fabEditProfile.setVisibility(show ? View.GONE : View.VISIBLE);
+        fabEditProfile.animate().setDuration(shortAnimTime).alpha(
+                show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                fabEditProfile.setVisibility(show ? View.GONE : View.VISIBLE);
+            }
+        });
+
+        pbUpdate.setVisibility(show ? View.VISIBLE : View.GONE);
+        pbUpdate.animate().setDuration(shortAnimTime).alpha(
+                show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                pbUpdate.setVisibility(show ? View.VISIBLE : View.GONE);
+            }
+        });
     }
 }

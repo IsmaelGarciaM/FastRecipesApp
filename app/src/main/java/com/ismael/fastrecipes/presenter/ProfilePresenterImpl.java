@@ -1,15 +1,25 @@
 package com.ismael.fastrecipes.presenter;
 
 import android.content.Context;
+import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.ismael.fastrecipes.FastRecipesApplication;
 import com.ismael.fastrecipes.exceptions.DataEntryException;
 import com.ismael.fastrecipes.interfaces.ProfilePresenter;
 import com.ismael.fastrecipes.model.Errors;
 import com.ismael.fastrecipes.model.Recipe;
 import com.ismael.fastrecipes.model.User;
+import com.ismael.fastrecipes.utils.Const;
 import com.ismael.fastrecipes.utils.FastRecipesService;
 import com.ismael.fastrecipes.utils.Result;
 import com.ismael.fastrecipes.utils.ResultUser;
@@ -31,6 +41,8 @@ public class ProfilePresenterImpl implements ProfilePresenter {
     private Context context;
     private ProfilePresenter.View view;
     private FastRecipesService mService;
+    private StorageReference mStorageRef;
+
 
     public ProfilePresenterImpl(ProfilePresenter.View vista){
         this.view = vista;
@@ -47,9 +59,6 @@ public class ProfilePresenterImpl implements ProfilePresenter {
                 .subscribe(new Subscriber<ResultUser>() {
                     @Override
                     public void onCompleted() {
-                        view.updateCurrentUser(u.get(0));
-                        view.setUserData(u.get(0));
-
                     }
 
                     @Override
@@ -152,7 +161,7 @@ public class ProfilePresenterImpl implements ProfilePresenter {
 
 
     @Override
-    public void editProfile(User userData) {
+    public void editProfile(User userData, final boolean imageChanged, final Uri mImageUri) {
         final ArrayList<User> u = new ArrayList<>();
         //Observable<Recipe> call = mService.getRecipe(id);
         mService.updateProfile(userData).subscribeOn(Schedulers.newThread())
@@ -161,8 +170,13 @@ public class ProfilePresenterImpl implements ProfilePresenter {
                     boolean cont = false;
                     @Override
                     public void onCompleted() {
-                        if (cont)
-                        view.setUserData(u.get(0));
+                        if (cont){
+                            if(imageChanged)
+                                loadImage(u.get(0), mImageUri);
+                            else
+                                view.setUserData(u.get(0));
+                        }
+
                     }
 
                     @Override
@@ -180,6 +194,34 @@ public class ProfilePresenterImpl implements ProfilePresenter {
                 });
     }
 
+
+
+    String loadImage(final User u, Uri mImageUri){
+        // Intent i = new Intent(Intent.ACTION_PICK, android.provider.)
+        final String[] newImage = new String[1];
+        mStorageRef = FirebaseStorage.getInstance().getReference(Const.FIREBASE_IMAGE_USER+"/"+String.valueOf(u.getId()));
+        mStorageRef.putFile(mImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                mStorageRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Uri> task) {
+                        u.setImage(task.getResult().toString());
+                        editProfile(u, false, null);
+                        view.setUserData(u);
+                        view.updateCurrentUser(u);
+                    }
+                });
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("ERROR FIREASE STORAGE", e.getMessage());
+            }
+        });
+
+        return "";
+    }
     /**
      * Realiza la comprobación de que el email no es nulo y llama a otra función para comprobar su validez
      * @param email Email a comprobar

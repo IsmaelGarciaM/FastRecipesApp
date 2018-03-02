@@ -145,7 +145,6 @@ public class LoginPresenterImpl implements LoginPresenter {
                 }
         }
         else{
-            
             mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
