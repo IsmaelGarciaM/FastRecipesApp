@@ -1,2 +1,1 @@
-include ':fastrecipes-app'
-project(':fastrecipes-app').projectDir = new File('app')
+include 'app'
