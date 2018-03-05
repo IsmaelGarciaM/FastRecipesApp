@@ -1,8 +1,7 @@
 package com.ismael.fastrecipes;
 
-
 import android.app.Activity;
-import android.database.Cursor;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,8 +9,12 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,11 +23,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
+import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.RuntimeExecutionException;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.hsalf.smilerating.BaseRating;
@@ -37,23 +39,23 @@ import com.ismael.fastrecipes.model.User;
 import com.ismael.fastrecipes.presenter.RecipesPresenterImpl;
 import com.ismael.fastrecipes.utils.Const;
 import com.squareup.picasso.Picasso;
-
 import java.util.ArrayList;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * RecipeFragment.class - Contiene la vista de los datos de una receta
+ * @author Ismael García
  */
 public class RecipeFragment extends Fragment implements RecipesPresenter.View{
 
-    private FirebaseAnalytics mFirebaseAnalytics;
     public RecipeFragment() {
         // Required empty public constructor
     }
 
+    @BindView(R.id.crvRecipeUser)
+    CardView recipeAuthor;
     @BindView(R.id.edtComment)
     EditText edtComment;
     @BindView(R.id.llrating)
@@ -92,8 +94,8 @@ public class RecipeFragment extends Fragment implements RecipesPresenter.View{
     RecyclerView lvComments;
     @BindView(R.id.txvRecipeSource)
     TextView txvSource;
-    //@BindView(R.id.fabDeleteRecipe)
-    //FloatingActionButton fabDelete;
+    @BindView(R.id.fabDeleteRecipe)
+    FloatingActionButton fabDelete;
     @BindView(R.id.fabEditRecipe)
     FloatingActionButton fabEdit;
     @BindView(R.id.fabSetFav)
@@ -102,74 +104,10 @@ public class RecipeFragment extends Fragment implements RecipesPresenter.View{
     static private RecipeFragment rfInstance;
     private RecipeFragmentListener mCallback;
     Recipe recetaActual;
-    CommentsAdapter cAdapter;
     ArrayList<Comment> comments;
     int newRating;
     RecipesPresenter presenter;
     private CommentsAdapter adapterCommentFirebase;
-
-    public void setRecipeData(Recipe r){
-
-
-        try {
-            if(r.getImage() != null && !r.getImage().equals("")) {
-
-                try {
-                    Picasso.with(getContext()).load(r.getImage()).into(imvRecipe);
-                } catch (Exception e) {
-                    imvRecipe.setImageDrawable(getResources().getDrawable(R.drawable.addrecipe));
-                }
-
-            }
-            else
-                imvRecipe.setImageDrawable(getResources().getDrawable(R.drawable.addrecipe));
-
-            txvRecipeCategories.setText(r.getCategories());
-            txvRecipeName.setText(r.getName());
-            txvRecipeUserName.setText(r.getAuthorName());
-            txvIngredients.setText(r.getIngredients());
-            txvRecipeDescrip.setText(r.getElaboration());
-            txvRecipeTime.setText(String.valueOf(r.getTime()) + " minutos");
-            txvRecipeDifficulty.setText(r.getDifficulty());
-            txvSource.setText(r.getSource());
-            txvRecipeNPers.setText(String.valueOf(r.getnPers())+ " pers.");
-            txvRecipeRating.setText(String.valueOf(r.getRating())+ "/5");
-            setFavState(r);
-        }
-        catch (Exception e){}
-    }
-
-    @Override
-    public void showRecipeInfo(Bundle recipe) {
-        Recipe rtmp = recipe.getParcelable("r");
-        setRecipeData(rtmp);
-    }
-
-    @Override
-    public void setFavState(Recipe recipe) {
-        if (recipe.getFav() == 0){
-            fabFav.setImageResource(R.drawable.heart_outline);
-        }else{
-            fabFav.setImageResource(R.drawable.heart);
-        }
-    }
-
-    @Override
-    public void setListData(ArrayList<Recipe> recs) {
-
-    }
-
-    @Override
-    public void cancelSearch() {
-
-    }
-
-    @Override
-    public void addNewComment(ArrayList<Comment> c) {
-        comments.clear();
-        comments.addAll(c);
-        adapterCommentFirebase.notifyDataSetChanged();
-    }
 
     interface RecipeFragmentListener{
         void showRecipe(Bundle recipe);
@@ -177,21 +115,25 @@ public class RecipeFragment extends Fragment implements RecipesPresenter.View{
         void showAddRecipe(Bundle b);
         void showProfile(Bundle b);
         void showUsersList(Bundle b);
+        void showSocialFragment(String msg);
+
     }
 
     public static RecipeFragment getInstance(Bundle args){
 
         if(rfInstance == null) {
             rfInstance = new RecipeFragment();
+            rfInstance.setArguments(new Bundle());
         }
-        rfInstance.setArguments(args);
+        if(args != null) {
+            rfInstance.getArguments().putAll(args);
+        }
         return  rfInstance;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
         comments = new ArrayList<>();
         if(rfInstance.getArguments() != null){
             if(rfInstance.getArguments().getParcelable("recipe") != null){
@@ -199,7 +141,6 @@ public class RecipeFragment extends Fragment implements RecipesPresenter.View{
             }
         }
         presenter = new RecipesPresenterImpl(this, recetaActual.getIdr());
-
     }
 
     @Override
@@ -208,7 +149,7 @@ public class RecipeFragment extends Fragment implements RecipesPresenter.View{
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_recipe, container, false);
         ButterKnife.bind(this, rootView);
-        //fabDelete.setVisibility(View.GONE);
+        fabDelete.setVisibility(View.GONE);
         fabEdit.setVisibility(View.GONE);
 
         //Personalización de rating bar
@@ -233,13 +174,12 @@ public class RecipeFragment extends Fragment implements RecipesPresenter.View{
         return rootView;
     }
 
-    View mView;
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if(mCallback.getUser().getId() == recetaActual.getAuthor()){
-            //fabDelete.setEnabled(true);
-            //fabDelete.setVisibility(View.VISIBLE);
+            fabDelete.setEnabled(true);
+            fabDelete.setVisibility(View.VISIBLE);
             fabEdit.setEnabled(true);
             fabEdit.setVisibility(View.VISIBLE);
             fabEdit.setOnClickListener(new View.OnClickListener() {
@@ -252,15 +192,15 @@ public class RecipeFragment extends Fragment implements RecipesPresenter.View{
             });
         }
 
-        mView = view;
         btnSendComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(!edtComment.getText().toString().equals("")){
                     String comment = edtComment.getText().toString();
-                    presenter.sendComment(comment, recetaActual.getIdr(), mCallback.getUser().getId(), mCallback.getUser().getName());
+                    Comment c = new Comment( mCallback.getUser().getId(), mCallback.getUser().getName(), recetaActual.getIdr(), comment, String.valueOf(mCallback.getUser().getId()));
+                    presenter.sendComment(c);
                     edtComment.setText("");
-                    Snackbar.make(mView, "Comentario publicado.", Snackbar.LENGTH_SHORT);
+                    Snackbar.make(btnSendComment, "Comentario publicado.", Snackbar.LENGTH_SHORT);
                 }
             }
         });
@@ -277,13 +217,6 @@ public class RecipeFragment extends Fragment implements RecipesPresenter.View{
         });
 
         lvComments.setAdapter(adapterCommentFirebase);
-
-       /*lvComments.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-            }
-        });*/
 
         fabFav.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -305,23 +238,26 @@ public class RecipeFragment extends Fragment implements RecipesPresenter.View{
                     mCallback.showAddRecipe(b);
                 }
             });
-/*
+
             fabDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    presenter.deleteRecipe(recetaActual.getIdr());
+                    showSafeDelete(recetaActual.getName());
                 }
             });
-*/
+
         }
         else {
             fabFav.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if (recetaActual.getFav() == 0) {
+                        Log.d("ADDINFAV", "1");
                         presenter.setFavourite(mCallback.getUser().getId(), recetaActual.getIdr(), 1);
-                    } else
+                    } else{
+                        Log.d("DELETINFAV", "0");
                         presenter.setFavourite(mCallback.getUser().getId(), recetaActual.getIdr(), 0);
+                    }
 
                 }
             });
@@ -344,7 +280,18 @@ public class RecipeFragment extends Fragment implements RecipesPresenter.View{
                 }
             });
 
+            recipeAuthor.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Bundle b = new Bundle();
+                    b.putInt("id", recetaActual.getAuthor());
+                    mCallback.showProfile(b);
+                }
+            });
+
         }
+
+
     }
 
     @Override
@@ -373,4 +320,138 @@ public class RecipeFragment extends Fragment implements RecipesPresenter.View{
     }
 
 
+    /**
+     * Realiza la carga de los datos de la receta en sus respectivas vistas
+     * @param r Receta a mostrar
+     */
+    public void setRecipeData(Recipe r){
+        try {
+            if(r.getImage() != null && !r.getImage().equals("")) {
+                try {
+                    Picasso.with(getContext()).load(r.getImage()).resize(300, 200).onlyScaleDown().into(imvRecipe);
+                } catch (Exception e) {
+                    imvRecipe.setImageDrawable(getResources().getDrawable(R.drawable.addrecipe));
+                }
+            }
+            else
+                imvRecipe.setImageDrawable(getResources().getDrawable(R.drawable.addrecipe));
+
+
+            try{
+                StorageReference mStorageRef = FirebaseStorage.getInstance().getReference(Const.FIREBASE_IMAGE_USER+"/"+String.valueOf(r.getAuthor()));
+                mStorageRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Uri> task) {
+                        Picasso.with(getContext()).load(task.getResult()).error(R.drawable.user_icon).into(imvRecipeUser);
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        imvRecipeUser.setImageDrawable(getResources().getDrawable(R.drawable.user_icon));
+                    }
+                });
+            }catch (Exception e){}
+            txvRecipeCategories.setText(r.getCategories());
+            txvRecipeName.setText(r.getName());
+            txvRecipeUserName.setText(r.getAuthorName());
+            txvIngredients.setText(r.getIngredients());
+            txvRecipeDescrip.setText(r.getElaboration());
+            txvRecipeTime.setText(String.valueOf(r.getTime()) + " minutos");
+            txvRecipeDifficulty.setText(r.getDifficulty());
+            txvSource.setText(r.getSource());
+            txvRecipeNPers.setText(String.valueOf(r.getnPers())+ " pers.");
+            txvRecipeRating.setText(String.valueOf(r.getRating())+ "/5");
+            setFavState(r);
+        }
+        catch (Exception e){}
+    }
+
+    /**
+     * Actualiza los datos de la receta actualmente mostrada
+     * @param recipe Nuevos datos de la receta
+     */
+    @Override
+    public void showRecipeInfo(Bundle recipe) {
+        Recipe rtmp = recipe.getParcelable("r");
+        setRecipeData(rtmp);
+    }
+
+    /**
+     * Cambia el estado de favorito de la receta tras la respuesta del servidor
+     * @param recipe Receta con el nuevo estado de favorito
+     */
+    @Override
+    public void setFavState(Recipe recipe) {
+        if (recipe.getFav() == 0){
+            recetaActual.setFav(0);
+            fabFav.setImageResource(R.drawable.heart_outline);
+        }else{
+            recetaActual.setFav(1);
+            fabFav.setImageResource(R.drawable.heart);
+        }
+    }
+
+    @Override
+    public void setListData(ArrayList<Recipe> recs) {
+
+    }
+
+    /**
+     * Muestra un Snackbar al eliminar una receta
+     */
+    @Override
+    public void cancelSearch() {
+        mCallback.showSocialFragment("La receta se ha eliminado.");
+    }
+
+    /**
+     * Carga un nuevo comentario realizado en la receta
+     * @param c Comentarios de la receta
+     */
+    @Override
+    public void addNewComment(ArrayList<Comment> c) {
+        comments.clear();
+        comments.addAll(c);
+        adapterCommentFirebase.notifyDataSetChanged();
+    }
+
+    /**
+     * Muestra un mensaje tras realizar ciertas acciones o al producirse un error
+     * @param msg Mensaje a mostrar
+     */
+    @Override
+    public void showNetworkError(String msg) {
+        Toast t = Toast.makeText(FastRecipesApplication.getContext(), msg, Toast.LENGTH_LONG);
+        t.setGravity(Gravity.CENTER, 0, 0);
+        t.show();
+    }
+
+    /**
+     * Muestra un cuadro de diálogo para confirmar la eliminación de una receta
+     * @param name Nombre de la receta a eliminar
+     */
+    private void showSafeDelete(String name){
+        AlertDialog.Builder customDialog = new AlertDialog.Builder(this.getContext(), R.style.Theme_AppCompat_DayNight_Dialog);
+        customDialog.setTitle(getResources().getString(R.string.delete));
+        customDialog.setMessage("¿Estás seguro de que quieres eliminar la receta '"+name+"'?\n No podrás deshacer esta acción");
+        customDialog.setNegativeButton(getResources().getString(R.string.back), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                //cancel
+            }
+        });
+        customDialog.setPositiveButton(getResources().getString(R.string.accept), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                presenter.deleteRecipe(recetaActual.getIdr());
+            }
+        }).show();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        presenter = null;
+    }
 }

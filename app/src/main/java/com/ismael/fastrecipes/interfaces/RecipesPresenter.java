@@ -19,7 +19,7 @@ public interface RecipesPresenter {
     void deleteRecipe(int idRecipe);
     void setFavourite(int id, int id1, int fav);
     void getFilteredRecipes(Recipe rModel);
-    void sendComment(String comment, int id, int id1, String nameAut);
+    void sendComment(Comment c);
     void setRating(int id, int id1, int newRating);
     void validateField(String field);
     void validateName(String name);
@@ -33,6 +33,7 @@ public interface RecipesPresenter {
         void setListData(ArrayList<Recipe> recs);
         void cancelSearch();
         void addNewComment(ArrayList<Comment> newComment);
+        void showNetworkError(String msg);
     }
 
     void getMyRecipesList(int idUser);

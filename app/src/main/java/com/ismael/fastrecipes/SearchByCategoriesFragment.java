@@ -77,10 +77,11 @@ public class SearchByCategoriesFragment extends Fragment implements CategoriesPr
 
         if(sbcfInstance == null) {
             sbcfInstance = new SearchByCategoriesFragment();
+            sbcfInstance.setArguments(new Bundle());
         }
-        try{
-            sbcfInstance.setArguments(args);
-        }catch (NullPointerException npe){}
+        if(args!=null){
+            sbcfInstance.getArguments().putAll(args);
+        }
         return  sbcfInstance;
     }
 

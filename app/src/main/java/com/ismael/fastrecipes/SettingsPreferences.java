@@ -37,8 +37,11 @@ public class SettingsPreferences extends PreferenceFragment implements Prefs.Vie
 
         if(pfInstance == null){
             pfInstance = new SettingsPreferences();
+            pfInstance.setArguments(new Bundle());
         }
-        pfInstance.setArguments(args);
+        if(args!=null) {
+            pfInstance.getArguments().putAll(args);
+        }
         return  pfInstance;
     }
 

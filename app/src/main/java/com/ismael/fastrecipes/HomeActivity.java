@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.Snackbar;
@@ -23,6 +24,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ismael.fastrecipes.interfaces.IngredientPresenter;
 import com.ismael.fastrecipes.model.Filter;
+import com.ismael.fastrecipes.model.Recipe;
 import com.ismael.fastrecipes.model.User;
 import com.ismael.fastrecipes.presenter.IngredientsPresenterImpl;
 import com.ismael.fastrecipes.provider.FastRecipesContract;
@@ -34,6 +36,7 @@ import java.util.ArrayList;
 /**
  * HomeActivity.class - Clase con la actividad contenedora de toda la aplicacion.
  * Maneja el menu y contiene el objeto con los filtros de busqueda
+ * @author Ismael García
  */
 public class HomeActivity extends AppCompatActivity implements UsersListFragment.UsersListListener, AddIngredientsFragment.AddIngredientsListener, AddRecipeFragment.AddRecipeFragmentListener, RecipeFragment.RecipeFragmentListener, RecipesListFragment.RecipesListListener, ProfileFragment.ProfileListener, MyRecipesFragment.MyRecipeFragmentListener, MyCommentsFragment.MyCommentsFragmentListener, SettingsPreferences.PrefsListener, FavRecipesFragment.FavRecipesListener, SearchRecipeFragment.SearchFragmentListener, SocialActivityFragment.SocialActivityFragmentListener, SearchByIngredientFragment.SearchIngredientsListener, SearchByCategoriesFragment.SearchCategoriesListener{
 
@@ -56,6 +59,10 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
     RecipesListFragment rlFragment;
     AddIngredientsFragment addingFr;
     UsersListFragment ulfFragment;
+    User user;
+    BottomNavigationView bnvTabMenu;
+    boolean settingsOp;
+    Recipe newR;
 
     //Dialog base para la gestion de filtros
     Dialog customDialog = null;
@@ -81,44 +88,31 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
         this.user.setImage(us.getImage());
     }
 
-    User user;
-    BottomNavigationView bnvTabMenu;
-    boolean settingsOp;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_home);
-            bnvTabMenu = (BottomNavigationView) findViewById(R.id.bottom_navigation);
-            filters = new ArrayList<>();
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_home);
+        bnvTabMenu = (BottomNavigationView) findViewById(R.id.bottom_navigation);
+        filters = new ArrayList<>();
         Log.d( "BACKSTACKCOUNT", String.valueOf(getSupportFragmentManager().getBackStackEntryCount()));
-
-            try {
-                if(getIntent().getExtras().getParcelable("user") != null) {
-                    user = getIntent().getExtras().getParcelable("user");
-                    StorageReference mStorageRefload = FirebaseStorage.getInstance().getReference(Const.FIREBASE_IMAGE_USER+"/"+String.valueOf(user.getId()));
-
-                    try {
-                        if (user.getImage() != null && !user.getImage().equals("")) {
-                            if (user.getImage().startsWith("gs")) {
-                                mStorageRefload.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Uri> task) {
-                                        user.setImage(task.getResult().toString());
-                                    }
-                                });
-                            }
-                        }
-                    }catch (Exception e){}
-                }else{
-                    user = new User("Anónimo", "email", "dd/mm/aa", "uid");
-                }
-            }catch (NullPointerException npe) {
-                user = new User("Anónimo", "email", "dd/mm/aa", "uid");
+        try {
+            if(getIntent().getExtras() != null && getIntent().getExtras().getParcelable("user") != null) {
+                user = getIntent().getExtras().getParcelable("user");
+            }else{
+                user = new User("anónimo@anonimail.com", "Anónimo", "??/??/??", "uid");
             }
 
+            if(getIntent().getExtras().getParcelable("new") != null){
+                newR  = getIntent().getExtras().getParcelable("new");
+                Log.d("NEW IS NOT NULL", newR.getElaboration());
+
+            }
+        }catch (NullPointerException npe) {
+        }
             //Menu de la aplicacion
-            bnvTabMenu.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+        bnvTabMenu.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
                 @Override
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                     if(settingsOp)
@@ -131,7 +125,8 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
                             break;
                             //muestra el fragment con el perfil, las recetas y los comentarios
                         case R.id.action_social:
-                            showSocialFragment(false);
+                            if(newR== null)
+                                showSocialFragment("");
                             break;
 
                         //muestra el listado de favoritos
@@ -147,8 +142,20 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
                     return true;
                 }
             });
+
+
+        if(newR != null){
+            bnvTabMenu.setSelectedItemId(R.id.action_social);
+            Bundle b = new Bundle();
+            b.putParcelable("recipe",newR);
+            showAddRecipe(b);
+            Log.d("NEW R EXISTS", "IS HERE");
+        }else {
             showSearchFragment(null);
+            Log.d("NEW R NULL", "SHOWSEARCH");
         }
+
+    }
 
 
     /**
@@ -177,7 +184,7 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
 
             else if(getSupportFragmentManager().findFragmentByTag("profile") != null){
                 getSupportFragmentManager().popBackStackImmediate();
-                showSocialFragment(false);
+                showSocialFragment("");
             }
 
             else if(getSupportFragmentManager().findFragmentByTag("recipe") != null){
@@ -185,7 +192,7 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
                 switch (where){
                     case 1:
                         where = -1;
-                        showSocialFragment(false);
+                        showSocialFragment("");
                         break;
                     case 2:
                         where = -1;
@@ -198,7 +205,7 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
 
             }else if(getSupportFragmentManager().findFragmentByTag("add") != null){
                 getSupportFragmentManager().popBackStackImmediate();
-                showSocialFragment(false);
+                showSocialFragment("");
             }
 
         }
@@ -240,6 +247,7 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
         searchFragment = SearchRecipeFragment.getInstance(data);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.framehome, searchFragment);
+
         if (getSupportFragmentManager().findFragmentByTag("ing") != null || getSupportFragmentManager().findFragmentByTag("cat") != null ) {
             getSupportFragmentManager().popBackStackImmediate();
         }
@@ -249,16 +257,18 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
 
 
     @Override
-    public void showSocialFragment(boolean show) {
+    public void showSocialFragment(String msg) {
         where = 1;
         bnvTabMenu.setVisibility(View.VISIBLE);
         Bundle b = new Bundle();
-        b.putParcelable("user", user);
-        if(show){
-            b.putBoolean("show",show);
-        }
+        b.putString("message", msg);
+
         socialFragment = SocialActivityFragment.getInstance(b);
-        if(getSupportFragmentManager().findFragmentByTag("recipe") != null)
+        if (getSupportFragmentManager().findFragmentByTag("recipe") != null && getSupportFragmentManager().findFragmentByTag("add") != null) {
+            getSupportFragmentManager().popBackStackImmediate();
+            getSupportFragmentManager().popBackStackImmediate();
+
+        }else if(getSupportFragmentManager().findFragmentByTag("recipe") != null || getSupportFragmentManager().findFragmentByTag("add") != null)
             getSupportFragmentManager().popBackStackImmediate();
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.framehome, socialFragment);
@@ -508,6 +518,13 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
     void setSettingsOp(boolean v){settingsOp = v;}
 
 
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+    }
 
-
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+    }
 }

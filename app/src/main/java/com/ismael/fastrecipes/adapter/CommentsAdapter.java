@@ -80,20 +80,25 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHo
             txvNameUserComment.setText(cTmp.getNameAuthor());
             txvComment.setText(cTmp.getContent());
             txvComDate.setText(cTmp.getDate());
+            if(cTmp.getImage() != null && !cTmp.getImage().equals("")) {
+                StorageReference mStRef = FirebaseStorage.getInstance().getReference(Const.FIREBASE_IMAGE_USER+"/"+cTmp.getIdAuthor());
 
-            try {
-                StorageReference mStorageRefloadrec = FirebaseStorage.getInstance().getReference(Const.FIREBASE_IMAGE_USER + "/" + String.valueOf(cTmp.getIdAuthor()));
+                try {
+                    mStRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Uri> task) {
+                            imgUserComment.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
-                mStorageRefloadrec.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Uri> task) {
-                        Picasso.with(context).load(task.getResult()).into(imgUserComment);
-
-                    }
-                });
-            } catch (Exception e) {
-                imgUserComment.setImageDrawable(context.getResources().getDrawable(R.drawable.user_icon));
+                            Picasso.with(context).load(task.getResult()).resize(200, 200).onlyScaleDown().centerCrop().error(R.drawable.user_icon).into(imgUserComment);
+                        }
+                    });
+                } catch (Exception e) {
+                    imgUserComment.setImageDrawable(context.getResources().getDrawable(R.drawable.user_icon));
+                }
             }
+            else
+                imgUserComment.setImageDrawable(context.getResources().getDrawable(R.drawable.user_icon));
+
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

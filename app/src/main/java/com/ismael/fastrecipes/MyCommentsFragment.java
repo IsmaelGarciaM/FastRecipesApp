@@ -69,8 +69,11 @@ public class MyCommentsFragment extends Fragment implements CommentPresenter.Vie
 
         if(mcfInstance == null) {
             mcfInstance = new MyCommentsFragment();
+            mcfInstance.setArguments(new Bundle());
         }
-        mcfInstance.setArguments(args);
+        if(args != null) {
+            mcfInstance.getArguments().putAll(args);
+        }
         return  mcfInstance;
     }
 

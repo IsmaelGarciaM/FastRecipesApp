@@ -40,10 +40,12 @@ import butterknife.ButterKnife;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * AddIngredientsFragment.class - Fragment con la vista para añadir ingredientes a ula publicación de una receta.
+ * @author Ismael García
  */
 public class AddIngredientsFragment extends Fragment{
 
+    //Cuadro de texto para la búsqueda
     @BindView(R.id.actxvIng)
     AutoCompleteTextView searchI;
 
@@ -55,25 +57,39 @@ public class AddIngredientsFragment extends Fragment{
 
     @BindView(R.id.fabSaveNewIngredients)
     FloatingActionButton fabsave;
-    boolean cont = false;
 
-    static AddIngredientsFragment aifInstance;
-    ArrayAdapter<String> adapter;
-    TextWatcher twIng;
-
+    private static AddIngredientsFragment aifInstance;   //Instancia singleton del fragment
+    ArrayAdapter<String> adapter;                        //Adapter para el listado
     AddIngredientsListener mCallback;
     ArrayAdapter<String> listAdapter;
     Recipe tmpRecipe;
     String[] allIng;
 
-    public static AddIngredientsFragment getInstance(Bundle args){
 
-        if(aifInstance == null)
+    public AddIngredientsFragment() {
+        // Required empty public constructor
+    }
+
+    /**
+     * Método para instanciar el frament
+     * @param args Bundle con la receta que se está editando o creando, para reconstruir al volver a mostrar
+     * @see AddRecipeFragment
+     * @return Devuelve la instancia del fragment, siempre única
+     */
+    public static AddIngredientsFragment getInstance(Bundle args){
+        if(aifInstance == null) {
             aifInstance = new AddIngredientsFragment();
-        aifInstance.setArguments(args);
+            aifInstance.setArguments(new Bundle());
+        }
+        if(args != null) {
+            aifInstance.getArguments().putAll(args);
+        }
         return  aifInstance;
     }
 
+    /**
+     * Interfaz para gestión del fragment desde HomeActivity
+     */
     interface AddIngredientsListener{
         void showAddIngredients(Bundle b);
         void showAddRecipe(Bundle b);
@@ -94,16 +110,7 @@ public class AddIngredientsFragment extends Fragment{
         }
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
 
-    }
-
-
-    public AddIngredientsFragment() {
-        // Required empty public constructor
-    }
 
 
     @Override
@@ -120,13 +127,9 @@ public class AddIngredientsFragment extends Fragment{
         allIng = getResources().getStringArray(R.array.ingredients);
 
         adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, allIng);
-        /*else {
-            adapter = new ArrayAdapter(getContext(), android.R.layout.simple_dropdown_item_1line, allIng);
-        }*/
-
-        listAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_dropdown_item_1line);
+        listAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line);
         if(tmpRecipe.getIngredients() != null && !tmpRecipe.getIngredients().equals("")){
-            String[] a = tmpRecipe.getIngredients().split("\r\n");
+            String[] a = tmpRecipe.getIngredients().split("\n");
             for(int i=0; i<+a.length;i++) {
                 listAdapter.add(a[i]);
             }
@@ -156,43 +159,13 @@ public class AddIngredientsFragment extends Fragment{
             }
         });
 
-        /*twIng = new TextWatcher() {
-            String value = "";
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                try{
-                    if (String.valueOf(charSequence).length() != 0 && String.valueOf(charSequence).length() > value.length()){
-                        //if(!adapterOk.getCursor().isClosed())
-
-                    }
-                    value = String.valueOf(charSequence);
-                }catch (Exception e){
-                    Log.d("EXCTIONNOCONTROL", e.getMessage());
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
-
-
-        };
-
-*/
         fabsave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 Bundle b = new Bundle();
                 String in = "";
                 for (int i = 0; i < listAdapter.getCount(); i++){
-                    in += listAdapter.getItem(i) + "\r\n";
+                    in += listAdapter.getItem(i) + "\n";
                 }
 
                 tmpRecipe.setIngredients(in);
@@ -211,23 +184,35 @@ public class AddIngredientsFragment extends Fragment{
         btnAddIng.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                listAdapter.add(searchI.getText().toString());
-                searchI.setText("");
-                listAdapter.notifyDataSetChanged();
+                if(!searchI.getText().toString().equals("")) {
+                    listAdapter.add(searchI.getText().toString());
+                    searchI.setText("");
+                    listAdapter.notifyDataSetChanged();
+                }
             }
         });
 
-       // searchI.addTextChangedListener(twIng);
-
-
+        if(aifInstance.getArguments().getParcelable("recipe") != null){
+            listAdapter.clear();
+            String[] ings = new String[]{};
+            Recipe tmp = aifInstance.getArguments().getParcelable("recipe");
+            if(tmp.getIngredients() != null && !tmp.getIngredients().equals("")) {
+                ings = tmp.getIngredients().split("\n");
+                listAdapter.addAll(ings);
+                listAdapter.notifyDataSetChanged();
+            }
+        }
     }
 
+    /**
+     * Muestra un cuadro de diálogo para confirmar el borrado de un elemento
+     * @param ing Nombre del ingrediente a añadir
+     * @param pos Posición que ocupa en el adaptador
+     */
     private void showSafeDelete(String ing, final int pos){
-        AlertDialog.Builder customDialog = new AlertDialog.Builder(this.getContext(), R.style.Theme_Dialog_Translucent);
+        AlertDialog.Builder customDialog = new AlertDialog.Builder(this.getContext(), R.style.Theme_AppCompat_DayNight_Dialog);
         customDialog.setCancelable(false);
         customDialog.setTitle("¿Borrar "+ing+"?");
-
-        customDialog.setView(R.layout.item_search);
         customDialog.setNegativeButton(getResources().getString(R.string.back), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -245,10 +230,15 @@ public class AddIngredientsFragment extends Fragment{
 
     }
 
+    /**
+     * Muestra un cuadro de diálogo para añadir una cantidad a un ingrediente
+     * @param ing Ingrediente seleccionado
+     * @param pos Posición en el adaptador
+     */
     private void showAddQuantity(final String ing, final int pos){
         final String[] t = new String[1];
 
-        AlertDialog.Builder customDialog = new AlertDialog.Builder(this.getContext(), R.style.Theme_Dialog_Translucent);
+        AlertDialog.Builder customDialog = new AlertDialog.Builder(this.getContext(), R.style.Theme_AppCompat_DayNight_Dialog);
         customDialog.setCancelable(true);
         customDialog.setTitle(getResources().getString(R.string.add_quantity));
 
@@ -265,16 +255,23 @@ public class AddIngredientsFragment extends Fragment{
             public void onClick(DialogInterface dialogInterface, int i) {
                 EditText edtTime = ((Dialog)dialogInterface).findViewById(R.id.edtNameRecSearch);
                 t[0] = edtTime.getText().toString();
-                listAdapter.remove(listAdapter.getItem(pos));
-                listAdapter.add(t[0] + " " + ing);
+                if(!t[0].equals("")) {
+                    listAdapter.remove(listAdapter.getItem(pos));
+                    listAdapter.add(t[0] + " " + ing);
+                }
             }
         }).show();
 
     }
+
+    /**
+     * Muestra un cuadro de diálogo para añadir una cantidad a un ingrediente
+     * @param ing Ingrediente seleccionado
+     */
     private void showAddQuantity(final String ing){
         final String[] t = new String[1];
 
-        AlertDialog.Builder customDialog = new AlertDialog.Builder(this.getContext(), R.style.Theme_Dialog_Translucent);
+        AlertDialog.Builder customDialog = new AlertDialog.Builder(this.getContext(), R.style.Theme_AppCompat_DayNight_Dialog);
         customDialog.setCancelable(false);
         customDialog.setTitle(getResources().getString(R.string.add_quantity));
 
@@ -291,14 +288,19 @@ public class AddIngredientsFragment extends Fragment{
             public void onClick(DialogInterface dialogInterface, int i) {
                 EditText edtTime = ((Dialog)dialogInterface).findViewById(R.id.edtNameRecSearch);
                 t[0] = edtTime.getText().toString();
-                listAdapter.add(t[0] + " " + ing);
-                listAdapter.notifyDataSetChanged();
+                if(!t[0].equals("")) {
+                    listAdapter.add(t[0] + " " + ing);
+                    listAdapter.notifyDataSetChanged();
+                }
+                else{
+                    listAdapter.add(ing);
+                    listAdapter.notifyDataSetChanged();
+
+                }
                 searchI.setText("");
 
             }
         }).show();
 
     }
-
-
 }

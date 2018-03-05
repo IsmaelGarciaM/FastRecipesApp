@@ -1,17 +1,14 @@
 package com.ismael.fastrecipes;
 
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -26,11 +23,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 import com.ismael.fastrecipes.exceptions.DataEntryException;
 import com.ismael.fastrecipes.interfaces.RecipesPresenter;
 import com.ismael.fastrecipes.model.Comment;
@@ -38,7 +30,6 @@ import com.ismael.fastrecipes.model.Recipe;
 import com.ismael.fastrecipes.model.User;
 import com.ismael.fastrecipes.presenter.RecipesPresenterImpl;
 import com.ismael.fastrecipes.provider.GenericFileProvider;
-import com.ismael.fastrecipes.utils.Const;
 import com.ismael.fastrecipes.utils.PhotoUtils;
 import com.squareup.picasso.Picasso;
 
@@ -50,16 +41,11 @@ import butterknife.ButterKnife;
 
 import static android.app.Activity.RESULT_OK;
 
-
 /**
- * A simple {@link Fragment} subclass.
+ * AddRecipeFragment.class - Fragment que contiene la vista para publicar recetas nuevas o editar publicadas
+ * @author Ismael García
  */
 public class AddRecipeFragment extends Fragment implements RecipesPresenter.View{
-
-
-    public AddRecipeFragment() {
-        // Required empty public constructor
-    }
 
     @BindView(R.id.imvAddRecipeImage)
     ImageView imvImageRecipe;
@@ -69,10 +55,13 @@ public class AddRecipeFragment extends Fragment implements RecipesPresenter.View
 
     @BindView(R.id.edtImageUrl)
     EditText edtImageUrl;
+
     @BindView(R.id.edtSourceRecipe)
     EditText edtSourceRecipe;
+
     @BindView(R.id.tilNameRecipe)
     TextInputLayout tilName;
+
     @BindView(R.id.edtNameRecipe)
     EditText edtNameRecipe;
 
@@ -105,33 +94,40 @@ public class AddRecipeFragment extends Fragment implements RecipesPresenter.View
     @BindView(R.id.txvAddIng)
     TextView txvIng;
 
-    static private AddRecipeFragment arfInstance;
+    private static AddRecipeFragment arfInstance;
     private AddRecipeFragmentListener mCallback;
     Recipe recipeTmp;
     RecipesPresenter presenter;
-    private StorageReference mStorageRef;
     private Uri mImageUri;
-    private static final int ACTIVITY_SELECT_IMAGE = 1020,
-            ACTIVITY_SELECT_FROM_CAMERA = 1040, ACTIVITY_SHARE = 1030;
+    private static final int ACTIVITY_SELECT_IMAGE = 1020;
+    private static final int ACTIVITY_SELECT_FROM_CAMERA = 1040;
     boolean imageChanged;
     private PhotoUtils photoUtils;
-    StorageReference mStorageRefload ;
 
+    /**
+     * Interfaz para la gestión con HomeActivity
+     */
     interface AddRecipeFragmentListener{
         void showAddRecipe(Bundle recipe);
         User getUser();
-        void showSocialFragment(boolean show);
+        void showSocialFragment(String msg);
         void showAddIngredients(Bundle b);
         void showSearchByCategories(Bundle b);
     }
 
-
+    /**
+     * Instanciador de la clase con patrón singleton
+     * @param args Bundle con los datos de la receta si es para editar
+     * @return Instancia del fragment
+     */
     public static AddRecipeFragment getInstance(Bundle args){
-
         if(arfInstance == null) {
             arfInstance = new AddRecipeFragment();
+            arfInstance.setArguments(new Bundle());
         }
-        arfInstance.setArguments(args);
+        if(args != null) {
+            arfInstance.getArguments().putAll(args);
+        }
         return  arfInstance;
     }
 
@@ -150,16 +146,20 @@ public class AddRecipeFragment extends Fragment implements RecipesPresenter.View
         View rootView = inflater.inflate(R.layout.fragment_add_recipe, container, false);
         ButterKnife.bind(this, rootView);
         npNPers.setMaxValue(10);
-
-        if(arfInstance.getArguments()!= null) {
+        clear();
+        if(arfInstance.getArguments().getParcelable("recipe") != null) {
             recipeTmp = arfInstance.getArguments().getParcelable("recipe");
-            if(recipeTmp.getIdr() > 0)
-                mStorageRefload = FirebaseStorage.getInstance().getReference(Const.FIREBASE_IMAGE_RECIPE+"/"+String.valueOf(recipeTmp.getIdr()));
 
             setRecipeData();
 
         }
         return rootView;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        clear();
     }
 
     @Override
@@ -172,9 +172,16 @@ public class AddRecipeFragment extends Fragment implements RecipesPresenter.View
                 if(r!= null) {
                     if (r.getIdr() > 0) {
                         presenter.modifyRecipe(r, mImageUri);
-                    } else
+                        clear();
+                        mCallback.showSocialFragment(getContext().getResources().getString(R.string.updatedrecipe));
+
+
+                    } else {
                         presenter.addRecipe(r, mImageUri);
-                    mCallback.showSocialFragment(true);
+                        clear();
+                        mCallback.showSocialFragment(getContext().getResources().getString(R.string.recipepublished));
+                    }
+
                 }
             }
         });
@@ -182,7 +189,7 @@ public class AddRecipeFragment extends Fragment implements RecipesPresenter.View
         btnAddTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showTimeDialog("");
+                showTimeDialog();
             }
         });
         btnAddDifficulty.setOnClickListener(new View.OnClickListener() {
@@ -238,6 +245,27 @@ public class AddRecipeFragment extends Fragment implements RecipesPresenter.View
         mCallback = null;
     }
 
+
+    /**
+     * Reestablece todos los campos a valores vacíos
+     */
+    void clear(){
+        imvImageRecipe.setImageDrawable(getResources().getDrawable(R.drawable.addrecipe));
+        edtImageUrl.setText("");
+        edtNameRecipe.setText("");
+        txvCats.setText("");
+        npNPers.setValue(0);
+        btnAddTime.setText(getResources().getString(R.string.time));
+        btnAddDifficulty.setText(getResources().getString(R.string.difficulty));
+        txvIng.setText("");
+        edtElaboration.setText("");
+        edtSourceRecipe.setText("");
+    }
+
+    /**
+     * Comprueba los campos mínimos necesarios y crea el objeto necesario para la publicación de una receta
+     * @return La nueva receta con los datos introducidos
+     */
     Recipe createRecipe(){
 
 
@@ -345,10 +373,22 @@ public class AddRecipeFragment extends Fragment implements RecipesPresenter.View
         return newR;
     }
 
+    @Override
+    public void showNetworkError(String msg){
+
+    }
+
+    /**
+     * Muestra un error en caso de fallo de comprobación de alguno de los campos
+     * @param msg Mensaje de error
+     */
     private void showError(String msg) {
         Snackbar.make(edtElaboration, msg, Snackbar.LENGTH_LONG).show();
     }
 
+    /**
+     * Establece los datos en la pantalla de la receta nueva o a editar
+     */
     void setRecipeData(){
         String t;
         if(recipeTmp.getTime() > 0)
@@ -356,7 +396,6 @@ public class AddRecipeFragment extends Fragment implements RecipesPresenter.View
         else
             t = "Tiempo";
         //imagen
-        edtNameRecipe.setText(recipeTmp.getName());
 
         if(recipeTmp.getImage() != null && !recipeTmp.getImage().equals("") && !imageChanged) {
                     Picasso.with(getContext()).load(recipeTmp.getImage()).into(imvImageRecipe);
@@ -370,20 +409,30 @@ public class AddRecipeFragment extends Fragment implements RecipesPresenter.View
                 edtImageUrl.setText(recipeTmp.getImage());
             }
 
+        edtNameRecipe.setText(recipeTmp.getName());
         txvCats.setText(recipeTmp.getCategories());
         txvIng.setText(recipeTmp.getIngredients());
         btnAddTime.setText(t);
         btnAddDifficulty.setText(recipeTmp.getDifficulty());
+        Log.d("ELABORATION", recipeTmp.getElaboration());
         edtElaboration.setText(recipeTmp.getElaboration());
         if(recipeTmp.getnPers() != null && !recipeTmp.getnPers().equals(""))
-            npNPers.setValue(Integer.parseInt(recipeTmp.getnPers()));
+            if(recipeTmp.getnPers().length()>2)
+                npNPers.setValue(Integer.parseInt(recipeTmp.getnPers().substring(0, recipeTmp.getnPers().length() - 6)));
+            else
+                npNPers.setValue(Integer.parseInt(recipeTmp.getnPers()));
+
     }
 
+    /**
+     * Obtiene los datos de la receta que se va a crear para guardarlos mientras se accede a otras vistas para añadir
+     * ingredientes o categorías
+     * @return Nueva receta con los datos temporales de la receta a crear
+     */
     Recipe getTemporalRecipeData(){
         Recipe tmpRecipe = new Recipe();
         tmpRecipe.setName(String.valueOf(edtNameRecipe.getText()));
         tmpRecipe.setCategories(String.valueOf(txvCats.getText()));
-        String s = String.valueOf(btnAddTime.getText());
         if(!String.valueOf(btnAddTime.getText()).equals("Tiempo"))
             tmpRecipe.setTime(Integer.parseInt(String.valueOf(btnAddTime.getText()).substring(0, String.valueOf(btnAddTime.getText()).length() - 8)));
         else
@@ -397,26 +446,25 @@ public class AddRecipeFragment extends Fragment implements RecipesPresenter.View
 
     }
 
-    private void showTimeDialog(String time){
+    /**
+     * Muestra un cuadro de diálogo para añadir un tiempo de receta
+     */
+    private void showTimeDialog(){
         final String[] t = new String[1];
         AlertDialog.Builder customDialog;
         customDialog = new AlertDialog.Builder(this.getContext(), R.style.Theme_Dialog_Translucent);
         customDialog.setCancelable(false);
         customDialog.setView(R.layout.dialog_time_picker);
-
         customDialog.setNegativeButton("Atrás", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 //cancel
             }
         });
-
         customDialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                //add filtro de tiempo
                 EditText edtTime = ((Dialog)dialogInterface).findViewById(R.id.edtTime);
-
                 String tmp = edtTime.getText().toString();
                 if(!tmp.equals("")) {
                     t[0] = tmp + " minutos";
@@ -424,12 +472,14 @@ public class AddRecipeFragment extends Fragment implements RecipesPresenter.View
                 }
             }
         });
-
-
         customDialog.show();
     }
 
 
+    /**
+     * Carga la imagen añadida en la vista obteniendo un Bitmap desde la URI de la imagen
+     * @param uri Ruta de acceso a la imagen guardada en la memoria del dispositivo
+     */
     public void getImage(Uri uri) {
         Bitmap bounds = photoUtils.getImage(uri);
         if (bounds != null) {
@@ -439,8 +489,11 @@ public class AddRecipeFragment extends Fragment implements RecipesPresenter.View
 
         }
     }
-    private void getPhotoDialog() {
 
+    /**
+     * Muestra un cuadro de diálogo para añadir una imagen a la receta
+     */
+    private void getPhotoDialog() {
         android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getContext());
         builder.setTitle("Elige una acción");
         builder.setPositiveButton(R.string.camera, new DialogInterface.OnClickListener() {
@@ -457,7 +510,7 @@ public class AddRecipeFragment extends Fragment implements RecipesPresenter.View
                 } catch (Exception e) {
                     Log.v(getClass().getSimpleName(),"Can't create file to take picture!");
                 }
-                //mImageUri = Uri.fromFile(photo);
+                //Obtenemos la URI de la imagen temporal creada desde la cámara
                 mImageUri = GenericFileProvider.getUriForFile(getContext(), "com.ismael.fastrecipes", photo);
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri);
                 startActivityForResult(intent, ACTIVITY_SELECT_FROM_CAMERA);
@@ -478,6 +531,12 @@ public class AddRecipeFragment extends Fragment implements RecipesPresenter.View
         builder.show();
     }
 
+    /**
+     * Recoge los datos tras la selección de una imagen
+     * @param requestCode Indica cómo se ha cargado la imagen, cámara o galería
+     * @param resultCode Código del resultado de la selección de la imagen
+     * @param data Intent con los datos de la imagen
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -492,20 +551,22 @@ public class AddRecipeFragment extends Fragment implements RecipesPresenter.View
         }
     }
 
+    /**
+     * Muestra un cuadro de diálogo para cambiar la dificultad de la receta
+     */
     private void showDifficultDialog(){
         AlertDialog.Builder builderDificult = new AlertDialog.Builder(this.getContext(), R.style.Theme_Dialog_Translucent);
-
         builderDificult.setTitle("Dificultad")
                 .setItems(R.array.diff_array, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String content = "";
                         switch (which) {
-                            case 1:  content = "Fácil";
+                            case 0:  content =  getResources().getStringArray(R.array.diff_array)[0];
                                 break;
-                            case 2:  content = "Medio";
+                            case 1:  content =  getResources().getStringArray(R.array.diff_array)[1];
                                 break;
-                            case 3:  content = "Difícil";
+                            case 2:  content = getResources().getStringArray(R.array.diff_array)[2];
                                 break;
                         }
 
@@ -515,13 +576,48 @@ public class AddRecipeFragment extends Fragment implements RecipesPresenter.View
                 });
 
         builderDificult.setCancelable(false).create().show();
-
-
     }
 
+    /**
+     * Guarda el estado del fragment
+     * @param outState Datos de salida
+     */
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mImageUri != null)
+            outState.putString("Uri", mImageUri.toString());
+    }
+
+    /**
+     * Restituye el estado del fragment
+     * @param savedInstanceState Datos de entrada
+     */
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey("Uri")) {
+                mImageUri = Uri.parse(savedInstanceState.getString("Uri"));
+            }
+        }
+    }
+
+
+    /**
+     * Métodos innecesarios
+     */
     @Override
     public void showRecipeInfo(Bundle recipe) {
 
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        presenter = null;
+        photoUtils = null;
     }
 
     @Override
@@ -542,23 +638,6 @@ public class AddRecipeFragment extends Fragment implements RecipesPresenter.View
     @Override
     public void addNewComment(ArrayList<Comment> newComment) {
 
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        if (mImageUri != null)
-            outState.putString("Uri", mImageUri.toString());
-    }
-
-    @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey("Uri")) {
-                mImageUri = Uri.parse(savedInstanceState.getString("Uri"));
-            }
-        }
     }
 
 }

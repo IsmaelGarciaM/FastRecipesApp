@@ -1,6 +1,8 @@
 package com.ismael.fastrecipes.presenter;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
@@ -14,6 +16,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.ismael.fastrecipes.FastRecipesApplication;
+import com.ismael.fastrecipes.R;
 import com.ismael.fastrecipes.exceptions.DataEntryException;
 import com.ismael.fastrecipes.interfaces.ProfilePresenter;
 import com.ismael.fastrecipes.model.Errors;
@@ -25,6 +28,7 @@ import com.ismael.fastrecipes.utils.Result;
 import com.ismael.fastrecipes.utils.ResultUser;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,102 +53,90 @@ public class ProfilePresenterImpl implements ProfilePresenter {
         this.context = vista.getContext();
         mService = FastRecipesApplication.getFastRecipesService();
     }
-    @Override
-    public void getUserByComment(int idComment) {
-
-        final ArrayList<User> u = new ArrayList<>();
-        //Observable<Recipe> call = mService.getRecipe(id);
-        mService.getUserByComment(idComment).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<ResultUser>() {
-                    @Override
-                    public void onCompleted() {
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.d("SUBSCRIBER FAILED USER", e.getMessage());
-                    }
-
-                    @Override
-                    public void onNext(ResultUser resultUser) {
-                        u.addAll(resultUser.getUsers());
-                    }
-                });
-    }
 
     @Override
     public void getUser(int idUser) {
 
         final ArrayList<User> u = new ArrayList<>();
-        //Observable<Recipe> call = mService.getRecipe(id);
-        mService.getUser(idUser).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<ResultUser>() {
-                    boolean cont = false;
-                    @Override
-                    public void onCompleted() {
-                        if(cont)
-                            view.setUserData(u.get(0));
-                    }
+        if(isOnline()) {
+            mService.getUser(idUser).subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread()).timeout(10, TimeUnit.SECONDS)
+                    .subscribe(new Subscriber<ResultUser>() {
+                        boolean cont = false;
 
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.d("SUBSCRIBER FAILED USER", e.getMessage());
-                    }
-
-                    @Override
-                    public void onNext(ResultUser resultUser) {
-                        if(resultUser.getCode() && resultUser.getUsers() != null) {
-                            u.addAll(resultUser.getUsers());
-                            cont = true;
+                        @Override
+                        public void onCompleted() {
+                            if (cont)
+                                view.setUserData(u.get(0));
                         }
-                    }
-                });
+
+                        @Override
+                        public void onError(Throwable e) {
+                            view.showNetworkError("Ha ocurrido un problema con la conexión");
+                        }
+
+                        @Override
+                        public void onNext(ResultUser resultUser) {
+                            if (resultUser.getCode() && resultUser.getUsers() != null) {
+                                u.addAll(resultUser.getUsers());
+                                cont = true;
+                            } else
+                                view.showNetworkError("Error en el servidor. No se ha podido obtener los datos del usuario.");
+                        }
+                    });
+        }else
+            view.showNetworkError(context.getResources().getString(R.string.nointernet));
     }
     @Override
     public void getUsersFav(int idRecipe) {
         final ArrayList<User> u = new ArrayList<>();
-        //Observable<Recipe> call = mService.getRecipe(id);
-        mService.getUsersFav(idRecipe).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<ResultUser>() {
-                    @Override
-                    public void onCompleted() {
-                        if(u.size()>0)
-                            view.setUserListData(u);
-                        else
-                            view.cancelSearch();
-                    }
+        if(isOnline()){
+            mService.getUsersFav(idRecipe).subscribeOn(Schedulers.newThread())
+            .observeOn(AndroidSchedulers.mainThread()).timeout(10, TimeUnit.SECONDS)
+            .subscribe(new Subscriber<ResultUser>() {
+                @Override
+                public void onCompleted() {
+                    if(u.size()>0)
+                        view.setUserListData(u);
+                    else
+                        view.cancelSearch();
+                }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.d("SUBSCRIBER FAILED USER", e.getMessage());
-                    }
+                @Override
+                public void onError(Throwable e) {
+                    view.showNetworkError("Error en la conexión.");
+                }
 
-                    @Override
-                    public void onNext(ResultUser resultUser) {
+                @Override
+                public void onNext(ResultUser resultUser) {
+                    if(resultUser.getCode() && resultUser.getUsers().size() > 0)
                         u.addAll(resultUser.getUsers());
-                    }
-                });
+                }
+            });
+        }else
+            view.showNetworkError(context.getResources().getString(R.string.nointernet));
+
     }
 
     @Override
     public void getUserRecipes(int idUser) {
         final ArrayList<Recipe> r = new ArrayList<>();
-        mService.getUserRecipes(idUser).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+        if(isOnline()){
+        mService.getMyRecipes(idUser).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).timeout(10, TimeUnit.SECONDS)
                 .subscribe(new Subscriber<Result>() {
                     boolean cont = false;
                     @Override
                     public void onCompleted() {
                         if (cont)
                             view.setUserRecipesData(r);
+                        else
+                            view.cancelSearch();
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.d("SUBSCRIBER FAILED USER", e.getMessage());
+                        view.showNetworkError("Error de conexión con el servidor");
                     }
 
                     @Override
@@ -153,19 +145,22 @@ public class ProfilePresenterImpl implements ProfilePresenter {
                             r.addAll(result.getRecipes());
                             cont = true;
                         }
-
                     }
                 });
-    }
 
+        }else
+            view.showNetworkError(context.getResources().getString(R.string.nointernet));
+
+
+    }
 
 
     @Override
     public void editProfile(User userData, final boolean imageChanged, final Uri mImageUri) {
         final ArrayList<User> u = new ArrayList<>();
-        //Observable<Recipe> call = mService.getRecipe(id);
+        if(isOnline()){
         mService.updateProfile(userData).subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread()).timeout(10, TimeUnit.SECONDS)
                 .subscribe(new Subscriber<ResultUser>() {
                     boolean cont = false;
                     @Override
@@ -181,7 +176,7 @@ public class ProfilePresenterImpl implements ProfilePresenter {
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.d("SUBSCRIBER FAILED USER", e.getMessage());
+                        view.showNetworkError("Error de conexión con el servidor");
                     }
 
                     @Override
@@ -192,11 +187,14 @@ public class ProfilePresenterImpl implements ProfilePresenter {
                         }
                     }
                 });
+        }else
+            view.showNetworkError(context.getResources().getString(R.string.nointernet));
+
     }
 
 
 
-    String loadImage(final User u, Uri mImageUri){
+    private void loadImage(final User u, Uri mImageUri){
         // Intent i = new Intent(Intent.ACTION_PICK, android.provider.)
         final String[] newImage = new String[1];
         mStorageRef = FirebaseStorage.getInstance().getReference(Const.FIREBASE_IMAGE_USER+"/"+String.valueOf(u.getId()));
@@ -211,16 +209,19 @@ public class ProfilePresenterImpl implements ProfilePresenter {
                         view.setUserData(u);
                         view.updateCurrentUser(u);
                     }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        view.showNetworkError("No ha sido posible cargar la imagen. Inténtelo de nuevo en unos minutos.");
+                    }
                 });
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Log.d("ERROR FIREASE STORAGE", e.getMessage());
+                view.showNetworkError("No ha sido posible cargar la imagen. Inténtelo de nuevo en unos minutos.");
             }
         });
-
-        return "";
     }
     /**
      * Realiza la comprobación de que el email no es nulo y llama a otra función para comprobar su validez
@@ -237,7 +238,7 @@ public class ProfilePresenterImpl implements ProfilePresenter {
     }
 
     /**
-     * Comrpueba que el email es válido
+     * Comprueba que el email es válido
      * @param email Email a comprobar
      * @return Devuelve true o false en función de la validez del email
      */
@@ -264,4 +265,19 @@ public class ProfilePresenterImpl implements ProfilePresenter {
         if(TextUtils.isEmpty(name))
             throw new DataEntryException(Errors.EMPTYFIELD_EXCEPTION, context.getApplicationContext());
     }
+
+    /**
+     * Comprueba la conexión de red del dispositivo
+     * @return Devuelve true o false en función de la disponibilidad de la conexión del dispositivo
+     */
+    private boolean isOnline() {
+        ConnectivityManager cm =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnected();
+    }
+
 }
+
+

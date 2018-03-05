@@ -84,7 +84,7 @@ public class FastRecipesService {
      * @return Devuelve un Observable con un array de ResultComment, array con los comentarios
      */
     public Observable<ResultComment> getUserComments(int idUser){
-        return fastRecipesApi.getCommentsObservable(idUser);
+        return null;//fastRecipesApi.getCommentsObservable(idUser);
     }
 
     /**
@@ -132,11 +132,11 @@ public class FastRecipesService {
     }
 
     public Observable<Result> sendComment(int idUser, Comment com) {
-        return fastRecipesApi.sendCommentObservable(idUser, com);
+        return null;//fastRecipesApi.sendCommentObservable(idUser, com);
     }
 
     public Observable<Result> removeComment(int idComment) {
-        return fastRecipesApi.removeCommentObservable(idComment);
+        return null;//fastRecipesApi.removeCommentObservable(idComment);
     }
 
     public Observable<ResultUser> getUser(int idUser ) {

@@ -8,7 +8,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="email">Email</string>
     <string name="password">Contraseña</string>
-    <string name="name">Nombre</string>
+    <string name="name">Nombre completo</string>
     <string name="register">Registrarse</string>
     <string name="forget_pass">Olvidé mi contraseña</string>
     <string name="login_error">E-mail o contraseña incorrecto.</string>
@@ -37,11 +37,17 @@
     <string name="searchRes">Resultado de búsqueda</string>
     <string name="norecipes">No hay recetas que coincidan con tu búsqueda</string>
     <string name="time">Tiempo</string>
+    <string name="difficulty">Tiempo</string>
     <string name="searchIngre">Buscar ingredientes</string>
     <string name="dontrem">No recordar</string>
     <string name="rem">Recordar</string>
     <string name="nofavs">Nadie a marcado esta receta como favorita.</string>
     <string name="favs">Favoritos</string>
+    <string name="nointernet">No hay conexión de red.</string>
+    <string name="recipepublished">La receta ha sido publicada correctamente.</string>
+    <string name="updatedrecipe">Receta actualizada.</string>
+    <string name="updatedprofile">Perfil actualizado.</string>
+    <string name="delete">Eliminar</string>
 
 
     <string-array name="categories_array">
@@ -52,7 +58,7 @@
         <item>Sopas y cremas</item>
         <item>Carnes</item>
         <item>Frutos secos</item>
-        <item>Pescado y marisco</item>
+        <item>Pescados y mariscos</item>
         <item>Frutas</item>
         <item>Pastas y pizzas</item>
         <item>Lácteos</item>
@@ -65,6 +71,10 @@
         <item>Anís</item>
         <item>Apio</item>
         <item>Azafrán</item>
+        <item>Páprika</item>
+        <item>Jamón</item>
+        <item>Chorizo</item>
+
         <item>Canela</item>
         <item>Cardamomo</item>
         <item>Cebolla deshidratada</item>
@@ -163,7 +173,7 @@
         <item>Aguacate</item>
         <item>Cereza</item>
         <item>Mango</item>
-        <item>Melocotón(es)</item>
+        <item>Melocotón</item>
         <item>Nectarina</item>
         <item>Ciruelas</item>
         <item>Frutas del bosque</item>
@@ -178,7 +188,7 @@
         <item>Kiwi</item>
         <item>Limón</item>
         <item>Mandarina</item>
-        <item>Melón(es)</item>
+        <item>Melón</item>
         <item>Naranja</item>
         <item>Piña</item>
         <item>Plátano</item>
@@ -244,7 +254,7 @@
         <item>Oca</item>
         <item>Gallina</item>
         <item>Pollo</item>
-        <item>Huevo(s)</item>
+        <item>Huevo</item>
         <item>Yema de Huevo</item>
         <item>Clara de huevo</item>
         <item>Conejo</item>

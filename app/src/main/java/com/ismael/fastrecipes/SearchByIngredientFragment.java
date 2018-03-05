@@ -74,9 +74,13 @@ public class SearchByIngredientFragment extends Fragment{
 
     public static SearchByIngredientFragment getInstance(Bundle args){
 
-        if(sbyfInstance == null)
+        if(sbyfInstance == null) {
             sbyfInstance = new SearchByIngredientFragment();
-        sbyfInstance.setArguments(args);
+            sbyfInstance.setArguments(new Bundle());
+        }
+        if(args!=null){
+            sbyfInstance.getArguments().putAll(args);
+        }
         return  sbyfInstance;
     }
 

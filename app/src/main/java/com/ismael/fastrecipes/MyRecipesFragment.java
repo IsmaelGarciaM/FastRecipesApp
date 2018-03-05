@@ -9,12 +9,14 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ismael.fastrecipes.adapter.FilteredRecipeAdapter;
 import com.ismael.fastrecipes.adapter.RecipeAdapter;
@@ -33,11 +35,10 @@ import static android.view.View.GONE;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * MyRecipesFragment.class - Fragment que muestra la lista de recetas de propias del usuario activo
+ * @author Ismael García
  */
 public class MyRecipesFragment extends Fragment implements RecipesPresenter.View {
-
-
     public MyRecipesFragment() {
         // Required empty public constructor
     }
@@ -55,19 +56,29 @@ public class MyRecipesFragment extends Fragment implements RecipesPresenter.View
     FilteredRecipeAdapter rAdapter;
     ArrayList<Recipe> myRecs;
 
+    /**
+     * Interfaz para las llamadas al contenedor
+     */
     interface MyRecipeFragmentListener{
         void showMyRecipes();
         void showRecipe(Bundle args);
         void showAddRecipe(Bundle b);
-
         User getUser();
     }
 
+    /**
+     * Instanciador del fragment
+     * @param args Datos previos opcionales
+     * @return Instancia del fragment
+     */
     public static MyRecipesFragment getInstance(Bundle args){
 
         if(mrfInstance == null) {
             mrfInstance = new MyRecipesFragment();
-            mrfInstance.setArguments(args);
+            mrfInstance.setArguments(new Bundle());
+        }
+        if(args != null) {
+            mrfInstance.getArguments().putAll(args);
         }
         return  mrfInstance;
     }
@@ -133,14 +144,26 @@ public class MyRecipesFragment extends Fragment implements RecipesPresenter.View
         presenter.getMyRecipesList(mCallback.getUser().getId());
     }
 
+    /**
+     * Llama al contenedor para que cargue la vista de una receta
+     * @param b Datos para realizar la carga de la receta
+     */
     @Override
     public void showRecipeInfo(Bundle b) {
         mCallback.showRecipe(b);
     }
 
+    /**
+     * Cambia el estado de favorito de una receta tras actualizarlo en la base de datos
+     * @param recipe Datos de la receta tras la consulta para actualizar el estado
+     */
     @Override
     public void setFavState(Recipe recipe) {}
 
+    /**
+     * Carga los datos obtenidos del servidor
+     * @param recs Listado de recetas publicadas por el usuario activo
+     */
     @Override
     public void setListData(ArrayList<Recipe> recs) {
             rAdapter.clear();
@@ -148,14 +171,36 @@ public class MyRecipesFragment extends Fragment implements RecipesPresenter.View
             rAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * Cancela la carga de datos si se produce un error o no hay recetas publicadas por el usuario activo
+     */
     @Override
     public void cancelSearch() {
         rAdapter.clear();
         lvMyRecipes.setVisibility(GONE);
         txvEmpty.setVisibility(View.VISIBLE);
     }
+
     @Override
     public void addNewComment(ArrayList<Comment> newComment) {
 
+    }
+
+    /**
+     * Muestra un mensaje en la pantalla tras la realización de ciertas acciones
+     * @param msg Mensaje a mostrar
+     */
+    @Override
+    public void showNetworkError(String msg) {
+        Toast t = Toast.makeText(FastRecipesApplication.getContext(), msg, Toast.LENGTH_LONG);
+        t.setGravity(Gravity.CENTER, 0, 0);
+        t.show();
+        txvEmpty.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        presenter = null;
     }
 }

@@ -53,16 +53,6 @@ public interface FastRecipesApi {
     @POST("recipe/fav/{id}")
     Observable<Result> setFavRecipeObservable(@Path("id") String id);
 
-    //COMENTARIOS
-    @GET("comments/{id}")
-    Observable<ResultComment> getCommentsObservable(@Path("id") int idUser);
-
-    @POST("comments/{id}")
-    Observable<Result> sendCommentObservable(@Path("id") int idUser, @Body Comment com);
-
-    @DELETE("comments/{id}")
-    Observable<Result> removeCommentObservable(@Path("id") int idComment);
-
     //USUARIOS
     @GET("user/comment/{id}")
     Observable<ResultUser> getUserObservable(@Path("id") int idComment);
@@ -85,6 +75,7 @@ public interface FastRecipesApi {
     @POST("user/update")
     Observable<ResultUser> updateUserObservable(@Body User userData);
 
+    //RATING
     @POST("rating/{id}")
     Observable<Result> setRatingObservable(@Path("id")String rate);
 

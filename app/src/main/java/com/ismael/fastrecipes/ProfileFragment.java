@@ -9,30 +9,21 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
+import android.widget.Toast;
 import com.ismael.fastrecipes.adapter.FilteredRecipeAdapter;
 import com.ismael.fastrecipes.exceptions.DataEntryException;
 import com.ismael.fastrecipes.interfaces.ProfilePresenter;
@@ -40,13 +31,10 @@ import com.ismael.fastrecipes.model.Recipe;
 import com.ismael.fastrecipes.model.User;
 import com.ismael.fastrecipes.presenter.ProfilePresenterImpl;
 import com.ismael.fastrecipes.provider.GenericFileProvider;
-import com.ismael.fastrecipes.utils.Const;
 import com.ismael.fastrecipes.utils.PhotoUtils;
 import com.squareup.picasso.Picasso;
-
 import java.io.File;
 import java.util.ArrayList;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -54,10 +42,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import static android.app.Activity.RESULT_OK;
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ProfileFragment.ProfileListener} interface
- * to handle interaction events.
+ * ProfileFragment.class - Contiene la vista que permite la visualización del perfil de un usuario
+ * @author Ismael García
+ * {@link ProfileFragment.ProfileListener} interfaz para gestionar los eventos
  */
 public class ProfileFragment extends Fragment implements ProfilePresenter.View{
 
@@ -100,11 +87,9 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
     ProfilePresenter presenter;
     FilteredRecipeAdapter adapter;
     ArrayList<Recipe> userRecipes;
-    String urlImageEditTmp;
-    private AlertDialog photoDialog;
     private Uri mImageUri;
-    private static final int ACTIVITY_SELECT_IMAGE = 1020,
-            ACTIVITY_SELECT_FROM_CAMERA = 1040, ACTIVITY_SHARE = 1030;
+    private static final int ACTIVITY_SELECT_IMAGE = 1020;
+    private static final int ACTIVITY_SELECT_FROM_CAMERA = 1040;
     private PhotoUtils photoUtils;
     boolean imageChanged;
 
@@ -161,7 +146,8 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
     public void onStart() {
         super.onStart();
         presenter.getUser(idUser);
-        presenter.getUserRecipes(idUser);
+        if(idUser != mCallback.getUser().getId())
+            presenter.getUserRecipes(idUser);
     }
 
     @Override
@@ -175,10 +161,6 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
      */
     public interface ProfileListener {
         void showProfile(Bundle b);
@@ -187,18 +169,24 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
         void setUser(User u);
     }
 
-
+    /*
+     * Instanciador del fragment
+     */
     public static ProfileFragment getInstance(Bundle b){
-        if(instance == null)
+        if(instance == null) {
             instance = new ProfileFragment();
-        instance.setArguments(b);
+            instance.setArguments(new Bundle());
+        }
+        if(b != null) {
+            instance.getArguments().putAll(b);
+        }
         return instance;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        lvUserRecipes.setAdapter(adapter);
         fabEditProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -238,24 +226,18 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
         });
     }
 
-
-
-
     @Override
     public void updateCurrentUser(User u){
         mCallback.setUser(u);
         showProgress(false);
-        Snackbar.make(edtName, "Perfil actualizado", Snackbar.LENGTH_SHORT).show();
+        showNetworkError(getResources().getString(R.string.updatedprofile));
     }
 
-    @Override
-    public void setUserListData(ArrayList<User> u) {
 
-    }
 
     @Override
     public void cancelSearch() {
-
+        showProgress(false);
     }
 
     @Override
@@ -275,13 +257,22 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
 
     }
 
+    /**
+     * Añade a la vista los datos de las recetas del usuario obtenidas desde el servidor. Sólo se cargarán si el perfil
+     * pertenece a un usuario que no es el que tiene la sesión activa, ya que puede ver sus recetas en SocialActivityFragment
+     * @param recs Listado de recetas publicadas por el usuario en cuestión
+     */
     @Override
     public void setUserRecipesData(ArrayList<Recipe> recs) {
         adapter.addAll(recs);
         adapter.notifyDataSetChanged();
     }
 
-    User getUserData(){
+    /**
+     * Construye un usuario con los datos modificados para su actualización
+     * @return Usuario con los nuevos datos
+     */
+    private User getUserData(){
         tilNameProfile.setErrorEnabled(false);
         tilNameProfile.setError(null);
 
@@ -324,8 +315,9 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
         return tmp;
     }
 
-
-
+    /**
+     * Muestra un cuadro de diálogo para añadir una imagen al perfil de usuario
+     */
     private void getPhotoDialog() {
 
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -382,6 +374,12 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
         }
     }
 
+    /**
+     Recoge los datos tras la selección de una imagen
+     * @param requestCode Indica cómo se ha cargado la imagen, cámara o galería
+     * @param resultCode Código del resultado de la selección de la imagen
+     * @param data Intent con los datos de la imagen
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -396,6 +394,10 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
         }
     }
 
+    /**
+     * Carga la imagen añadida en la vista obteniendo un Bitmap desde la URI de la imagen
+     * @param uri Ruta de acceso a la imagen guardada en la memoria del dispositivo
+     */
     public void getImage(Uri uri) {
         Bitmap bounds = photoUtils.getImage(uri);
         if (bounds != null) {
@@ -406,6 +408,10 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
         }
     }
 
+    /**
+     * Muestra una animación de carga mientras se actualiza un usuario
+     * @param show Determina la visibilidad de la animación
+     */
     @Override
     public void showProgress(final boolean show) {
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
@@ -430,5 +436,22 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
                 pbUpdate.setVisibility(show ? View.VISIBLE : View.GONE);
             }
         });
+    }
+
+    /**
+     * Muestra un mensaje tras la realización de ciertas acciones o tras un error
+     * @param msg Mensaje a mostrar
+     */
+    @Override
+    public void showNetworkError(String msg) {
+        showProgress(false);
+        Toast t = Toast.makeText(FastRecipesApplication.getContext(), msg, Toast.LENGTH_LONG);
+        t.setGravity(Gravity.CENTER, 0, 0);
+        t.show();
+    }
+
+    @Override
+    public void setUserListData(ArrayList<User> u) {
+
     }
 }

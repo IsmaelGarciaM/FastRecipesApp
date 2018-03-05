@@ -13,7 +13,6 @@ import java.util.ArrayList;
  */
 
 public interface ProfilePresenter {
-    void getUserByComment(int idComment);
     void getUser(int idUser);
     void getUsersFav(int idRecipe);
     void getUserRecipes(int idUser);
@@ -26,7 +25,7 @@ public interface ProfilePresenter {
         void setUserData(User u);
         void setUserRecipesData(ArrayList<Recipe> recs);
         void showProgress(boolean show);
-
+        void showNetworkError(String msg);
         void updateCurrentUser(User u);
 
         void setUserListData(ArrayList<User> u);

@@ -7,12 +7,14 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ismael.fastrecipes.adapter.FilteredRecipeAdapter;
 import com.ismael.fastrecipes.interfaces.RecipesPresenter;
@@ -80,15 +82,18 @@ public class RecipesListFragment extends Fragment implements RecipesPresenter.Vi
 
     /**
      * Instanciador de la vista
-     * @param args
-     * @return
+     * @param args Bundle con datos opcionales para la instancia
+     * @return Instancia del fragment
      */
     public static RecipesListFragment getInstance(Bundle args){
 
         if(rlfInstance == null) {
             rlfInstance = new RecipesListFragment();
+            rlfInstance.setArguments(new Bundle());
         }
-        rlfInstance.setArguments(args);
+        if(args != null) {
+            rlfInstance.getArguments().putAll(args);
+        }
         return  rlfInstance;
     }
 
@@ -149,6 +154,16 @@ public class RecipesListFragment extends Fragment implements RecipesPresenter.Vi
         presenter.getFilteredRecipes(getRModel());
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        presenter = null;
+    }
+
+    /**
+     * Realiza la creación de una receta modelo con los datos de los filtros creados para la búsqueda de recetas
+     * @return Objeto receta correctamente formateado para su correcta interpretación en la API
+     */
     private Recipe getRModel(){
         Recipe rModel = new Recipe();
         Filter tmp;
@@ -212,6 +227,10 @@ public class RecipesListFragment extends Fragment implements RecipesPresenter.Vi
     @Override
     public void setFavState(Recipe recipe) {}
 
+    /**
+     * Carga las recetas obtenidas de la busqueda del servidor en la vista
+     * @param recs Listado de recetas obtenidas
+     */
     @Override
     public void setListData(ArrayList<Recipe> recs) {
         adapter.clear();
@@ -219,6 +238,9 @@ public class RecipesListFragment extends Fragment implements RecipesPresenter.Vi
         adapter.notifyDataSetChanged();
     }
 
+    /**
+     * Cancela la carga de recetas por un error o por no haber ninguna receta coincidente con la búsqueda
+     */
     @Override
     public void cancelSearch() {
         lvRecipes.setVisibility(View.GONE);
@@ -227,5 +249,17 @@ public class RecipesListFragment extends Fragment implements RecipesPresenter.Vi
 
     @Override
     public void addNewComment(ArrayList<Comment> newComment) {
+    }
+
+    /**
+     * Muestra un mensaje al realizar algunas acciones o al producirse un error
+     * @param msg Mensaje a mostrar
+     */
+    @Override
+    public void showNetworkError(String msg) {
+        Toast t = Toast.makeText(FastRecipesApplication.getContext(), msg, Toast.LENGTH_LONG);
+        t.setGravity(Gravity.CENTER, 0, 0);
+        t.show();
+        empty.setVisibility(View.VISIBLE);
     }
 }

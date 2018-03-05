@@ -2,19 +2,24 @@ package com.ismael.fastrecipes;
 
 
 import android.app.Activity;
+import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Typeface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ismael.fastrecipes.adapter.FilteredRecipeAdapter;
 import com.ismael.fastrecipes.adapter.RecipeAdapter;
@@ -31,7 +36,8 @@ import butterknife.ButterKnife;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * FavRecipesFragment.class - Muestra un listado con las recetas marcadas como favoritas por el usuario
+ * @author Ismael García
  */
 public class FavRecipesFragment extends Fragment implements RecipesPresenter.View {
 
@@ -52,6 +58,10 @@ public class FavRecipesFragment extends Fragment implements RecipesPresenter.Vie
         // Required empty public constructor
     }
 
+    /**
+     * Carga los datos obtenidos del servidor en la lista de recetas
+     * @param data Listado de recetas marcadas como favoritas por el usuario
+     */
     @Override
     public void setListData(ArrayList<Recipe> data) {
             adapterFavRec.clear();
@@ -59,12 +69,20 @@ public class FavRecipesFragment extends Fragment implements RecipesPresenter.Vie
             adapterFavRec.notifyDataSetChanged();
     }
 
-    public static FavRecipesFragment getInstance(Bundle args){
+    /**
+     * Instanciador del fragment
+     * @param args Datos opcionales para la creación de la instancia
+     * @return Instancia única dl fragmeny
+     */
+    public static FavRecipesFragment getInstance(Bundle args) {
 
-        if(frfInstance == null) {
+        if (frfInstance == null) {
             frfInstance = new FavRecipesFragment();
+            frfInstance.setArguments(new Bundle());
         }
-        frfInstance.setArguments(args);
+        if(args != null) {
+            frfInstance.getArguments().putAll(args);
+        }
         return  frfInstance;
     }
 
@@ -77,8 +95,6 @@ public class FavRecipesFragment extends Fragment implements RecipesPresenter.Vie
             throw new ClassCastException(e.getMessage() + " activity must implement FavRecipeListener interface");
         }
     }
-
-
 
     public interface FavRecipesListener{
         void showFavRecipes();
@@ -124,23 +140,18 @@ public class FavRecipesFragment extends Fragment implements RecipesPresenter.Vie
 
 
     }
+
     @Override
     public void onStart() {
         super.onStart();
         presenter.getFavRecipes(mCallback.getUser().getId());
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-    }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mCallback = null;
-    }
-
+    /**
+     * Muestra la vista que presenta los datos de la receta
+     * @param b Bundle con los datos de la receta a mostrar
+     */
     @Override
     public void showRecipeInfo(Bundle b) {
         mCallback.showRecipe(b);
@@ -151,11 +162,38 @@ public class FavRecipesFragment extends Fragment implements RecipesPresenter.Vie
 
     }
 
+    /**
+     * Cancela la carga de datos si la conexión falla o la respuesta del servidor no contiene elementos
+     */
     @Override
     public void cancelSearch() {
         adapterFavRec.clear();
         emptyList.setVisibility(View.VISIBLE);
         lvFavRecipes.setVisibility(View.GONE);
+    }
+
+    /**
+     * Muestra un mensaje de error en la pantalla.
+     * @param msg Mensaje de error a mostrar
+     */
+    @Override
+    public void showNetworkError(String msg) {
+        Toast t = Toast.makeText(FastRecipesApplication.getContext(), msg, Toast.LENGTH_LONG);
+        t.setGravity(Gravity.CENTER, 0, 0);
+        t.show();
+        emptyList.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallback = null;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        presenter = null;
     }
 
     @Override

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,15 +66,15 @@ public class UsersAdapter extends ArrayAdapter<User> {
         else
             uh = (UserHolder) item.getTag();
 
+        Log.d("IMAGE", getItem(position).getImage());
 
         if(getItem(position).getImage() != null && !getItem(position).getImage().equals("")) {
             //cargar imagen
             try {
-                Picasso.with(context).load(getItem(position).getImage()).into(uh.userImage);
+                Picasso.with(context).load(getItem(position).getImage()).error(R.drawable.user_icon).into(uh.userImage);
 
             }
-            catch (Exception e){
-                uh.userImage.setImageDrawable(context.getResources().getDrawable(R.drawable.user_icon));
+            catch (Exception e) {
             }
         }
         else

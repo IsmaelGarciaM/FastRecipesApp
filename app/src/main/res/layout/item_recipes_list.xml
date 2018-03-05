@@ -10,13 +10,16 @@
 
     <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="110dp">
+        android:layout_height="wrap_content">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/imvRecipeImg"
             android:layout_width="92dp"
+            android:layout_marginTop="@dimen/hbLines"
             android:src="@drawable/addrecipe"
-            android:layout_height="match_parent"
+            android:layout_height="92dp"
+            android:layout_marginStart="@dimen/textPageBorder"
+            android:layout_marginBottom="@dimen/hbLines"
             android:layout_alignParentStart="true"
             android:layout_marginEnd="@dimen/textPageBorder"
             android:layout_alignParentTop="true"/>
@@ -50,6 +53,7 @@
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/imvRecipeImg"
             android:layout_marginTop="@dimen/textPageBorder"
+            android:layout_marginBottom="@dimen/hbLines"
             android:layout_below="@id/txvRecipeCategories"
             android:layout_marginStart="@dimen/textPageBorder">
 

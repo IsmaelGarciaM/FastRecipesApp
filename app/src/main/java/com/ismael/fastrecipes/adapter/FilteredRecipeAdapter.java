@@ -17,6 +17,8 @@ import com.google.firebase.storage.StorageReference;
 import com.ismael.fastrecipes.R;
 import com.ismael.fastrecipes.model.Recipe;
 import com.ismael.fastrecipes.utils.Const;
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -66,7 +68,8 @@ public class FilteredRecipeAdapter extends ArrayAdapter<Recipe> {
         if(getItem(position).getImage() != null && !getItem(position).getImage().equals("")) {
             try {
                 Picasso.with(context)
-                        .load(getItem(position).getImage())
+                        .load(getItem(position).getImage()).resize(300, 200)
+                        .error(R.drawable.addrecipe)
                         .into(frh.imgRecipe);
 
             } catch (Exception e) {
@@ -80,7 +83,7 @@ public class FilteredRecipeAdapter extends ArrayAdapter<Recipe> {
         frh.txvCategories.setText(getItem(position).getCategories());
         frh.txvRecipeTime.setText(String.valueOf(getItem(position).getTime()) + " min.");
         frh.txvRecipeDifficulty.setText(getItem(position).getDifficulty());
-        frh.txvRecipeRating.setText(String.valueOf(getItem(position).getRating()));
+        frh.txvRecipeRating.setText(String.valueOf(getItem(position).getRating())+ " /5");
         frh.txvRecipeNPers.setText(String.valueOf(getItem(position).getnPers()));
 
         return item;

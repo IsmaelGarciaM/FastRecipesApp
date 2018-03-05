@@ -3,6 +3,7 @@ package com.ismael.fastrecipes;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -23,6 +24,8 @@ import com.google.firebase.storage.StorageReference;
 import com.ismael.fastrecipes.adapter.PagerAdapter;
 import com.ismael.fastrecipes.model.User;
 import com.ismael.fastrecipes.utils.Const;
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
@@ -59,7 +62,7 @@ public class SocialActivityFragment extends Fragment{
      * Interfaz de escucha de la clase HomeAcivity
      */
     public interface SocialActivityFragmentListener{
-        void showSocialFragment(boolean show);
+        void showSocialFragment(String msg);
         String getUserName();
         void showProfile(Bundle b);
         User getUser();
@@ -73,8 +76,11 @@ public class SocialActivityFragment extends Fragment{
     public static SocialActivityFragment getInstance(Bundle args){
         if(safInstance == null){
             safInstance = new SocialActivityFragment();
+            safInstance.setArguments(new Bundle());
         }
-        safInstance.setArguments(args);
+        if(args!=null){
+            safInstance.getArguments().putAll(args);
+        }
         return  safInstance;
     }
 
@@ -92,9 +98,19 @@ public class SocialActivityFragment extends Fragment{
         ButterKnife.bind(this, rootView);
 
         if(mCallback.getUser().getImage() != null && !mCallback.getUser().getImage().equals("")) {
-            Picasso.with(getContext())
-                    .load(mCallback.getUser().getImage())
-                    .into(imvUser);
+
+            try {
+                Picasso.with(getContext())
+                        .load(mCallback.getUser().getImage())
+                        .resize(110, 145).onlyScaleDown()
+                        .memoryPolicy(MemoryPolicy.NO_CACHE)
+                        .networkPolicy(NetworkPolicy.NO_CACHE)
+                        .noFade()
+                        .error(R.drawable.user_icon)
+                        .into(imvUser);
+            }catch (Exception e){
+                imvUser.setImageDrawable(getResources().getDrawable(R.drawable.user_icon));
+            }
         }
         else{
             imvUser.setImageDrawable(getResources().getDrawable(R.drawable.user_icon));
@@ -168,8 +184,10 @@ public class SocialActivityFragment extends Fragment{
             }
         });
 
-        if(safInstance.getArguments() != null && safInstance.getArguments().getBoolean("show") )
-            Snackbar.make(view, "Se ha añadido la receta.", Snackbar.LENGTH_LONG).show();
+        if(safInstance.getArguments().getString("message") != null && !safInstance.getArguments().getString("message").equals("") ) {
+            String msg = safInstance.getArguments().getString("message");
+            Snackbar.make(view, msg, Snackbar.LENGTH_LONG).show();
+        }
 
 
     }

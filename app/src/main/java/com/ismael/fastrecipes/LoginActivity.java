@@ -25,6 +25,7 @@ import android.widget.TextView;
 import com.google.firebase.auth.FirebaseUser;
 import com.ismael.fastrecipes.exceptions.DataEntryException;
 import com.ismael.fastrecipes.interfaces.LoginPresenter;
+import com.ismael.fastrecipes.model.Recipe;
 import com.ismael.fastrecipes.presenter.LoginPresenterImpl;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,7 +33,6 @@ import butterknife.ButterKnife;
 /**
  * LoginActivity.java - Clase que controla el acceso de los usuarios a los servidores
  * @author Ismael Garcia
- * @version 0.2
  */
 public class LoginActivity extends Activity implements LoginPresenter.View{
 
@@ -62,7 +62,7 @@ public class LoginActivity extends Activity implements LoginPresenter.View{
 
     @BindView(R.id.login_data_layout)
     View dataView;
-
+    Bundle newR;
     LoginPresenter presenter;
     View mView = null;
 
@@ -71,8 +71,12 @@ public class LoginActivity extends Activity implements LoginPresenter.View{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+        Intent tmp = getIntent();
+        if(tmp.getExtras() != null)
+        {
+            newR = tmp.getExtras();
+        }
         presenter = new LoginPresenterImpl(this, getApplicationContext());
-
         edtPass.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -83,7 +87,6 @@ public class LoginActivity extends Activity implements LoginPresenter.View{
                 }
                 else {
                     if (actionId == R.id.activity_login || actionId == EditorInfo.IME_NULL) {
-                        //attemptLogin();
                         return true;
                     }
                     return false;
@@ -155,7 +158,7 @@ public class LoginActivity extends Activity implements LoginPresenter.View{
 
 
     /**
-     * Comprueba que el email y contraseña están bien formadas y de ser así, realiza el login. Mediante el presentador
+     * Comprueba que el email y contraseña están bien formadas y de ser así, realiza el login mediante el presentador
      */
     void attemptLogin() {
 
@@ -205,6 +208,10 @@ public class LoginActivity extends Activity implements LoginPresenter.View{
         }
     }
 
+    /**
+     * Muestra la animación de carga de la siguiente pantalla
+     * @param show Determina si es visible o no
+     */
     @Override
     public void showProgress(final boolean show) {
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
@@ -245,7 +252,7 @@ public class LoginActivity extends Activity implements LoginPresenter.View{
      * Muestra un error de conexión
      */
     private void showNetworkError(){
-        Snackbar.make(mView, "Errors de conexión con el servidor", Snackbar.LENGTH_LONG).show();
+        Snackbar.make(mView, "Error de conexión de red.", Snackbar.LENGTH_LONG).show();
     }
 
     /**
@@ -255,6 +262,9 @@ public class LoginActivity extends Activity implements LoginPresenter.View{
     @Override
     public void showHome(Bundle userInfo){
         Intent i = new Intent(this, HomeActivity.class);
+        if(newR != null) {
+            userInfo.putParcelable("new", newR);
+        }
         i.putExtras(userInfo);
         startActivity(i);
         finish();
@@ -279,13 +289,15 @@ public class LoginActivity extends Activity implements LoginPresenter.View{
      * @return Devuelve true o false en función de la disponibilidad de la conexión del dispositivo
      */
     private boolean isOnline() {
-        ConnectivityManager cm =
-                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null && activeNetwork.isConnected();
     }
 
+
+    /**
+     * Muestra un cuadro de diálogo para saber si se debe guardar la sesión activa o no
+     */
     void saveUser(){
         AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.Theme_Dialog_Translucent);
         dialog.setCancelable(false);
@@ -322,6 +334,10 @@ public class LoginActivity extends Activity implements LoginPresenter.View{
         }).show();
     }
 
+    /**
+     * Muestra un cuadro de diálogo para confirmar el envío de un correo para cambiar la contraseña
+     * @param email Dirección a la que se enviará el correo si está registrado como usuario
+     */
     private void showConfirmDialog(String email){
         final String[] t = {email};
 

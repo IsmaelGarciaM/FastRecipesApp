@@ -5,11 +5,13 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ismael.fastrecipes.adapter.UsersAdapter;
 import com.ismael.fastrecipes.interfaces.ProfilePresenter;
@@ -61,7 +63,16 @@ public class UsersListFragment extends Fragment implements ProfilePresenter.View
 
     @Override
     public void showProgress(boolean show) {
-        
+
+    }
+
+    @Override
+    public void showNetworkError(String msg) {
+        Toast t = new Toast(FastRecipesApplication.getContext());
+        t.setText(msg);
+        t.setDuration(Toast.LENGTH_LONG);
+        t.setGravity(Gravity.CENTER, 0, 0);
+        t.show();
     }
 
     @Override
@@ -71,8 +82,10 @@ public class UsersListFragment extends Fragment implements ProfilePresenter.View
 
     @Override
     public void setUserListData(ArrayList<User> u) {
-            adapter.addAll(u);
-            adapter.notifyDataSetChanged();
+        adapter.addAll(u);
+        adapter.notifyDataSetChanged();
+        txvEmpty.setVisibility(View.GONE);
+        lvUsers.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -91,8 +104,11 @@ public class UsersListFragment extends Fragment implements ProfilePresenter.View
 
         if(ulfInstance == null) {
             ulfInstance = new UsersListFragment();
+            ulfInstance.setArguments(new Bundle());
         }
-        ulfInstance.setArguments(args);
+        if(args!=null) {
+            ulfInstance.getArguments().putAll(args);
+        }
         return  ulfInstance;
     }
 

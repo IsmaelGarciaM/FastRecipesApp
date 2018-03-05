@@ -4,12 +4,16 @@ package com.ismael.fastrecipes;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Typeface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +22,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.ismael.fastrecipes.adapter.FilterAdapter;
 import com.ismael.fastrecipes.model.Filter;
 import java.util.ArrayList;
@@ -67,8 +73,11 @@ public class SearchRecipeFragment extends Fragment{
 
         if(srfInstance == null){
             srfInstance = new SearchRecipeFragment();
+            srfInstance.setArguments(new Bundle());
         }
-        srfInstance.setArguments(args);
+        if(args != null) {
+            srfInstance.getArguments().putAll(args);
+        }
         return  srfInstance;
     }
 
@@ -140,7 +149,7 @@ public class SearchRecipeFragment extends Fragment{
         fabSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mCallback.showRecipesList(null);
+                    mCallback.showRecipesList(null);
             }
         });
 
@@ -259,8 +268,9 @@ public class SearchRecipeFragment extends Fragment{
             public void onClick(DialogInterface dialogInterface, int i) {
                 //add filtro de tiempo
                 EditText edtTime = ((Dialog)dialogInterface).findViewById(R.id.edtTime);
-                if(!t[0].equals("")) {
-                    t[0] = edtTime.getText().toString() + " " + getResources().getString(R.string.minutes);
+                String tmp = edtTime.getText().toString();
+                if(!tmp.equals("")) {
+                    t[0] = tmp + " " + getResources().getString(R.string.minutes);
                     if (mCallback.getFilterByName(f5) != null) {
                         mCallback.getFilterByName(f5).setContent(t[0]);
                         filterAdapter.refreshList();

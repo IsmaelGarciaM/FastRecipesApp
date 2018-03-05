@@ -8,18 +8,20 @@
     <RelativeLayout
         android:id="@+id/rl_header"
         android:layout_width="match_parent"
-        android:layout_height="148dp"
+        android:layout_height="192dp"
         android:background="@color/ic_launcher_background_testing"
         android:orientation="vertical">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/cd_civUserProfile"
-            android:layout_width="96dp"
-            android:layout_height="96dp"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
             android:layout_margin="@dimen/textPageBorder"
             android:layout_marginTop="@dimen/textPageBorder"
             android:layout_above="@id/rlContainer"
             android:layout_centerHorizontal="true"
+            android:cropToPadding="true"
+            android:scaleType="centerCrop"
             android:src="@drawable/user_icon" />
 
         <RelativeLayout
