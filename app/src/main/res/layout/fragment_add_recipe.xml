@@ -6,11 +6,19 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent" >
 <RelativeLayout
+    android:id="@+id/rldataRecipe"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.ismael.fastrecipes.AddRecipeFragment">
+    <ProgressBar
+        android:id="@+id/pbRecipe"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:visibility="gone"
+        android:layout_centerInParent="true"
+        />
     <android.support.v7.widget.CardView
         android:id="@+id/crvAddRecipe"
         android:layout_width="match_parent"
@@ -43,6 +51,7 @@
         android:layout_marginStart="@dimen/textPageBorder"
         android:layout_marginTop="-12dp"
         android:layout_marginEnd="@dimen/textPageBorder"
+        android:hint="O bien introduce la url de la imagen"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -50,7 +59,6 @@
             android:id="@+id/edtImageUrl"
             android:layout_width="match_parent"
             android:textSize="10sp"
-            android:hint="O bien introduce la url de la imagen"
             android:layout_height="wrap_content" />
 
     </android.support.design.widget.TextInputLayout>
@@ -61,13 +69,13 @@
         android:layout_below="@+id/tilImageUrl"
         android:layout_marginStart="@dimen/textPageBorder"
         android:layout_marginEnd="@dimen/textPageBorder"
+        android:hint="Nombre de receta"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <android.support.design.widget.TextInputEditText
             android:id="@+id/edtNameRecipe"
             android:layout_width="match_parent"
-            android:hint="Nombre de receta"
             android:layout_height="wrap_content" />
 
     </android.support.design.widget.TextInputLayout>
@@ -181,12 +189,13 @@ android:layout_below="@id/btnAddCategories"
         android:layout_marginEnd="@dimen/textPageBorder"
         android:layout_marginTop="@dimen/hbLines"
         android:layout_width="match_parent"
+        android:hint="Elaboración"
         android:layout_height="wrap_content">
 
         <android.support.design.widget.TextInputEditText
             android:id="@+id/edtElaborationRecipe"
             android:layout_width="match_parent"
-            android:hint="Elaboración"
+            android:lineSpacingExtra="0.9dp"
             android:layout_height="match_parent" />
     </android.support.design.widget.TextInputLayout>
 
@@ -198,13 +207,13 @@ android:layout_below="@id/btnAddCategories"
         android:layout_marginTop="@dimen/hbLines"
         android:layout_marginEnd="@dimen/textPageBorder"
         android:layout_width="match_parent"
+        android:hint="Fuente"
         android:layout_height="wrap_content">
 
         <android.support.design.widget.TextInputEditText
             android:id="@+id/edtSourceRecipe"
             android:layout_width="match_parent"
             android:textSize="12sp"
-            android:hint="Fuente"
             android:layout_height="match_parent" />
     </android.support.design.widget.TextInputLayout>
 

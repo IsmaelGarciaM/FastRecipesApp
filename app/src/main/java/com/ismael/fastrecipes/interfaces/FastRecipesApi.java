@@ -29,9 +29,7 @@ import rx.Observable;
 
 public interface FastRecipesApi {
 
-    public static final String BASE_URL = "http://fastrecipesapp.com/apifastrecipes/api/public/";
-
-
+    public static final String BASE_URL = "https://ismagm9481493.ipage.com/wb_fastrecipesapp.com/apifastrecipes/api/public/";
 
     //RECETAS
     @GET("recipe/id/{id}")
@@ -84,4 +82,7 @@ public interface FastRecipesApi {
 
     @GET("favs/{id}")
     Observable<Result> getFavRecipesObservable(@Path("id") int idUser);
+
+    @GET("recipeoftheday")
+    Observable<Result> getRecipeOfDayObservable();
 }

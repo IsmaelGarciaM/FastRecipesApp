@@ -25,6 +25,7 @@ public interface RecipesPresenter {
     void validateName(String name);
     void validateEla(String elaboration);
     void loadImage(Recipe tmp, Uri mImageUri);
+    void getRecipeOfDay();
 
     interface View{
         Context getContext();

@@ -2,6 +2,7 @@ package com.ismael.fastrecipes;
 
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -76,11 +77,9 @@ public class SocialActivityFragment extends Fragment{
     public static SocialActivityFragment getInstance(Bundle args){
         if(safInstance == null){
             safInstance = new SocialActivityFragment();
-            safInstance.setArguments(new Bundle());
         }
-        if(args!=null){
-            safInstance.getArguments().putAll(args);
-        }
+        safInstance.setArguments(args);
+
         return  safInstance;
     }
 
@@ -96,7 +95,8 @@ public class SocialActivityFragment extends Fragment{
         // Inflate the layout for this fragment
         View rootView =  inflater.inflate(R.layout.fragment_social_activity, container, false);
         ButterKnife.bind(this, rootView);
-
+        Typeface font = Typeface.createFromAsset(getContext().getAssets(), "yummycupcakes.ttf");
+        txvUserName.setTypeface(font);
         if(mCallback.getUser().getImage() != null && !mCallback.getUser().getImage().equals("")) {
 
             try {

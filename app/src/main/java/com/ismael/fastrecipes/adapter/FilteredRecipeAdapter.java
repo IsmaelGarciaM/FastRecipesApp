@@ -1,6 +1,7 @@
 package com.ismael.fastrecipes.adapter;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -77,6 +78,10 @@ public class FilteredRecipeAdapter extends ArrayAdapter<Recipe> {
             }
         }else
             frh.imgRecipe.setImageDrawable(context.getResources().getDrawable(R.drawable.addrecipe));
+
+        Typeface font = Typeface.createFromAsset(getContext().getAssets(), "yummycupcakes.ttf");
+        frh.txvName.setTypeface(font);
+        frh.txvCategories.setTypeface(font);
 
 
         frh.txvName.setText(getItem(position).getName());

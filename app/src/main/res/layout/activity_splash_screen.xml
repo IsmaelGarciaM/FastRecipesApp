@@ -4,7 +4,6 @@
     android:id="@+id/activity_splash_screen"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/ic_launcher_background_testing"
     tools:context="com.ismael.fastrecipes.SplashScreen">
 
     <ImageView

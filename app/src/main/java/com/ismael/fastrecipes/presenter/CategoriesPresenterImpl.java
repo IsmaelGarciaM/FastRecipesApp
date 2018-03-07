@@ -47,7 +47,6 @@ public class CategoriesPresenterImpl implements CategoriesPresenter {
              cTmp = new Category(catNames[i], catImages[i], state);
              cats.add(cTmp);
          }
-         ///
          return cats;
     }
 }

@@ -165,6 +165,10 @@ public class FastRecipesService {
         return fastRecipesApi.getFavRecipesObservable(idUser);
     }
 
+    public Observable<Result> getRecipeOfDay() {
+        return fastRecipesApi.getRecipeOfDayObservable();
+    }
+
 
 
 

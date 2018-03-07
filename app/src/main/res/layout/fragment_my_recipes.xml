@@ -24,10 +24,10 @@
         android:id="@+id/fabAddRecipe"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_add"
+        app:srcCompat="@drawable/ic_add_new"
         app:backgroundTint="@color/colorPrimary"
-        android:layout_gravity="end"
-        android:layout_marginBottom="50dp"
+        android:layout_gravity="end|bottom"
+        android:layout_marginBottom="30dp"
         android:tag="@string/addrecipe"
         android:layout_marginTop="@dimen/textPageBorder"
         android:layout_marginEnd="@dimen/textPageBorder"/>

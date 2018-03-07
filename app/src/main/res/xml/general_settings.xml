@@ -1,37 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     >
-    <PreferenceCategory android:title="Configuración de Cuenta"
-        >
-
-
-        <Preference android:title="Cerrar sesión"
-            android:icon="@mipmap/ic_launcher_testing"
-            android:key="close_session">
-        </Preference>
-            <SwitchPreference
-                android:defaultValue="false"
-                android:title="Recordar usuario"
-                android:key="remember_user" />
+    <PreferenceCategory android:title="Configuración de Cuenta">
 
         <SwitchPreference
             android:defaultValue="false"
-            android:title="Recibir notificaciones"
-            android:key="notifications" />
+            android:title="@string/rememberuser"
+            android:key="remember_user" />
+
+        <Preference android:title="Cerrar sesión"
+            android:icon="@drawable/ic_turn_off"
+            android:key="close_session">
+        </Preference>
+    </PreferenceCategory>
+
+
+    <PreferenceCategory android:title="@string/about">
+        <Preference android:title="@string/version"
+            android:summary="1.0"
+            android:icon="@drawable/ic_version"
+            android:key="version"/>
 
         <Preference
-            android:defaultValue="false"
-            android:title="Términos y condiciones"
-            android:key="notifications" />
+            android:title="@string/credits"
+            android:summary="Créditos, agradecimientos y licencias"
+            android:key="credits"/>
 
-        <Preference android:title="Ayuda"
-            android:icon="@drawable/fridge_filled"
-            android:key="help">
-        </Preference>
-
-
-
-
+        <Preference
+            android:title="@string/terms"
+            android:key="conditions" />
 
         </PreferenceCategory>
+    <PreferenceCategory android:title="Sobre el desarrollador">
+
+        <Preference
+            android:title="Sobre nosotros"
+            android:icon="@drawable/ic_info"
+            android:key="about_us"/>
+
+        <Preference
+            android:title="Perfil profesional"
+            android:icon="@drawable/linkedin"
+            android:key="profesional"/>
+
+    </PreferenceCategory>
 </PreferenceScreen>

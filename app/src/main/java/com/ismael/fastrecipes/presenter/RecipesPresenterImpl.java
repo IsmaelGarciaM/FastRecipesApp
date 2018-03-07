@@ -66,16 +66,13 @@ public class RecipesPresenterImpl implements RecipesPresenter{
     private Context context;
     private RecipesPresenter.View view;
     private FastRecipesService mService;
-    Result r = new Result();
     private DatabaseReference mCommentsReference;
     DatabaseReference firebaseDatabaseInstance;
-    GenericTypeIndicator<List<Comment>> t ;
     private StorageReference mStorageRef;
 
 
 
     public RecipesPresenterImpl(RecipesPresenter.View vista, int id){
-        t = new GenericTypeIndicator<List<Comment>>() {};
         this.view = vista;
         this.context = vista.getContext();
         mService = FastRecipesApplication.getFastRecipesService();
@@ -200,10 +197,13 @@ public class RecipesPresenterImpl implements RecipesPresenter{
                     .subscribe(new Subscriber<Result>() {
                         @Override
                         public void onCompleted() {
-                            Log.d("SUBSCRIBER ADD INFO", "RECIPE ADDED");
-                            //view.showSocialFragment();
                             if (r[0].getImage().equals("add") && mImageUri != null)
                                 loadImage(r[0], mImageUri);
+                            else {
+                                Bundle b = new Bundle();
+                                b.putParcelable("recipe", r[0]);
+                                view.showRecipeInfo(b);
+                            }
 
                         }
 
@@ -236,6 +236,11 @@ public class RecipesPresenterImpl implements RecipesPresenter{
                             //view.showSocialFragment();
                             if (r[0].getImage().equals("add") && mImageUri != null)
                                 loadImage(r[0], mImageUri);
+                            else {
+                                Bundle b = new Bundle();
+                                b.putParcelable("recipe", r[0]);
+                                view.showRecipeInfo(b);
+                            }
                         }
 
                         @Override
@@ -459,7 +464,7 @@ public class RecipesPresenterImpl implements RecipesPresenter{
                             view.cancelSearch();
                         }
                         else if(state[0] == 1){
-                            Log.d("SUBSCRIBER DELETE", "LA RECETA NO SE HA BORRADO.");
+                            view.showNetworkError("La receta no se ha borrado.");
                         }
                     }
 
@@ -504,6 +509,35 @@ public class RecipesPresenterImpl implements RecipesPresenter{
                 view.showNetworkError( msg);
             }
         });
+    }
+
+    @Override
+    public void getRecipeOfDay() {
+        final ArrayList<Recipe> r = new ArrayList<>();
+        if(isOnline()) {
+            mService.getRecipeOfDay().subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread()).timeout(10, TimeUnit.SECONDS)
+                    .subscribe(new Subscriber<Result>() {
+                        @Override
+                        public void onCompleted() {
+                            if (r.get(0) != null) {
+                                view.setListData(r);
+                            }
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            view.showNetworkError("Ha ocurrido un problema con la conexión");
+                        }
+
+                        @Override
+                        public void onNext(Result result) {
+                            if (result.getRecipes() != null)
+                                r.add(result.getRecipes().get(0));
+                        }
+
+                    });
+        }
     }
 
     /**

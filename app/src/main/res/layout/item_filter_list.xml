@@ -27,6 +27,7 @@
             android:layout_marginTop="@dimen/textPageBorder"
             android:layout_marginEnd="@dimen/hbLines"
             android:maxWidth="280dp"
+            android:textColor="@color/textColorPrimary"
             android:layout_marginStart="@dimen/textPageBorder"
             android:layout_height="wrap_content" />
 
@@ -38,7 +39,8 @@
            android:layout_below="@+id/filterTitle"
            android:layout_marginStart="@dimen/textPageBorder"
            android:layout_marginTop="@dimen/hbLines"
-           android:layout_marginEnd="@dimen/hbLines"
+            android:textColor="@color/textColorPrimary"
+            android:layout_marginEnd="@dimen/hbLines"
             android:layout_marginBottom="@dimen/hbLines"/>
 
     </RelativeLayout>

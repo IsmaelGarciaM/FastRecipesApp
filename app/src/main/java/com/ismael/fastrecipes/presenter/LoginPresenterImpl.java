@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -120,26 +121,49 @@ public class LoginPresenterImpl implements LoginPresenter {
 
         if(email.equals("") && pass.equals("")) {
                 if (context.getSharedPreferences("fastrecipessp", Context.MODE_PRIVATE).getBoolean("remember_user", false)) {
+                    /*
+
                     email = context.getSharedPreferences("fastrecipessp", Context.MODE_PRIVATE).getString("um", "");
                     pass = context.getSharedPreferences("fastrecipessp", Context.MODE_PRIVATE).getString("up", "");
-                    mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                Log.d(TAG, "signInWithEmail:success");
-                                FirebaseUser user = mAuth.getCurrentUser();
-                                //if(user.isEmailVerified())
-                                vista.updateUI(user);
+                    */
+                    if(mAuth.getCurrentUser() != null){
+                        mAuth.getCurrentUser().getIdToken(false).addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
+                             @Override
+                             public void onComplete(@NonNull Task<GetTokenResult> task) {
+                                 userLogin(task.getResult().getToken());
+                             }
+                        }).addOnFailureListener(new OnFailureListener() {
+                             @Override
+                             public void onFailure(@NonNull Exception e) {
+                                 vista.showLoginError("");
+                             }
+                        });
 
-                                //else
-                                //vista.updateUI(null);
-                            } else {
-                                Log.d(TAG, "signInWithEmail:failure", task.getException());
-                                vista.showProgress(false);
-                                vista.showLoginError(context.getResources().getString(R.string.login_error));
+
+
+                    }
+                    else {
+                        /*mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    Log.d(TAG, "signInWithEmail:success");
+                                    FirebaseUser user = mAuth.getCurrentUser();
+                                    //if(user.isEmailVerified())
+                                    vista.updateUI(user);
+
+                                    //else
+                                    //vista.updateUI(null);
+                                } else {
+                                    Log.d(TAG, "signInWithEmail:failure", task.getException());
+                                    vista.showProgress(false);
+                                    vista.showLoginError(context.getResources().getString(R.string.login_error));
+                                }
                             }
-                        }
-                    });
+                        });*/
+                        vista.showLoginError("");
+
+                    }
                 } else {
                     vista.showLoginError("");
                 }

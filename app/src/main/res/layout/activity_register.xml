@@ -13,7 +13,6 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:background="@color/ic_launcher_background_testing"
     tools:context="com.ismael.profinder.RegisterActivity">
 
 

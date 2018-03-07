@@ -2,7 +2,6 @@
 
 <RelativeLayout android:layout_margin="2dp"
     android:layout_width="wrap_content"
-    android:background="@color/ic_launcher_background_testing"
     android:layout_height="150dp"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
@@ -11,15 +10,12 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="@dimen/textPageBorder"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/windowBackground"
-
-    app:cardBackgroundColor="@color/colorPrimary"
+    android:background="@color/backgroundEdit"
     android:elevation="@dimen/elevation"
     app:cardCornerRadius="@dimen/elevation">
 
     <RelativeLayout android:layout_margin="2dp"
         android:layout_width="wrap_content"
-        android:background="@color/ic_launcher_background_testing"
         android:layout_height="wrap_content">
         <ImageView
             android:id="@+id/catIcon"

@@ -181,12 +181,12 @@ public class RegisterActivity extends AppCompatActivity implements RegisterPrese
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 getPreferences(MODE_PRIVATE).edit().putBoolean("remember_user", false).apply();
-                String m = String.valueOf(edtEmailRegister.getText());
+                /*String m = String.valueOf(edtEmailRegister.getText());
                 if(m.endsWith(" ")){
                     m = m.trim();
-                }
-                getSharedPreferences("fastrecipessp", MODE_PRIVATE).edit().putString("um", m).apply();
-                getSharedPreferences("fastrecipessp", MODE_PRIVATE).edit().putString("up", String.valueOf(edtPasswordRegister.getText())).apply();
+                }*/
+                //getSharedPreferences("fastrecipessp", MODE_PRIVATE).edit().putString("um", m).apply();
+                //getSharedPreferences("fastrecipessp", MODE_PRIVATE).edit().putString("up", String.valueOf(edtPasswordRegister.getText())).apply();
                 attemptRegister();
 
             }
@@ -196,14 +196,14 @@ public class RegisterActivity extends AppCompatActivity implements RegisterPrese
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 getSharedPreferences("fastrecipessp", MODE_PRIVATE).edit().putBoolean("remember_user", true).apply();
-                String m = String.valueOf(edtEmailRegister.getText());
+                /*String m = String.valueOf(edtEmailRegister.getText());
                 if(m.endsWith(" ")){
                     m = m.trim();
                 }
 
                 getSharedPreferences("fastrecipessp", MODE_PRIVATE).edit().putString("um",m).apply();
                 getSharedPreferences("fastrecipessp", MODE_PRIVATE).edit().putString("up", String.valueOf(edtPasswordRegister.getText())).apply();
-                attemptRegister();
+                */attemptRegister();
 
             }
         }).show();

@@ -24,7 +24,8 @@
             android:id="@+id/btnAddIng"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
-            android:background="@drawable/ic_add"/>
+            android:text="Añadir"
+            android:background="@drawable/bg_button"/>
     </LinearLayout>
 
     <ListView

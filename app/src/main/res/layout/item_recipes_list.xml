@@ -5,8 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:elevation="@dimen/hbLines"
     app:cardElevation="@dimen/elevation"
-    app:cardCornerRadius="@dimen/elevation"
-    app:cardBackgroundColor="@color/ic_launcher_background_testing">
+    app:cardCornerRadius="@dimen/hbLines">
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -31,7 +30,7 @@
             android:id="@+id/txvRecipeName"
             android:layout_toEndOf="@id/imvRecipeImg"
             android:layout_alignParentTop="true"
-            android:textSize="16sp"
+            android:textSize="20sp"
             />
 
 
@@ -42,7 +41,7 @@
             android:id="@+id/txvRecipeCategories"
             android:layout_toEndOf="@id/imvRecipeImg"
             android:layout_below="@id/txvRecipeName"
-            android:textSize="10sp"
+            android:textSize="16sp"
             />
 
 
@@ -69,6 +68,7 @@
                 android:id="@+id/txvTimeRecipe"
                 android:layout_height="wrap_content"
                 android:layout_toEndOf="@id/timeIcon"
+                android:layout_marginStart="@dimen/elevation"
                 android:layout_alignBaseline="@id/timeIcon"
                 android:textSize="10sp"
                 android:text="" />
@@ -79,7 +79,7 @@
             android:layout_height="16dp"
             android:id="@+id/difficultIcon"
             android:layout_marginStart="@dimen/textPageBorder"
-            android:layout_marginEnd="@dimen/hbLines"
+            android:layout_marginEnd="@dimen/elevation"
             android:src="@drawable/speedometer"
             android:layout_toEndOf="@id/txvTimeRecipe"
             />
@@ -90,7 +90,7 @@
             android:layout_height="wrap_content"
             android:textSize="10sp"
             android:id="@+id/txvRecipeDifficult"
-android:layout_alignBaseline="@id/difficultIcon"
+            android:layout_alignBaseline="@id/difficultIcon"
             android:layout_toEndOf="@id/difficultIcon"
 
             />
@@ -99,9 +99,10 @@ android:layout_alignBaseline="@id/difficultIcon"
         <ImageView
             android:layout_width="16dp"
             android:layout_height="16dp"
+
             android:id="@+id/ratingIcon"
-            android:layout_marginStart="@dimen/textPageBorder"
-            android:src="@drawable/heart"
+            android:layout_marginStart="@dimen/hbLines"
+            android:src="@drawable/satisfaction"
             android:layout_toEndOf="@id/txvRecipeDifficult"/>
 
 
@@ -119,8 +120,8 @@ android:layout_alignBaseline="@id/difficultIcon"
             android:layout_width="16dp"
             android:layout_height="16dp"
             android:id="@+id/imvNpersicon"
-            android:layout_marginStart="@dimen/textPageBorder"
-            android:src="@drawable/user_icon"
+            android:layout_marginStart="@dimen/hbLines"
+            android:src="@drawable/ic_girl"
             android:layout_toEndOf="@+id/txvRecipeRating"/>
 
 

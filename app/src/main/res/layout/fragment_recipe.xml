@@ -132,20 +132,21 @@
                 android:text="-"
                 />
 
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
             <ImageView
-                android:layout_weight="1"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:id="@+id/ratingIconPR"
-
                 android:layout_marginTop="@dimen/elevation"
                 android:layout_marginStart="@dimen/textPageBorder"
                 android:src="@drawable/satisfaction" />
 
-
             <TextView
-                android:layout_weight="1"
                 android:textSize="10sp"
+                android:layout_toEndOf="@id/ratingIconPR"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/elevation"
@@ -153,7 +154,14 @@
                 android:id="@+id/txvRecipeRatingPR"
                 android:text="-/5"
                 />
+                <LinearLayout
+                    android:layout_width="30dp"
+                    android:layout_marginTop="@dimen/elevation"
+                    android:layout_height="2dp"
+                    android:layout_below="@id/ratingIconPR"
+                    android:background="@color/colorPrimary"/>
 
+            </RelativeLayout>
         </LinearLayout>
 
     </android.support.v7.widget.CardView>
@@ -203,8 +211,17 @@
             android:layout_margin="@dimen/textPageBorder"
             android:text="Ingredientes:"
             android:textSize="16sp"/>
+            <LinearLayout
+                android:layout_marginStart="@dimen/textPageBorder"
+                android:layout_marginEnd="@dimen/textPageBorder"
+                android:layout_below="@id/txvIng"
+                android:layout_marginTop="-12dp"
+                android:background="@color/colorPrimary"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"/>
 
-        <TextView
+
+            <TextView
             android:id="@+id/txvRecipeIngredients"
             android:layout_below="@+id/txvIng"
             android:layout_marginStart="@dimen/textPageBorder"
@@ -221,11 +238,22 @@
             android:text="Elaboración:"
             android:textSize="16sp"/>
 
+            <LinearLayout
+                android:layout_marginStart="@dimen/textPageBorder"
+                android:layout_marginEnd="@dimen/textPageBorder"
+                android:layout_below="@id/txvDesc"
+                android:lineSpacingExtra="0.9dp"
+                android:layout_marginTop="-12dp"
+                android:background="@color/colorPrimary"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"/>
+
         <TextView
             android:id="@+id/txvRecipeDescription"
             android:layout_below="@+id/txvDesc"
             android:layout_width="wrap_content"
             android:layout_marginStart="@dimen/textPageBorder"
+            android:layout_marginEnd="@dimen/hbLines"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/hbLines"
             android:textSize="14sp"/>
@@ -251,6 +279,16 @@
                 android:text="@string/nameAuthorTile"
                 android:layout_marginTop="@dimen/elevation"
                 android:layout_marginBottom="@dimen/hbLines"/>
+
+            <LinearLayout
+                android:layout_marginStart="@dimen/textPageBorder"
+                android:layout_marginEnd="@dimen/textPageBorder"
+                android:layout_below="@id/nameAuthorRecipeTitle"
+                android:layout_marginTop="-12dp"
+                android:background="@color/colorPrimary"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"/>
+
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/imvRecipeImageUser"
@@ -306,6 +344,9 @@
     app:cardCornerRadius="@dimen/elevation"
     android:layout_margin="@dimen/hbLines"
     >
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
     <TextView
         android:id="@+id/txvtitlecomments"
         android:layout_width="wrap_content"
@@ -314,6 +355,15 @@ android:layout_marginStart="@dimen/textPageBorder"
         android:layout_marginBottom="@dimen/elevation"
         android:layout_marginTop="@dimen/elevation"
         android:layout_height="wrap_content" />
+    <LinearLayout
+        android:layout_marginStart="@dimen/textPageBorder"
+        android:layout_marginEnd="@dimen/textPageBorder"
+        android:layout_below="@id/txvtitlecomments"
+        android:layout_marginTop="-8dp"
+        android:background="@color/colorPrimary"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"/>
+    </RelativeLayout>
 </android.support.v7.widget.CardView>
 
     <android.support.v7.widget.RecyclerView
@@ -385,7 +435,7 @@ android:layout_marginStart="@dimen/textPageBorder"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:id="@+id/fabDeleteRecipe"
-    app:srcCompat="@drawable/ic_delete_item"
+    app:srcCompat="@drawable/ic_delete"
     android:layout_gravity="bottom|end"
     android:layout_marginBottom="75dp"
     android:layout_marginEnd="@dimen/textPageBorder"

@@ -176,7 +176,7 @@ public class ProfilePresenterImpl implements ProfilePresenter {
 
                     @Override
                     public void onError(Throwable e) {
-                        view.showNetworkError("Error de conexión con el servidor");
+                        view.showNetworkError("Error de conexión con el servidor. " + e.getMessage());
                     }
 
                     @Override

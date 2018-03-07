@@ -66,15 +66,15 @@ public class UsersAdapter extends ArrayAdapter<User> {
         else
             uh = (UserHolder) item.getTag();
 
-        Log.d("IMAGE", getItem(position).getImage());
-
         if(getItem(position).getImage() != null && !getItem(position).getImage().equals("")) {
+            Log.d("image", getItem(position).getImage());
             //cargar imagen
             try {
                 Picasso.with(context).load(getItem(position).getImage()).error(R.drawable.user_icon).into(uh.userImage);
 
             }
             catch (Exception e) {
+                uh.userImage.setImageDrawable(context.getResources().getDrawable(R.drawable.user_icon));
             }
         }
         else

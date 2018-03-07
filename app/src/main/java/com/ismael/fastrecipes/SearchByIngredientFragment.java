@@ -4,6 +4,7 @@ package com.ismael.fastrecipes;
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -18,11 +19,13 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.CompoundButton;
 import android.widget.FilterQueryProvider;
 import android.widget.GridView;
 import android.widget.ListAdapter;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import com.ismael.fastrecipes.db.DatabaseContract;
 import com.ismael.fastrecipes.interfaces.IngredientPresenter;
@@ -48,6 +51,20 @@ public class SearchByIngredientFragment extends Fragment{
     @BindView(R.id.sacsi)
     AutoCompleteTextView sacIng;
 
+
+    @BindView(R.id.txvquecontenga)
+    TextView txvYes;
+
+    @BindView(R.id.sacno)
+    TextView txvNo;
+
+
+    @BindView(R.id.txvIngIn)
+    TextView txvIngIn;
+
+    @BindView(R.id.txvIngOut)
+    TextView txvIngOut;
+
     @BindView(R.id.grvsi)
     GridView grvIngOk;
 
@@ -67,9 +84,7 @@ public class SearchByIngredientFragment extends Fragment{
     ArrayList<String> ingredientsOk;
     ArrayList<String> ingredientsNot;
     ArrayAdapter<String> adapterOk;
-    TextWatcher tw;
-    ArrayList<Filter> backup;
-    int[] filtersPos;
+    Typeface font;
 
 
     public static SearchByIngredientFragment getInstance(Bundle args){
@@ -120,6 +135,9 @@ public class SearchByIngredientFragment extends Fragment{
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //filtersPos = new int[]{10,10};
+        ingredientsOk = new ArrayList<>();
+        ingredientsNot = new ArrayList<>();
+
         if(mCallback.getFilterByName(Const.f1) != null){
                     Collections.addAll(ingredientsOk, mCallback.getFilterByName(Const.f1).getContent().split(", "));
         }
@@ -140,9 +158,11 @@ public class SearchByIngredientFragment extends Fragment{
         View rootView = inflater.inflate(R.layout.fragment_search_by_ingredient, container, false);
         ButterKnife.bind(this, rootView);
 
-
+        font = Typeface.createFromAsset(getContext().getAssets(), "yummycupcakes.ttf");
+        txvIngIn.setTypeface(font);
+        txvIngOut.setTypeface(font);
         adapterOk = new ArrayAdapter(getContext(), android.R.layout.simple_dropdown_item_1line, getResources().getStringArray(R.array.ingredients));
-
+        txvIngIn.setTextColor(getResources().getColor(R.color.colorPrimary));
         adapterGrvIngOk = new ArrayAdapter<String>(this.getContext(), android.R.layout.simple_dropdown_item_1line, ingredientsOk);
         adapterGrvIngNot = new ArrayAdapter<String>(this.getContext(), android.R.layout.simple_dropdown_item_1line, ingredientsNot);
 
@@ -152,6 +172,12 @@ public class SearchByIngredientFragment extends Fragment{
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        if(adapterGrvIngOk.getCount() > 0)
+            txvYes.setVisibility(View.VISIBLE);
+
+        if(adapterGrvIngNot.getCount() > 0)
+            txvNo.setVisibility(View.VISIBLE);
 
         sacIng.setThreshold(1);
         sacIng.setAdapter(adapterOk);
@@ -165,16 +191,40 @@ public class SearchByIngredientFragment extends Fragment{
             }
         });
 
+        swtIn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(swtIn.isChecked()) {
+                    txvIngIn.setTextColor(getResources().getColor(R.color.textColorPrimary));
+                    txvIngOut.setTextColor(getResources().getColor(R.color.colorPrimary));
+                }
+                else{
+                    txvIngIn.setTextColor(getResources().getColor(R.color.colorPrimary));
+                    txvIngOut.setTextColor(getResources().getColor(R.color.textColorPrimary));
+
+                }
+
+            }
+        });
+
         sacIng.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     if (!swtIn.isChecked()) {
                         if(!contains(adapterGrvIngOk, adapterOk.getItem(i))) {
+                            if(adapterGrvIngOk.getCount() == 0) {
+                                txvYes.setVisibility(View.VISIBLE);
+                                txvYes.setTypeface(font);
+                            }
                             adapterGrvIngOk.add(adapterOk.getItem(i));
                             adapterGrvIngOk.notifyDataSetChanged();
                         }
                     } else {
                         if(!contains(adapterGrvIngNot, adapterOk.getItem(i))) {
+                            if(adapterGrvIngNot.getCount() == 0){
+                                txvNo.setVisibility(View.VISIBLE);
+                                txvNo.setTypeface(font);
+                            }
                             adapterGrvIngNot.add(adapterOk.getItem(i));
                             adapterGrvIngNot.notifyDataSetChanged();
                         }
@@ -188,6 +238,8 @@ public class SearchByIngredientFragment extends Fragment{
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 adapterGrvIngOk.remove(adapterGrvIngOk.getItem(i));
+                if(adapterGrvIngOk.getCount() == 0)
+                    txvYes.setVisibility(View.GONE);
                 adapterGrvIngOk.notifyDataSetChanged();
             }
         });
@@ -197,6 +249,8 @@ public class SearchByIngredientFragment extends Fragment{
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 adapterGrvIngNot.remove(adapterGrvIngNot.getItem(i));
                 adapterGrvIngNot.notifyDataSetChanged();
+                if(adapterGrvIngNot.getCount() == 0)
+                    txvNo.setVisibility(View.GONE);
             }
         });
     }
@@ -222,25 +276,25 @@ public class SearchByIngredientFragment extends Fragment{
         String ingNot = "";
 
         for (int i = 0; i < adapterGrvIngOk.getCount(); i++)
-            ingOk += adapterGrvIngOk.getItem(i) + " ";
+            ingOk += adapterGrvIngOk.getItem(i) + ", ";
 
         if (!ingOk.equals("")) {
             if (mCallback.getFilterByName(Const.f1) != null)
-                mCallback.getFilterByName(Const.f1).setContent(ingOk);
+                mCallback.getFilterByName(Const.f1).setContent(ingOk.substring(0, ingOk.length()-2));
             else {
-                Filter ingOkFilter = new Filter(Const.f1, ingOk);
+                Filter ingOkFilter = new Filter(Const.f1, ingOk.substring(ingOk.length()-2));
                 mCallback.addFilter(ingOkFilter);
             }
         }
 
         for (int i = 0; i < adapterGrvIngNot.getCount(); i++)
-            ingNot += adapterGrvIngNot.getItem(i) + " ";
+            ingNot += adapterGrvIngNot.getItem(i) + ", ";
 
         if (!ingNot.equals("")) {
             if (mCallback.getFilterByName(Const.f2) != null)
-                mCallback.getFilterByName(Const.f2).setContent(ingNot);
+                mCallback.getFilterByName(Const.f2).setContent(ingNot.substring(0, ingNot.length()-2));
             else {
-                Filter ingNotFilter = new Filter(Const.f2, ingNot);
+                Filter ingNotFilter = new Filter(Const.f2, ingNot.substring(0, ingNot.length()-2));
                 mCallback.addFilter(ingNotFilter);
             }
         }

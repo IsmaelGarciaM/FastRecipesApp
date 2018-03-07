@@ -1,66 +1,259 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.ismael.fastrecipes.SearchRecipeFragment">
-
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <ScrollView
+        android:id="@+id/scrollSearch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
     <RelativeLayout
         android:id="@+id/rllSelectFilter"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/ic_launcher_background_testing"
-        android:layout_alignParentTop="true">
+        android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/imvIcon"
-            android:layout_width="144dp"
-            android:layout_height="144dp"
-            android:layout_marginTop="@dimen/textPageBorder"
-            android:layout_marginStart="@dimen/textPageBorder"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:src="@drawable/iconbig" />
+        <android.support.v7.widget.CardView
+            android:id="@+id/crvRecipeOfDay"
+            android:layout_width="wrap_content"
+            android:background="@color/ic_launcher_background_testing"
+            android:layout_margin="@dimen/textPageBorder"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="@dimen/hbLines"
+            app:cardElevation="@dimen/elevation">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <ImageView
+                    android:id="@+id/imvRecipeOfDay"
+                    android:layout_width="128dp"
+                    android:layout_height="128dp"
+                    android:contentDescription="Receta rápida del día"
+                    android:layout_margin="@dimen/textPageBorder"
+                    android:src="@drawable/iconbig" />
+
+                <TextView
+                    android:layout_toEndOf="@id/imvRecipeOfDay"
+                    android:id="@+id/txvRecipeOfDayTitle"
+                    android:layout_width="wrap_content"
+                    android:textAlignment="center"
+                    android:textColor="@color/textColorPrimary"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/textPageBorder"
+                    android:textSize="20sp"
+                    android:text="@string/recipeday"/>
+
+                <TextView
+                    android:layout_toEndOf="@id/imvRecipeOfDay"
+                    android:id="@+id/txvRecipeOfDayName"
+                    android:layout_width="200dp"
+                    android:textColor="@color/textColorPrimary"
+
+                    android:layout_below="@id/txvRecipeOfDayTitle"
+                    android:layout_marginTop="@dimen/textPageBorder"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textSize="16sp"
+                    android:textAlignment="center"
+                    />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_marginTop="@dimen/textPageBorder"
+                    android:layout_toEndOf="@id/imvRecipeOfDay"
+                    android:layout_below="@id/txvRecipeOfDayName"
+                    android:orientation="vertical"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                    <ImageView
+                        android:layout_marginStart="2dp"
+                        android:layout_width="16dp"
+                        android:layout_height="14dp"
+                        android:src="@drawable/hourglass"/>
+                    <TextView
+                        android:id="@+id/txvRecipeOfDayTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/textColorPrimary"
+                        android:layout_marginStart="@dimen/elevation"
+                        android:text="- min."
+                        android:textSize="10sp"
+                        android:textAlignment="center"
+                        />
+
+                    <ImageView
+                        android:layout_marginStart="@dimen/textPageBorder"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginTop="-5dp"
+
+                        android:src="@drawable/speedometer"/>
+
+                    <TextView
+                        android:id="@+id/txvRecipeOfDayDifficulty"
+                        android:layout_width="wrap_content"
+                        android:textColor="@color/textColorPrimary"
+
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/elevation"
+                        android:text="-"
+                        android:textSize="10sp"
+
+                        android:textAlignment="center"
+                        />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_marginTop="@dimen/hbLines"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_girl"/>
+
+                    <TextView
+                        android:id="@+id/txvRecipeOfDayNPers"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/elevation"
+                        android:layout_marginTop="@dimen/elevation"
+                        android:text="- pers"
+                        android:textSize="10sp"
+                        android:textColor="@color/textColorPrimary"
+
+                        android:textAlignment="center"
+                        />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <TextView
+                    android:layout_below="@id/imvRecipeOfDay"
+                    android:id="@+id/txvSerchSubtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/elevation"
+                    android:layout_marginStart="50dp"
+                    android:layout_marginBottom="@dimen/elevation"
+                    android:layout_marginEnd="50dp"
+                    android:textSize="14sp"
+                    android:layout_centerInParent="true"
+                    android:textAlignment="center"
+                    android:textColor="@color/textColorPrimary"
+                    android:text="@string/textProm" />
+
+
+            </RelativeLayout>
+        </android.support.v7.widget.CardView>
+
+
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/crvFilters"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/crvRecipeOfDay"
+            android:layout_marginBottom="@dimen/elevation"
+            android:layout_marginEnd="@dimen/textPageBorder"
+            android:layout_marginStart="@dimen/textPageBorder">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/txvQqc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_centerHorizontal="true"
+                android:lines="1"
+                android:layout_marginTop="@dimen/elevation"
+                android:text="Búsqueda de recetas"
+                android:textColor="@color/textColorPrimary"
+                android:textSize="18sp" />
+
+
+            <LinearLayout
+                android:layout_below="@id/txvQqc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <Button
+                    android:layout_marginTop="@dimen/elevation"
+                    android:id="@+id/btnAddFilter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:text="Añadir filtro"
+                    android:layout_weight="2"
+                    style="@style/Base.TextAppearance.AppCompat.Widget.Button.Borderless.Colored"
+                    android:background="@drawable/bg_button"
+                    android:layout_marginStart="10dp"/>
+
+                <Button
+                    android:id="@+id/btnSpacing"
+                    android:layout_width="50dp"
+                    android:layout_weight="1"
+                    style="@style/Base.TextAppearance.AppCompat.Widget.Button.Borderless.Colored"
+                    android:visibility="invisible"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_button"
+                    />
+
+                <Button
+                    android:layout_marginTop="@dimen/elevation"
+                    android:id="@+id/btnDelete"
+                    android:text="Borrar todos"
+                    android:layout_width="60dp"
+                    android:layout_weight="2"
+                    style="@style/Base.TextAppearance.AppCompat.Widget.Button.Borderless.Colored"
+                    android:layout_marginBottom="@dimen/elevation"
+                    android:textSize="12sp"
+                    android:layout_marginEnd="@dimen/textPageBorder"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_button"
+                    />
+            </LinearLayout>
+            </RelativeLayout>
+        </android.support.v7.widget.CardView>
+
 
         <TextView
-            android:layout_toEndOf="@id/imvIcon"
-            android:id="@+id/txvQqc"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            android:textSize="24sp"
-            android:textAlignment="center"
-            android:text="@string/strqqc" />
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/hbLines"
+            android:layout_marginEnd="@dimen/textPageBorder"
+            android:layout_below="@id/crvFilters"
+            android:layout_alignBaseline="@id/imvInfo"
+            android:id="@+id/txvConfirmEmail"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="10sp"
+            android:visibility="gone"
+            android:text="@string/notverified"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
-        <Button
-            android:id="@+id/btnAddFilter"
-            android:layout_width="32dp"
-            android:layout_below="@id/txvQqc"
-            android:layout_height="45dp"
-            android:hint="Add filter"
-            android:layout_marginTop="@dimen/textPageBorder"
-            android:layout_toEndOf="@id/imvIcon"
-            android:layout_marginStart="30dp"
-            android:background="@drawable/bg_button"
-            android:drawableStart="@drawable/ic_add"/>
+        <ImageView
+            android:layout_marginTop="8dp"
+            android:visibility="gone"
+            android:layout_below="@id/crvFilters"
+            android:id="@+id/imvInfo"
+            android:layout_marginStart="20dp"
+            android:layout_width="18dp"
+            android:src="@drawable/ic_info"
+            android:layout_height="18dp" />
 
-        <Button
-            android:id="@+id/btnDelete"
-            android:hint="Delete all"
-            android:layout_width="32dp"
-            android:layout_below="@id/txvQqc"
-            android:layout_height="45dp"
-            android:layout_marginTop="@dimen/textPageBorder"
-            android:background="@drawable/bg_button"
-            android:drawableStart="@drawable/ic_delete_item"
-            android:layout_toEndOf="@id/btnAddFilter"
-            android:layout_marginStart="50dp"
-            />
+    </RelativeLayout>
+    </ScrollView>
 
-    <ListView
+        <ListView
         android:id="@+id/rcvFilterList"
-        android:layout_below="@id/imvIcon"
-        android:layout_marginTop="@dimen/hbLines"
+        android:layout_below="@id/scrollSearch"
+        android:layout_marginTop="35dp"
         android:layout_width="match_parent"
         android:layout_marginStart="25dp"
         android:layout_marginEnd="25dp"
@@ -71,28 +264,27 @@
 
         <TextView
             android:id="@+id/txvfilterEmptyList"
-            android:layout_below="@id/imvIcon"
-            android:layout_marginTop="@dimen/textPageBorder"
+            android:layout_below="@id/scrollSearch"
+            android:layout_marginTop="35dp"
             android:layout_width="match_parent"
             android:layout_marginStart="40dp"
             android:visibility="gone"
+            android:textAlignment="center"
             android:layout_marginEnd="50dp"
             android:text="Añade filtros para concretar la búsqueda."
             android:layout_marginBottom="50dp"
-            android:layout_height="match_parent"/>
+            android:layout_height="wrap_content"/>
 
     </RelativeLayout>
-
 
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabSearch"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_gravity="bottom|end"
+        android:layout_gravity="end|bottom"
         android:layout_marginBottom="70dp"
         android:layout_marginEnd="@dimen/textPageBorder"
         app:srcCompat="@drawable/ic_search_black_24dp"
         app:backgroundTint="@color/colorPrimary" />
-
 </android.support.design.widget.CoordinatorLayout>

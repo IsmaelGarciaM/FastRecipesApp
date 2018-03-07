@@ -144,6 +144,14 @@ public class User implements Parcelable, Serializable{
         this.email = userEmail;
         this.uid = uid;
     }
+    public User(int id, String userName, String location, String image) {
+        this.id = id;
+        this.name = userName;
+        this.location = location;
+        this.image = image;
+    }
+
+
 
 
     @Override

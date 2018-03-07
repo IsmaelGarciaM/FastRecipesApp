@@ -8,38 +8,51 @@
     <android.support.design.widget.AppBarLayout
         android:id="@+id/ablHeader"
         android:layout_width="match_parent"
-        android:background="@color/ic_launcher_background_testing"
-        android:layout_height="wrap_content">
-
-        <android.support.design.widget.CollapsingToolbarLayout
-            android:id="@+id/ctlProfile"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:contentScrim="@color/colorPrimary"
-            app:expandedTitleMarginStart="48dp"
-            app:expandedTitleMarginEnd="64dp"
-            app:layout_scrollFlags="scroll|snap">
-
-
-        </android.support.design.widget.CollapsingToolbarLayout>
-
+        android:background="@drawable/userback"
+        android:layout_height="192dp">
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/imgProfileFragm"
             android:src="@drawable/user_icon"
             android:layout_margin="@dimen/hbLines"
+            android:layout_marginTop="@dimen/textPageBorder"
             android:layout_gravity="center_horizontal"
             android:layout_width="96dp"
             android:layout_height="96dp"
             android:elevation="8dp"
             app:layout_scrollFlags="scroll"
             />
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/tilNameProfile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:labelFor="@id/imgProfileFragm"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="25dp"
+            android:layout_marginBottom="@dimen/textPageBorder">
+
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/edtNameProfile"
+                android:text="Anonymous"
+                android:layout_width="wrap_content"
+                android:background="@android:color/transparent"
+                android:textColor="@color/textColorPrimary"
+                android:textAlignment="center"
+                android:enabled="false"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:textSize="18sp"/>
+        </android.support.design.widget.TextInputLayout>
+
     </android.support.design.widget.AppBarLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/ablHeader"
-
+        android:layout_marginTop="@dimen/hbLines"
+        android:layout_marginStart="@dimen/textPageBorder"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <RelativeLayout
@@ -49,34 +62,11 @@
             >
 
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/tilNameProfile"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-
-                android:layout_marginBottom="@dimen/textPageBorder"
-
-                >
-
-
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/edtNameProfile"
-                    android:text="Anonymous"
-                    android:layout_width="wrap_content"
-                    android:background="@android:color/transparent"
-                    android:textAlignment="center"
-                    android:enabled="false"
-                    android:layout_height="wrap_content"
-                    android:maxLines="1"
-                    android:textSize="18sp"/>
-            </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/tilEmailProfile"
                 android:layout_width="wrap_content"
                 android:visibility="gone"
-                android:layout_below="@id/tilNameProfile"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="@dimen/textPageBorder"
@@ -153,6 +143,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="20sp"
+            android:layout_centerHorizontal="true"
             android:layout_marginTop="@dimen/hbLines"
             android:text="@string/published_recipes"/>
 
@@ -161,6 +152,7 @@
             android:layout_marginStart="@dimen/hbLines"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/textPageBorder"
             android:layout_below="@id/tilLocationProfile"
             android:layout_marginTop="50dp"/>
 

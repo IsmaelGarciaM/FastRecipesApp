@@ -2,6 +2,7 @@ package com.ismael.fastrecipes;
 
 
 import android.app.Activity;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.ismael.fastrecipes.adapter.CategoryAdapter;
 import com.ismael.fastrecipes.interfaces.CategoriesPresenter;
@@ -48,7 +50,8 @@ public class SearchByCategoriesFragment extends Fragment implements CategoriesPr
     FloatingActionButton fabSave;
     CategoryAdapter adapter;
 
-
+    @BindView(R.id.txvCatTitle)
+    TextView txvCatTitle;
 
 
     static private SearchByCategoriesFragment sbcfInstance;
@@ -62,14 +65,11 @@ public class SearchByCategoriesFragment extends Fragment implements CategoriesPr
     interface SearchCategoriesListener{
         void showSearchByCategories(Bundle data);
         void showSearchFragment(Bundle data);
-
         Filter getFilter(int pos);
         void addFilter(Filter f);
         void removeFilter(int pos);
         int getNFilters();
-
         Filter getFilterByName(String s);
-
         void showAddRecipe(Bundle b);
     }
 
@@ -109,6 +109,8 @@ public class SearchByCategoriesFragment extends Fragment implements CategoriesPr
             if(mCallback.getFilterByName(Const.f3) != null)
                 cats = mCallback.getFilterByName(Const.f3).getContent().split(", ");
         }
+        Typeface font = Typeface.createFromAsset(getContext().getAssets(), "yummycupcakes.ttf");
+        txvCatTitle.setTypeface(font);
         rcvCategories.setLayoutManager(lm);
         catList = new ArrayList<>();
         catList.addAll(presenter.getCategories(false));
@@ -119,6 +121,8 @@ public class SearchByCategoriesFragment extends Fragment implements CategoriesPr
                         catList.get(j).setState(true);
             }
         }
+        adapter = new CategoryAdapter(this.getContext(), catList);
+
 
         return rootView;
     }
@@ -127,9 +131,6 @@ public class SearchByCategoriesFragment extends Fragment implements CategoriesPr
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-
-
-        adapter = new CategoryAdapter(this.getContext(), catList);
         rcvCategories.setAdapter(adapter);
         fabSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -201,7 +202,15 @@ public class SearchByCategoriesFragment extends Fragment implements CategoriesPr
                 mCallback.addFilter(ftmp);
             }
         }
+        else {
+            if (mCallback.getFilterByName(Const.f3) != null)
+                ;
 
+            else {
+                Filter ftmp = new Filter(Const.f3, content.substring(0, content.length() - 2));
+                mCallback.addFilter(ftmp);
+            }
+        }
 
     }
 }

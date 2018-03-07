@@ -1,1 +1,2 @@
-include 'app'
+include ':fastrecipes-app'
+project(':fastrecipes-app').projectDir = new File('app')

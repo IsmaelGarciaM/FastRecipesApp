@@ -2,6 +2,7 @@ package com.ismael.fastrecipes;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -53,6 +54,18 @@ public class RecipeFragment extends Fragment implements RecipesPresenter.View{
     public RecipeFragment() {
         // Required empty public constructor
     }
+
+    @BindView(R.id.txvIng)
+    TextView txvIngTitle;
+    @BindView(R.id.txvDesc)
+    TextView txvElaTitle;
+    @BindView(R.id.nameAuthorRecipeTitle)
+    TextView txvAuthTitle;
+    @BindView(R.id.txvtitlecomments)
+    TextView txvCommentTitle;
+    @BindView(R.id.txvRecipeSourceTitle)
+    TextView txvSourceTitle;
+
 
     @BindView(R.id.crvRecipeUser)
     CardView recipeAuthor;
@@ -152,6 +165,15 @@ public class RecipeFragment extends Fragment implements RecipesPresenter.View{
         fabDelete.setVisibility(View.GONE);
         fabEdit.setVisibility(View.GONE);
 
+        Typeface font = Typeface.createFromAsset(getContext().getAssets(), "yummycupcakes.ttf");
+        txvRecipeName.setTypeface(font);
+        txvAuthTitle.setTypeface(font);
+        txvCommentTitle.setTypeface(font);
+        txvElaTitle.setTypeface(font);
+        txvIngTitle.setTypeface(font);
+        txvSourceTitle.setTypeface(font);
+        txvRecipeUserName.setTypeface(font);
+
         //Personalización de rating bar
         ratingBar.setNameForSmile(BaseRating.TERRIBLE, "¿Esto qué es?");//R.string.bad);
         ratingBar.setNameForSmile(BaseRating.BAD, R.string.bad);
@@ -205,10 +227,6 @@ public class RecipeFragment extends Fragment implements RecipesPresenter.View{
             }
         });
 
-
-
-
-
         ratingBar.setOnRatingSelectedListener(new SmileRating.OnRatingSelectedListener() {
             @Override
             public void onRatingSelected(int level, boolean reselected) {
@@ -218,7 +236,7 @@ public class RecipeFragment extends Fragment implements RecipesPresenter.View{
 
         lvComments.setAdapter(adapterCommentFirebase);
 
-        fabFav.setOnLongClickListener(new View.OnLongClickListener() {
+        /*fabFav.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
                 Bundle b = new Bundle();
@@ -226,7 +244,7 @@ public class RecipeFragment extends Fragment implements RecipesPresenter.View{
                 mCallback.showUsersList(b);
                 return true;
             }
-        });
+        });*/
 
 
         if(mCallback.getUser().getId() == recetaActual.getAuthor()) {
@@ -402,7 +420,8 @@ public class RecipeFragment extends Fragment implements RecipesPresenter.View{
      */
     @Override
     public void cancelSearch() {
-        mCallback.showSocialFragment("La receta se ha eliminado.");
+        Toast.makeText(getContext(), "La receta se ha eliminado.", Toast.LENGTH_SHORT).show();
+        mCallback.showSocialFragment("");
     }
 
     /**

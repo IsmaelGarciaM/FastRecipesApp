@@ -48,6 +48,17 @@
     <string name="updatedrecipe">Receta actualizada.</string>
     <string name="updatedprofile">Perfil actualizado.</string>
     <string name="delete">Eliminar</string>
+    <string name="sendEmailVerification">Reenviar correo</string>
+    <string name="credits">Créditos</string>
+    <string name="rememberuser">Recordar usuario</string>
+    <string name="version">Versión</string>
+    <string name="terms">Términos y condiciones</string>
+    <string name="about">Acerca de...</string>
+    <string name="recipeday">Receta rápida del día</string>
+    <string name="textProm">¿Buscas algo más concreto? Añade filtros a la búsqueda y... ¡a cocinar!</string>
+    <string name="withingredients">Con los ingredientes:</string>
+    <string name="withoutin">Que no contenga:</string>
+    <string name="notverified">E-mail no verificado, algunas funciones están deshabilitadas</string>
 
 
     <string-array name="categories_array">

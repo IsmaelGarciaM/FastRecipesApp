@@ -263,7 +263,7 @@ public class LoginActivity extends Activity implements LoginPresenter.View{
     public void showHome(Bundle userInfo){
         Intent i = new Intent(this, HomeActivity.class);
         if(newR != null) {
-            userInfo.putParcelable("new", newR);
+            userInfo.putParcelable("newR", newR);
         }
         i.putExtras(userInfo);
         startActivity(i);

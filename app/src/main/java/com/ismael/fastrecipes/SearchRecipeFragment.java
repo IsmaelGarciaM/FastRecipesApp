@@ -4,15 +4,14 @@ package com.ismael.fastrecipes;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Typeface;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,12 +19,25 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.ismael.fastrecipes.adapter.FilterAdapter;
+import com.ismael.fastrecipes.interfaces.RecipesPresenter;
+import com.ismael.fastrecipes.model.Comment;
 import com.ismael.fastrecipes.model.Filter;
+import com.ismael.fastrecipes.model.Recipe;
+import com.ismael.fastrecipes.presenter.RecipesPresenterImpl;
+import com.squareup.picasso.Picasso;
+import com.weiwangcn.betterspinner.library.BetterSpinner;
+
 import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -41,11 +53,41 @@ import static com.ismael.fastrecipes.utils.Const.f6;
  * SearchRecipeFragment.class - Vista del buscador de recetas. Gestiona los filtros por los que se va a buscar una receta.
  * @author Ismael Garcia
  */
-public class SearchRecipeFragment extends Fragment{
+public class SearchRecipeFragment extends Fragment implements RecipesPresenter.View{
 
     /**
      * Variables de clase
      */
+    @BindView(R.id.crvRecipeOfDay)
+    CardView crvRecipeDay;
+
+    @BindView(R.id.txvSerchSubtitle)
+    TextView txvSubtitle;
+
+    @BindView(R.id.txvRecipeOfDayTitle)
+    TextView title2;
+
+    @BindView(R.id.txvConfirmEmail)
+    TextView txvConfirmEmail;
+
+    @BindView(R.id.imvRecipeOfDay)
+    ImageView imvRecipeDay;
+
+    @BindView(R.id.imvInfo)
+    ImageView imvInfo;
+
+    @BindView(R.id.txvRecipeOfDayName)
+    TextView txvRecipeDayName;
+
+    @BindView(R.id.txvRecipeOfDayTime)
+    TextView txvRecipeDayTime;
+
+    @BindView(R.id.txvRecipeOfDayDifficulty)
+    TextView txvRecipeDayDifficulty;
+
+    @BindView(R.id.txvRecipeOfDayNPers)
+    TextView txvRecipeDayNPers;
+
     @BindView(R.id.fabSearch)
     FloatingActionButton fabSearch;
 
@@ -63,11 +105,14 @@ public class SearchRecipeFragment extends Fragment{
 
     @BindView(R.id.btnAddFilter)
     Button btnAddFilter;
+    FirebaseAuth fa;
 
     private SearchFragmentListener mCallback;
     static SearchRecipeFragment srfInstance;
     AlertDialog.Builder customDialog = null;
     FilterAdapter filterAdapter;
+    RecipesPresenter presenter;
+    ArrayList<Recipe> recipeOfDay;
 
     public static SearchRecipeFragment getInstance(Bundle args){
 
@@ -85,6 +130,53 @@ public class SearchRecipeFragment extends Fragment{
         // Required empty public constructor
     }
 
+    @Override
+    public void showRecipeInfo(Bundle recipe) {
+
+    }
+
+    @Override
+    public void setFavState(Recipe recipe) {
+
+    }
+
+    @Override
+    public void setListData(ArrayList<Recipe> rDay) {
+        if(recipeOfDay == null){
+            recipeOfDay = new ArrayList<Recipe>();
+            recipeOfDay.add(rDay.get(0));
+        }
+        txvRecipeDayName.setText(recipeOfDay.get(0).getName());
+        txvRecipeDayTime.setText(recipeOfDay.get(0).getTime() + " min.");
+        txvRecipeDayDifficulty.setText(recipeOfDay.get(0).getDifficulty());
+        txvRecipeDayNPers.setText(String.valueOf(recipeOfDay.get(0).getnPers()) + " pers.");
+        if(recipeOfDay.get(0).getImage() != null && !recipeOfDay.get(0).getImage().equals("")){
+            try{
+                Picasso.with(getContext()).load(recipeOfDay.get(0).getImage())
+                        .error(R.drawable.addrecipe).noFade()
+                        .resize(128,128)
+                        .into(imvRecipeDay);
+            }catch(Exception e){}
+        }
+    }
+
+    @Override
+    public void cancelSearch() {
+
+    }
+
+    @Override
+    public void addNewComment(ArrayList<Comment> newComment) {
+
+    }
+
+    @Override
+    public void showNetworkError(String msg) {
+        Toast t = Toast.makeText(FastRecipesApplication.getContext(), msg, Toast.LENGTH_LONG);
+        t.setGravity(Gravity.CENTER, 0, 0);
+        t.show();
+    }
+
     //Interfaz para HomeActivity
     public interface SearchFragmentListener{
         void showSearchFragment(Bundle data);
@@ -98,6 +190,7 @@ public class SearchRecipeFragment extends Fragment{
         ArrayList<Filter> getFilters();
         void showRecipesList(Bundle b);
         void deleteFilters();
+        void showRecipe(Bundle b);
     }
 
 
@@ -115,7 +208,10 @@ public class SearchRecipeFragment extends Fragment{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        presenter = new RecipesPresenterImpl(this, 0);
     }
+
+
 
     @Override
     public android.view.View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -129,6 +225,10 @@ public class SearchRecipeFragment extends Fragment{
         }
         Typeface font = Typeface.createFromAsset(getContext().getAssets(), "yummycupcakes.ttf");
         title.setTypeface(font);
+        title2.setTypeface(font);
+        txvEmpty.setTypeface(font);
+        txvRecipeDayName.setTypeface(font);
+        txvSubtitle.setTypeface(font);
         return rootView;
     }
 
@@ -146,12 +246,21 @@ public class SearchRecipeFragment extends Fragment{
     @Override
     public void onViewCreated(android.view.View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        fa = FirebaseAuth.getInstance();
         fabSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(fa.getCurrentUser().isEmailVerified())
                     mCallback.showRecipesList(null);
+                else
+                    showVerifyEmail();
             }
         });
+
+        if(!fa.getCurrentUser().isEmailVerified()) {
+            txvConfirmEmail.setVisibility(View.VISIBLE);
+            imvInfo.setVisibility(View.VISIBLE);
+        }
 
         btnAddFilter.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -204,15 +313,29 @@ public class SearchRecipeFragment extends Fragment{
                 mCallback.deleteFilters();
                 filterAdapter.refreshList();
                 txvEmpty.setVisibility(View.VISIBLE);
-
             }
         });
 
+        if(recipeOfDay != null){
+            setListData(recipeOfDay);
+        }
+
+        crvRecipeDay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle b = new Bundle();
+                b.putParcelable("recipe", recipeOfDay.get(0));
+                mCallback.showRecipe(b);
+            }
+        });
     }
 
     @Override
     public void onStart() {
         super.onStart();
+        if(recipeOfDay == null){
+            presenter.getRecipeOfDay();
+        }
     }
 
     /**
@@ -220,7 +343,7 @@ public class SearchRecipeFragment extends Fragment{
      */
     public void showFilters(){
         // con este tema personalizado evitamos los bordes por defecto
-        customDialog = new AlertDialog.Builder(this.getContext(), R.style.Theme_Dialog_Translucent);
+        customDialog = new AlertDialog.Builder(this.getContext(), R.style.Theme_AppCompat_DayNight_Dialog);
         customDialog.setTitle("Filtros");
 
         customDialog.setItems(new CharSequence[]{"Ingredientes", "Categorias", "Nombre", "Tiempo", "Dificultad"}, new DialogInterface.OnClickListener() {
@@ -252,7 +375,7 @@ public class SearchRecipeFragment extends Fragment{
     private void showTimeDialog(String time){
         final String[] t = new String[1];
 
-        customDialog = new AlertDialog.Builder(this.getContext(), R.style.Theme_Dialog_Translucent);
+        customDialog = new AlertDialog.Builder(this.getContext(), R.style.Theme_AppCompat_DayNight_Dialog);
         customDialog.setTitle("Tiempo máximo en minutos.");
         customDialog.setCancelable(false);
         customDialog.setView(R.layout.dialog_time_picker);
@@ -286,11 +409,6 @@ public class SearchRecipeFragment extends Fragment{
             }
         });
 
-      /*  if(!time.equals("")){
-            EditText edttim = customDialog.create().findViewById(R.id.edtTime);
-            edttim.setText(time);
-        }*/
-
         customDialog.show();
     }
 
@@ -298,7 +416,7 @@ public class SearchRecipeFragment extends Fragment{
      * Muestra el cuadro de diálogo para añadir un nuevo filtro de dificultad
      */
     private void showDifficultDialog(){
-        AlertDialog.Builder builderDificult = new AlertDialog.Builder(this.getContext(), R.style.Theme_Dialog_Translucent);
+        AlertDialog.Builder builderDificult = new AlertDialog.Builder(this.getContext(), R.style.Theme_AppCompat_DayNight_Dialog);
 
         builderDificult.setTitle(f6)
                 .setItems(R.array.diff_array, new DialogInterface.OnClickListener() {
@@ -341,7 +459,7 @@ public class SearchRecipeFragment extends Fragment{
     private void showNameDialog(){
         final String[] t = new String[1];
 
-        customDialog = new AlertDialog.Builder(this.getContext(), R.style.Theme_Dialog_Translucent);
+        customDialog = new AlertDialog.Builder(this.getContext(), R.style.Theme_AppCompat_DayNight_Dialog);
         customDialog.setCancelable(false);
         customDialog.setTitle("Busca por el nombre de la receta:");
 
@@ -379,4 +497,34 @@ public class SearchRecipeFragment extends Fragment{
         txvEmpty.setVisibility(View.GONE);
     }
 
+    public void showVerifyEmail(){
+        AlertDialog.Builder dialog = new AlertDialog.Builder(getContext(), R.style.Theme_AppCompat_DayNight_Dialog);
+        dialog.setTitle("Verificar e-mail");
+        dialog.setCancelable(false);
+        dialog.setMessage("Verifica tu email para poder acceder a las funcionalidades de FastRecipes. Recuerda que debes reiniciar sesión tras la verificación.");
+        dialog.setNegativeButton(getResources().getString(R.string.accept), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                //cancel
+            }
+        });
+
+        dialog.setPositiveButton(getResources().getString(R.string.sendEmailVerification), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                fa.getCurrentUser().sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Toast.makeText(getContext(), "Email enviado", Toast.LENGTH_SHORT).show();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getContext(), "No ha sido posible. Inténtalo en unos minutos.", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        });
+        dialog.show();
+    }
 }

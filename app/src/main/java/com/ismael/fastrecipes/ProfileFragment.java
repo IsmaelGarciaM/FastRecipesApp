@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -74,7 +75,7 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
 
 
     @BindView(R.id.txvlvcomprotitle)
-    TextView edtTitleRecipes;
+    TextView txvTitleRecipes;
     @BindView(R.id.edtEmailProfile)
     TextInputEditText edtEmailProfile;
 
@@ -118,12 +119,14 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
         if(idUser != mCallback.getUser().getId()) {
             fabEditProfile.setEnabled(false);
             fabEditProfile.setVisibility(View.GONE);
-            edtTitleRecipes.setVisibility(View.VISIBLE);
+            txvTitleRecipes.setVisibility(View.VISIBLE);
+            Typeface font = Typeface.createFromAsset(getContext().getAssets(), "yummycupcakes.ttf");
+            txvTitleRecipes.setTypeface(font);
             lvUserRecipes.setVisibility(View.VISIBLE);
 
         }
         else {
-            edtTitleRecipes.setVisibility(View.GONE);
+            txvTitleRecipes.setVisibility(View.GONE);
             lvUserRecipes.setVisibility(View.GONE);
             fabEditProfile.setEnabled(true);
             fabEditProfile.setVisibility(View.VISIBLE);
@@ -197,20 +200,31 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
                     view.setBackgroundColor(getResources().getColor(R.color.backgroundEdit));
                     fabEditProfile.setImageResource(R.drawable.ic_edit);
                     showProgress(true);
+                    edtName.setTextColor(getResources().getColor(R.color.textColorPrimary));
+                    edtLocation.setTextColor(getResources().getColor(R.color.textColorPrimary));
+
                     User uTmp = getUserData();
                     if(uTmp != null && mImageUri != null)
                         presenter.editProfile(uTmp, imageChanged, mImageUri);
                     else if(uTmp != null){
                         presenter.editProfile(uTmp, imageChanged, null);
                     }
+                    else{
+                        edit = false;
+                        edtName.setEnabled(false);
+                        edtLocation.setEnabled(false);
+                        view.setBackgroundColor(getResources().getColor(R.color.backgroundEdit));
+                        fabEditProfile.setImageResource(R.drawable.ic_edit);
+                        showProgress(false);
+                    }
+
 
                 }else{
                     edit = true;
                     edtName.setEnabled(true);
                     edtName.setTextColor(getResources().getColor(R.color.colorPrimary));
-                    view.setBackgroundColor(getResources().getColor(R.color.backgroundEdit));
-                    edtLocation.setEnabled(true);
                     edtLocation.setTextColor(getResources().getColor(R.color.colorPrimary));
+                    edtLocation.setEnabled(true);
                     fabEditProfile.setImageResource(R.drawable.ic_save);
                 }
             }
@@ -310,7 +324,12 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
             showProgress(false);
         }
         else {
-            tmp = new User(mCallback.getUser().getId(), mCallback.getUser().getEmail(), name, "", edtLocation.getText().toString(), mCallback.getUser().getRegdate(), 0, image, "");
+            if(mCallback.getUser().getLocation().equals(edtLocation.getText().toString()) &&
+                    mCallback.getUser().getName().equals(name) && !imageChanged){
+                    tmp = null;
+            }
+                else
+                    tmp = new User(mCallback.getUser().getId(), name, edtLocation.getText().toString(), image);
         }
         return tmp;
     }

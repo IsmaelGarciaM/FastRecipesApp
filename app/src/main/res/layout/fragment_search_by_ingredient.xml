@@ -5,10 +5,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.ismael.fastrecipes.SearchByIngredientFragment">
 
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:id="@+id/crvSwitch"
+        android:layout_margin="@dimen/textPageBorder"
+        android:layout_height="wrap_content">
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
     <TextView
+        android:id="@+id/txvIngIn"
+        android:textSize="18sp"
         android:text="Que contenga"
         android:layout_marginTop="@dimen/hbLines"
         android:layout_marginStart="@dimen/textPageBorder"
+        android:layout_marginEnd="@dimen/elevation"
         android:layout_width="wrap_content"
         android:layout_alignBaseline="@+id/swtIngr"
         android:layout_height="wrap_content" />
@@ -17,19 +28,23 @@
         android:id="@+id/swtIngr"
         android:layout_marginTop="@dimen/hbLines"
         android:layout_width="wrap_content"
+        android:layout_marginBottom="@dimen/hbLines"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
     <TextView
+        android:id="@+id/txvIngOut"
         android:text="Que no contenga"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="@dimen/hbLines"
-        android:layout_marginEnd="@dimen/textPageBorder"
+        android:textSize="18sp"
+        android:paddingEnd="@dimen/textPageBorder"
         android:layout_width="wrap_content"
         android:layout_alignBaseline="@+id/swtIngr"
         android:layout_height="wrap_content" />
-
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
 
     <AutoCompleteTextView
         android:id="@+id/sacsi"
@@ -37,7 +52,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/textPageBorder"
         android:layout_marginEnd="@dimen/textPageBorder"
-        android:layout_below="@+id/swtIngr"
+        android:layout_below="@+id/crvSwitch"
         android:drawableEnd="@drawable/ic_search_black_24dp"
         android:hint="Buscar ingredientes.."/>
 
@@ -55,15 +70,16 @@
             android:id="@+id/txvquecontenga"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Que contenga..."/>
+            android:visibility="gone"
+            android:text="@string/withingredients"/>
 
         <GridView
             android:id="@+id/grvsi"
-            android:layout_below="@+id/txvquecontenga"
+            android:layout_below="@id/txvquecontenga"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="100dp"
-            android:numColumns="3"
+            android:numColumns="2"
             android:verticalSpacing="@dimen/elevation">
 
 
@@ -80,7 +96,8 @@
         android:id="@+id/sacno"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Que no contenga..."/>
+        android:visibility="gone"
+        android:text="@string/withoutin"/>
 
     <GridView
         android:id="@+id/grvno"
@@ -88,7 +105,7 @@
         android:layout_below="@+id/sacno"
         android:verticalSpacing="@dimen/elevation"
         android:layout_width="match_parent"
-        android:numColumns="3"
+        android:numColumns="2"
         android:minHeight="100dp">
 
     </GridView>

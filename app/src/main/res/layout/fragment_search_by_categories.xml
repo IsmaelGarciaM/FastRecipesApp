@@ -3,21 +3,32 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/ic_launcher_background_testing"
 
     tools:context="com.ismael.fastrecipes.SearchByCategoriesFragment">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/txvCatTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Categorías"
+        android:layout_marginTop="@dimen/textPageBorder"
+        android:textSize="18dp"
+        android:textAlignment="center"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rcvCategories"
         android:layout_width="match_parent"
-        android:background="@color/ic_launcher_background_testing"
-
+        android:layout_below="@id/txvCatTitle"
         android:layout_height="wrap_content"
         android:padding="@dimen/textPageBorder"
+        android:layout_marginTop="-10dp"
         tools:listitem="@layout/item_categories_list"
         >
 
     </android.support.v7.widget.RecyclerView>
+    </RelativeLayout>
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/btnSaveCategories"
         android:layout_width="54dp"

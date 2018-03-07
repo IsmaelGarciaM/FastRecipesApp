@@ -121,6 +121,7 @@ public class FavRecipesFragment extends Fragment implements RecipesPresenter.Vie
 
         Typeface font = Typeface.createFromAsset(getContext().getAssets(), "yummycupcakes.ttf");
         title.setTypeface(font);
+        emptyList.setTypeface(font);
         lvFavRecipes.setAdapter(adapterFavRec);
 
 

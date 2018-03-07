@@ -2,7 +2,9 @@ package com.ismael.fastrecipes;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -19,10 +21,10 @@ import com.ismael.fastrecipes.interfaces.Prefs;
 public class SettingsPreferences extends PreferenceFragment implements Prefs.View{
     private Preference prefCloseSession;
     private SwitchPreference rememberUser;
-    private Preference changePassword;
-    private Preference help;
-    private Preference terms;
-    private Preference sendEmail;
+    private Preference credits;
+    private Preference conditions;
+    private Preference aboutUs;
+    private Preference profesional;
     PrefsListener mCallback;
     static SettingsPreferences pfInstance;
 
@@ -65,6 +67,14 @@ public class SettingsPreferences extends PreferenceFragment implements Prefs.Vie
         // Indicate here the XML resource you created above that holds the preferences
         addPreferencesFromResource(R.xml.general_settings);
         prefCloseSession = (Preference)  findPreference("close_session");
+        rememberUser = (SwitchPreference)  findPreference("remember_user");
+
+        credits = (Preference)  findPreference("credits");
+        conditions = (Preference)  findPreference("conditions");
+        profesional = (Preference)  findPreference("profesional");
+        aboutUs = (Preference)  findPreference("about_us");
+        //rememberUser = (SwitchPreference)  findPreference("remember_user");
+
         prefCloseSession.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -73,7 +83,43 @@ public class SettingsPreferences extends PreferenceFragment implements Prefs.Vie
                 return true;
             }
         });
-        rememberUser = (SwitchPreference)  findPreference("remember_user");
+
+        aboutUs.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Uri uri = Uri.parse("http://www.fastrecipesapp.com/sobre-nosotros");
+                showContent(uri);
+
+                return false;
+            }
+        });
+
+        credits.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Uri uri = Uri.parse("http://www.fastrecipesapp.com/creditos");
+                showContent(uri);
+                return false;
+            }
+        });
+
+        conditions.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Uri uri = Uri.parse("http://www.fastrecipesapp.com/terminos-y-condiciones");
+                showContent(uri);
+                return false;
+            }
+        });
+
+        profesional.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Uri uri = Uri.parse("http://www.linkedin.com");
+
+                return false;
+            }
+        });
 
         final SharedPreferences sp = FastRecipesApplication.getContext().getSharedPreferences("fastrecipessp", Context.MODE_PRIVATE);
 
@@ -97,6 +143,11 @@ public class SettingsPreferences extends PreferenceFragment implements Prefs.Vie
 
     SharedPreferences getPreferences(){
         return getContext().getSharedPreferences("fastrecipessp",Context.MODE_PRIVATE);
+    }
+
+    void showContent(Uri uri){
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(intent);
     }
 
 }
