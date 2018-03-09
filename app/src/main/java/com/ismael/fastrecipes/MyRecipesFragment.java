@@ -192,9 +192,11 @@ public class MyRecipesFragment extends Fragment implements RecipesPresenter.View
      */
     @Override
     public void showNetworkError(String msg) {
-        Toast t = Toast.makeText(FastRecipesApplication.getContext(), msg, Toast.LENGTH_LONG);
-        t.setGravity(Gravity.CENTER, 0, 0);
-        t.show();
+        try {
+            Toast t = Toast.makeText(getContext(), msg, Toast.LENGTH_LONG);
+            t.setGravity(Gravity.CENTER, 0, 0);
+            t.show();
+        }catch (Exception e){}
         txvEmpty.setVisibility(View.VISIBLE);
     }
 

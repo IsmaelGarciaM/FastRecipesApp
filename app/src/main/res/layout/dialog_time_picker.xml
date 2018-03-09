@@ -12,9 +12,5 @@
         android:textAlignment="center"
         android:maxLength="3"
         android:layout_marginEnd="@dimen/hbLines"
-        android:hint="@string/time"
-        android:layout_marginStart="@dimen/textPageBorder"
-        />
-
-
+        android:layout_marginStart="@dimen/textPageBorder" />
 </LinearLayout>

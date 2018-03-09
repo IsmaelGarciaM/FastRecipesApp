@@ -15,16 +15,14 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.ismael.fastrecipes.R;
-import com.ismael.fastrecipes.db.DatabaseContract;
-import com.ismael.fastrecipes.db.DatabaseHelper;
 
 /**
  * Created by Ismael on 24/01/2018.
  */
 
-public class FastRecipesProvider extends ContentProvider {
+public class FastRecipesProvider {
 
-    public static final int RECIPE = 1;
+   /* public static final int RECIPE = 1;
     public static final int FAVRECIPES = 2;
 
     public static final int RECIPE_ID= 11;
@@ -178,5 +176,5 @@ public class FastRecipesProvider extends ContentProvider {
             throw new SQLException("Error al actualizar");
 
         return affected;
-    }
+    }*/
 }

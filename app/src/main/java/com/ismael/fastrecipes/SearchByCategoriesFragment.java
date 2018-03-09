@@ -34,7 +34,8 @@ import butterknife.ButterKnife;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * SearchByCategoriesFragment -> Vista de la pantalla de selección de categorías
+ * @author Ismael Garcia
  */
 public class SearchByCategoriesFragment extends Fragment implements CategoriesPresenter.View{
 
@@ -151,7 +152,7 @@ public class SearchByCategoriesFragment extends Fragment implements CategoriesPr
 
     }
 
-    Bundle addCats(){
+    private Bundle addCats(){
         Bundle response = new Bundle();
         String content = "";
         for (int i = 0; i < adapter.getCats().size(); i++) {

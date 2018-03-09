@@ -15,7 +15,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Created by Ismael on 20/02/2018.
+ * PhotoUtils -> Utilidades para la correcta gestión y redimensión de imágenes
+ * @author Ismael Garcia
  */
 public class PhotoUtils extends Activity {
     private static Context mContext;

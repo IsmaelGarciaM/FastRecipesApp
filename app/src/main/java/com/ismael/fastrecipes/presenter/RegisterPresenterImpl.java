@@ -14,6 +14,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.ismael.fastrecipes.FastRecipesApplication;
+import com.ismael.fastrecipes.R;
 import com.ismael.fastrecipes.interfaces.FastRecipesApi;
 import com.ismael.fastrecipes.interfaces.RegisterPresenter;
 import com.ismael.fastrecipes.exceptions.DataEntryException;
@@ -151,7 +152,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
                     });
                 } else {
                     Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                    Toast.makeText(context, "Authentication failed.",
+                    Toast.makeText(context, context.getResources().getString(R.string.login_error),
                             Toast.LENGTH_SHORT).show();
 
                 }
@@ -178,13 +179,13 @@ public class RegisterPresenterImpl implements RegisterPresenter {
                     @Override
                     public void onCompleted() {
                         if(cont) vista.showLogin();
-                        else vista.showInputError("Error en servidor rest, CODIGO OK, PERO ERROR");
+                        else vista.showInputError(context.getResources().getString(R.string.serverError));
 
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        vista.showInputError("Error en servidor rest");
+                        vista.showInputError(context.getResources().getString(R.string.serverError));
                     }
 
                     @Override
@@ -195,34 +196,6 @@ public class RegisterPresenterImpl implements RegisterPresenter {
                     }
                 });
 
-
-        /*Call<Boolean> registerCall = mService.registerUser(idToken, u);
-        registerCall.enqueue(new Callback<Boolean>() {
-            @Override
-            public void onResponse(Call<Boolean> call, Response<Boolean> response) {
-
-                if (!response.isSuccessful()) {
-                    String error;
-                    if (response.errorBody()
-                            .contentType()
-                            .subtype()
-                            .equals("application/json")) {
-                        Log.d("LoginActivity", "APIERROR");
-                    } else {
-                        error = response.message();
-                    }
-
-                    return;
-                }
-
-
-            }
-
-            @Override
-            public void onFailure(Call<Boolean> call, Throwable t) {
-
-            }
-        });*/
     }
 
 

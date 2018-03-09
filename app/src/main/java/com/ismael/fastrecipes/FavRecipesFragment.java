@@ -2,16 +2,10 @@ package com.ismael.fastrecipes;
 
 
 import android.app.Activity;
-import android.content.Context;
-import android.database.Cursor;
 import android.graphics.Typeface;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,17 +14,13 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.ismael.fastrecipes.adapter.FilteredRecipeAdapter;
-import com.ismael.fastrecipes.adapter.RecipeAdapter;
 import com.ismael.fastrecipes.interfaces.RecipesPresenter;
 import com.ismael.fastrecipes.model.Comment;
 import com.ismael.fastrecipes.model.Recipe;
 import com.ismael.fastrecipes.model.User;
 import com.ismael.fastrecipes.presenter.RecipesPresenterImpl;
-
 import java.util.ArrayList;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -179,10 +169,13 @@ public class FavRecipesFragment extends Fragment implements RecipesPresenter.Vie
      */
     @Override
     public void showNetworkError(String msg) {
-        Toast t = Toast.makeText(FastRecipesApplication.getContext(), msg, Toast.LENGTH_LONG);
-        t.setGravity(Gravity.CENTER, 0, 0);
-        t.show();
+        try{
+            Toast t = Toast.makeText(getContext(), msg, Toast.LENGTH_LONG);
+            t.setGravity(Gravity.CENTER, 0, 0);
+            t.show();
+        }catch (Exception e){}
         emptyList.setVisibility(View.VISIBLE);
+
     }
 
     @Override

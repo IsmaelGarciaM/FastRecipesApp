@@ -2,17 +2,11 @@ package com.ismael.fastrecipes;
 
 
 import android.app.Activity;
-import android.content.Context;
-import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.SearchView;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,31 +14,23 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.CompoundButton;
-import android.widget.FilterQueryProvider;
 import android.widget.GridView;
-import android.widget.ListAdapter;
-import android.widget.SimpleCursorAdapter;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.ismael.fastrecipes.db.DatabaseContract;
-import com.ismael.fastrecipes.interfaces.IngredientPresenter;
 import com.ismael.fastrecipes.model.Filter;
-import com.ismael.fastrecipes.presenter.IngredientsPresenterImpl;
 import com.ismael.fastrecipes.utils.Const;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static android.content.ContentValues.TAG;
-
 
 /**
- * A simple {@link Fragment} subclass.
+ * SearchByIngredientFragment -> Vista de la pantalla de selección de ingredientes
+ * @author Ismael Garcia
  */
 public class SearchByIngredientFragment extends Fragment{
 
@@ -179,6 +165,18 @@ public class SearchByIngredientFragment extends Fragment{
         if(adapterGrvIngNot.getCount() > 0)
             txvNo.setVisibility(View.VISIBLE);
 
+        txvIngIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                swtIn.setChecked(false);
+            }
+        });
+        txvIngOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                swtIn.setChecked(true);
+            }
+        });
         sacIng.setThreshold(1);
         sacIng.setAdapter(adapterOk);
         grvIngOk.setAdapter(adapterGrvIngOk);
@@ -282,7 +280,7 @@ public class SearchByIngredientFragment extends Fragment{
             if (mCallback.getFilterByName(Const.f1) != null)
                 mCallback.getFilterByName(Const.f1).setContent(ingOk.substring(0, ingOk.length()-2));
             else {
-                Filter ingOkFilter = new Filter(Const.f1, ingOk.substring(ingOk.length()-2));
+                Filter ingOkFilter = new Filter(Const.f1, ingOk.substring(0, ingOk.length()-2));
                 mCallback.addFilter(ingOkFilter);
             }
         }

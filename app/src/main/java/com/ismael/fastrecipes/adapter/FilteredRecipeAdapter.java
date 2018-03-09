@@ -27,7 +27,8 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
- * Created by Ismael on 19/02/2018.
+ * FilteredRecipesAdapter -> Adaptador para los filtros
+ * @author Ismael Garcia
  */
 
 public class FilteredRecipeAdapter extends ArrayAdapter<Recipe> {

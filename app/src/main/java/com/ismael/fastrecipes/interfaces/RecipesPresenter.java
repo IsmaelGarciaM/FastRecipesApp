@@ -11,7 +11,8 @@ import com.ismael.fastrecipes.model.Recipe;
 import java.util.ArrayList;
 
 /**
- * Created by Ismael on 24/01/2018.
+ * RecipesPresenter -> Interfaz para las recetas
+ * @author Ismael Garcia
  */
 
 public interface RecipesPresenter {

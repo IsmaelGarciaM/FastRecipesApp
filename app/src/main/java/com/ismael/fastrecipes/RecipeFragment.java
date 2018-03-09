@@ -27,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.RuntimeExecutionException;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -175,11 +176,11 @@ public class RecipeFragment extends Fragment implements RecipesPresenter.View{
         txvRecipeUserName.setTypeface(font);
 
         //Personalización de rating bar
-        ratingBar.setNameForSmile(BaseRating.TERRIBLE, "¿Esto qué es?");//R.string.bad);
+        ratingBar.setNameForSmile(BaseRating.TERRIBLE, R.string.terrible);//R.string.bad);
         ratingBar.setNameForSmile(BaseRating.BAD, R.string.bad);
-        ratingBar.setNameForSmile(BaseRating.OKAY, "No está mal");//R.string.bad);
-        ratingBar.setNameForSmile(BaseRating.GOOD, "Me gusta");//R.string.bad);
-        ratingBar.setNameForSmile(BaseRating.GREAT, "¡Me encanta!");//R.string.bad);
+        ratingBar.setNameForSmile(BaseRating.OKAY,  R.string.okay);//R.string.bad);
+        ratingBar.setNameForSmile(BaseRating.GOOD, R.string.like);//R.string.bad);
+        ratingBar.setNameForSmile(BaseRating.GREAT, R.string.love);//R.string.bad);
 
         adapterCommentFirebase = new CommentsAdapter(getContext(), comments, new CommentsAdapter.OnItemClickListener() {
             @Override
@@ -219,7 +220,10 @@ public class RecipeFragment extends Fragment implements RecipesPresenter.View{
             public void onClick(View view) {
                 if(!edtComment.getText().toString().equals("")){
                     String comment = edtComment.getText().toString();
-                    Comment c = new Comment( mCallback.getUser().getId(), mCallback.getUser().getName(), recetaActual.getIdr(), comment, String.valueOf(mCallback.getUser().getId()));
+                    String image = "" ;
+                    if(!mCallback.getUser().getImage().equals(""))
+                        image = mCallback.getUser().getImage();
+                    Comment c = new Comment( mCallback.getUser().getId(), mCallback.getUser().getName(), recetaActual.getIdr(), comment, image);
                     presenter.sendComment(c);
                     edtComment.setText("");
                     Snackbar.make(btnSendComment, "Comentario publicado.", Snackbar.LENGTH_SHORT);
@@ -360,8 +364,11 @@ public class RecipeFragment extends Fragment implements RecipesPresenter.View{
                 mStorageRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
                     @Override
                     public void onComplete(@NonNull Task<Uri> task) {
-                        Picasso.with(getContext()).load(task.getResult()).error(R.drawable.user_icon).into(imvRecipeUser);
-
+                        try {
+                            Picasso.with(getContext()).load(task.getResult()).error(R.drawable.user_icon).into(imvRecipeUser);
+                        }catch (RuntimeExecutionException ree){
+                            imvRecipeUser.setImageDrawable(getResources().getDrawable(R.drawable.user_icon));
+                        }
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -441,9 +448,11 @@ public class RecipeFragment extends Fragment implements RecipesPresenter.View{
      */
     @Override
     public void showNetworkError(String msg) {
-        Toast t = Toast.makeText(FastRecipesApplication.getContext(), msg, Toast.LENGTH_LONG);
-        t.setGravity(Gravity.CENTER, 0, 0);
-        t.show();
+        try {
+            Toast t = Toast.makeText(getContext(), msg, Toast.LENGTH_LONG);
+            t.setGravity(Gravity.CENTER, 0, 0);
+            t.show();
+        }catch (Exception e){}
     }
 
     /**

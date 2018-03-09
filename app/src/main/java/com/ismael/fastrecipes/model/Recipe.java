@@ -9,7 +9,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * Created by Ismael on 23/01/2018.
+ * Recipe -> Clase POJO para recetas
+ * @author Ismael Garcia
  */
 
 public class Recipe implements Parcelable, Serializable{

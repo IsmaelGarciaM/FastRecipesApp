@@ -1,44 +1,23 @@
 package com.ismael.fastrecipes;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.ismael.fastrecipes.interfaces.IngredientPresenter;
 import com.ismael.fastrecipes.model.Filter;
 import com.ismael.fastrecipes.model.Recipe;
 import com.ismael.fastrecipes.model.User;
-import com.ismael.fastrecipes.presenter.IngredientsPresenterImpl;
-import com.ismael.fastrecipes.provider.FastRecipesContract;
-import com.ismael.fastrecipes.utils.Const;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-
-import static com.ismael.fastrecipes.utils.Const.f5;
 
 /**
  * HomeActivity.class - Clase con la actividad contenedora de toda la aplicacion.
@@ -47,7 +26,6 @@ import static com.ismael.fastrecipes.utils.Const.f5;
  */
 public class HomeActivity extends AppCompatActivity implements UsersListFragment.UsersListListener, AddIngredientsFragment.AddIngredientsListener, AddRecipeFragment.AddRecipeFragmentListener, RecipeFragment.RecipeFragmentListener, RecipesListFragment.RecipesListListener, ProfileFragment.ProfileListener, MyRecipesFragment.MyRecipeFragmentListener, MyCommentsFragment.MyCommentsFragmentListener, SettingsPreferences.PrefsListener, FavRecipesFragment.FavRecipesListener, SearchRecipeFragment.SearchFragmentListener, SocialActivityFragment.SocialActivityFragmentListener, SearchByIngredientFragment.SearchIngredientsListener, SearchByCategoriesFragment.SearchCategoriesListener{
 
-    IngredientPresenter presenter;
     //int para gestionar OnBackPressed de algunas vistas
     int where = -1;
     //longs para gestionar la salida de la aplicacion mediante OnBacPressed
@@ -252,7 +230,7 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
         addingFr = AddIngredientsFragment.getInstance(b);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.framehome, addingFr, "adding").addToBackStack("");
-        ft.commit();
+        ft.commitAllowingStateLoss();
     }
 
 
@@ -272,7 +250,7 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
             getSupportFragmentManager().popBackStackImmediate();
         }
         setSettingsOp(false);
-        ft.commit();
+        ft.commitAllowingStateLoss();
     }
 
 
@@ -282,15 +260,17 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
         bnvTabMenu.setVisibility(View.VISIBLE);
         Bundle b = new Bundle();
         b.putString("message", msg);
-
-        socialFragment = SocialActivityFragment.getInstance(b);
-        if(getSupportFragmentManager().findFragmentByTag("recipe") != null)
-            getSupportFragmentManager().popBackStackImmediate();
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.framehome, socialFragment);
-        setSettingsOp(false);
-        ft.commit();
-
+        try {
+            socialFragment = SocialActivityFragment.getInstance(b);
+            if (getSupportFragmentManager().findFragmentByTag("recipe") != null)
+                getSupportFragmentManager().popBackStackImmediate();
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.framehome, socialFragment);
+            setSettingsOp(false);
+            ft.commitAllowingStateLoss();
+        }catch (Exception e){
+            showSearchFragment(null);
+        }
     }
 
     /**
@@ -303,7 +283,7 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
         sbcFragment = SearchByCategoriesFragment.getInstance(data);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.framehome, sbcFragment, "cat").addToBackStack("");
-        ft.commit();
+        ft.commitAllowingStateLoss();
     }
 
     /**
@@ -316,7 +296,7 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
         sbiFragment = SearchByIngredientFragment.getInstance(null);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.framehome, sbiFragment, "ing").addToBackStack("");
-        ft.commit();
+        ft.commitAllowingStateLoss();
     }
 
     /**
@@ -338,7 +318,7 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
         profileFr = ProfileFragment.getInstance(b);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.framehome, profileFr, "profile").addToBackStack("");
-        ft.commit();
+        ft.commitAllowingStateLoss();
     }
 
     /**
@@ -350,7 +330,8 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
         ulfFragment = UsersListFragment.getInstance(args);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.framehome, ulfFragment, "ulist").addToBackStack("");
-        ft.commit();
+        ft.commitAllowingStateLoss();
+
     }
 
 
@@ -362,10 +343,14 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
         where = 2;
         bnvTabMenu.setVisibility(View.VISIBLE);
         favRecFr = FavRecipesFragment.getInstance(null);
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.framehome, favRecFr);
-        setSettingsOp(false);
-        ft.commit();
+        try {
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.framehome, favRecFr);
+            setSettingsOp(false);
+            ft.commitAllowingStateLoss();
+        }catch (Exception e){
+            showSearchFragment(null);
+        }
     }
 
     /**
@@ -379,7 +364,7 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.framehome, rlFragment, "list").addToBackStack("");
         setSettingsOp(false);
-        ft.commit();
+        ft.commitAllowingStateLoss();
     }
 
     @Override
@@ -402,7 +387,7 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
         }
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.framehome, recipeFrg, "recipe").addToBackStack("");
-        ft.commit();
+        ft.commitAllowingStateLoss();
     }
 
     /**
@@ -429,7 +414,7 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
 
 
         ft.replace(R.id.framehome, addRecipeFr, "add").addToBackStack("");
-        ft.commit();
+        ft.commitAllowingStateLoss();
 
     }
 
@@ -439,16 +424,22 @@ public class HomeActivity extends AppCompatActivity implements UsersListFragment
     @Override
     public void showConfig() {
         bnvTabMenu.setVisibility(View.VISIBLE);
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.framehome, new android.support.v4.app.Fragment());
-        ft.commit();
-        setSettingsOp(true);
-        getFragmentManager().beginTransaction().replace(R.id.framehome, new SettingsPreferences()).commit();
+       try {
+           FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+           ft.replace(R.id.framehome, new android.support.v4.app.Fragment());
+           ft.commit();
+           setSettingsOp(true);
+           getFragmentManager().beginTransaction().replace(R.id.framehome, new SettingsPreferences()).commitAllowingStateLoss();
+       }catch (Exception e){
+           showSearchFragment(null);
+       }
     }
 
     @Override
     public void closeSession() {
-        startActivity(new Intent().setClass(this, LoginActivity.class).putExtra("close", true));
+        getSharedPreferences("fastrecipessp", MODE_PRIVATE).edit().putString("um", null).apply();
+        getSharedPreferences("fastrecipessp", MODE_PRIVATE).edit().putString("up", null).apply();
+        startActivity(new Intent().setClass(this, LoginActivity.class));
         finish();
     }
 

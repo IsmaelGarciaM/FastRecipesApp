@@ -15,7 +15,8 @@ import android.preference.SwitchPreference;
 import com.ismael.fastrecipes.interfaces.Prefs;
 
 /**
- * Created by Ismael on 10/02/2018.
+ * SettingPreferences -> Vista de la configuración de la aplicación
+ * @author Ismael Garcia
  */
 
 public class SettingsPreferences extends PreferenceFragment implements Prefs.View{
@@ -115,7 +116,7 @@ public class SettingsPreferences extends PreferenceFragment implements Prefs.Vie
         profesional.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                Uri uri = Uri.parse("http://www.linkedin.com");
+                Uri uri = Uri.parse("https://www.linkedin.com/in/ismael-garc%C3%ADa-mart%C3%ADnez-a17a94139/");
 
                 return false;
             }

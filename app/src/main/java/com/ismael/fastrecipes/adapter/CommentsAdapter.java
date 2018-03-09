@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.RuntimeExecutionException;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -36,7 +37,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import static com.ismael.fastrecipes.FastRecipesApplication.getContext;
 
 /**
- * Created by Ismael on 23/01/2018.
+ * CommenstAdapter.class -> Adaptador para comentarios
+ * @author Ismael Garcia
  */
 
 public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHolder>{
@@ -81,18 +83,24 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHo
             txvComment.setText(cTmp.getContent());
             txvComDate.setText(cTmp.getDate());
             if(cTmp.getImage() != null && !cTmp.getImage().equals("")) {
-                StorageReference mStRef = FirebaseStorage.getInstance().getReference(Const.FIREBASE_IMAGE_USER+"/"+cTmp.getIdAuthor());
-
                 try {
+                    StorageReference mStRef = FirebaseStorage.getInstance().getReference(Const.FIREBASE_IMAGE_USER + "/" + cTmp.getIdAuthor());
+
+
                     mStRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
                         @Override
                         public void onComplete(@NonNull Task<Uri> task) {
                             imgUserComment.setScaleType(ImageView.ScaleType.CENTER_CROP);
-
-                            Picasso.with(context).load(task.getResult()).resize(200, 200).onlyScaleDown().centerCrop().error(R.drawable.user_icon).into(imgUserComment);
+                            try{
+                            Picasso.with(context).load(task.getResult()).
+                                    resize(200, 200)
+                                    .onlyScaleDown().centerCrop().error(R.drawable.user_icon).into(imgUserComment);
+                            } catch (RuntimeExecutionException e) {
+                                imgUserComment.setImageDrawable(context.getResources().getDrawable(R.drawable.user_icon));
+                            }
                         }
                     });
-                } catch (Exception e) {
+                }catch (Exception e) {
                     imgUserComment.setImageDrawable(context.getResources().getDrawable(R.drawable.user_icon));
                 }
             }

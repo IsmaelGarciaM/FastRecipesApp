@@ -3,7 +3,8 @@ package com.ismael.fastrecipes.interfaces;
 import android.content.Context;
 
 /**
- * Created by Ismael on 10/02/2018.
+ * Prefs -> Interfaz para preferencias
+ * @author Ismael Garcia
  */
 
 public interface Prefs {

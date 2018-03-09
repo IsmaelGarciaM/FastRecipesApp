@@ -1,97 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">FastRecipes</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="strqqc">Búsqueda de recetas</string>
-    <string name="strFilters">AÑADIR FILTROS</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="email">Email</string>
-    <string name="password">Contraseña</string>
-    <string name="name">Nombre completo</string>
-    <string name="register">Registrarse</string>
-    <string name="forget_pass">Olvidé mi contraseña</string>
-    <string name="login_error">E-mail o contraseña incorrecto.</string>
-    <string name="singin">Iniciar sesión</string>
-    <string name="access">Acceder</string>
-    <string name="myrecipes">Mis recetas</string>
-    <string name="mycomments" translatable="false">Mis Comentarios</string>
-    <string name="accept">Aceptar</string>
-    <string name="back">Atrás</string>
-    <string name="minutes">minutos</string>
-    <string name="commentrecipe">Comenta esta receta</string>
-    <string name="send">Enviar</string>
-    <string name="published_recipes">Recetas publicadas</string>
-    <string name="camera">Cámara</string>
-    <string name="gallery">Galería</string>
-    <string name="source">Fuente:</string>
-    <string name="rate">Valorar</string>
-    <string name="bad">No me gusta</string>
-    <string name="titleSaveUser">¿Recordar usuario?</string>
-    <string name="emptyMyRecs">Aún no has publicado recetas.</string>
-    <string name="favourites">Recetas favoritas</string>
-    <string name="empty_favs">No has añadido ninguna receta a favoritos.</string>
-    <string name="nameAuthorTile">Autor de esta receta</string>
-    <string name="add_quantity">Añade la cantidad</string>
-    <string name="addrecipe">Añadir receta</string>
-    <string name="searchRes">Resultado de búsqueda</string>
-    <string name="norecipes">No hay recetas que coincidan con tu búsqueda</string>
-    <string name="time">Tiempo</string>
-    <string name="difficulty">Dificultad</string>
-    <string name="searchIngre">Buscar ingredientes</string>
-    <string name="dontrem">No recordar</string>
-    <string name="rem">Recordar</string>
-    <string name="nofavs">Nadie a marcado esta receta como favorita.</string>
-    <string name="favs">Favoritos</string>
-    <string name="nointernet">No hay conexión de red.</string>
-    <string name="recipepublished">La receta ha sido publicada correctamente.</string>
-    <string name="updatedrecipe">Receta actualizada.</string>
-    <string name="updatedprofile">Perfil actualizado.</string>
-    <string name="delete">Eliminar</string>
-    <string name="sendEmailVerification">Reenviar correo</string>
-    <string name="credits">Créditos</string>
-    <string name="rememberuser">Recordar usuario</string>
-    <string name="version">Versión</string>
-    <string name="terms">Términos y condiciones</string>
-    <string name="about">Acerca de...</string>
-    <string name="recipeday">Receta rápida del día</string>
-    <string name="textProm">¿Buscas algo más concreto? Añade filtros a la búsqueda y... ¡a cocinar!</string>
-    <string name="withingredients">Con los ingredientes:</string>
-    <string name="withoutin">Que no contenga:</string>
-    <string name="notverified">E-mail no verificado, algunas funciones están deshabilitadas</string>
-    <string name="like">Me gusta</string>
-    <string name="okay">Comestible</string>
-    <string name="terrible">¡Muy mal!</string>
-    <string name="love">¡Me encanta!</string>
-    <string name="cantuploadphoto">No ha sido posible cargar la imagen. Inténtelo de nuevo en unos minutos.</string>
-    <string name="serverError">Error de conexión con el servidor</string>
-    <string name="publishedComment">Comentario publicado</string>
+    <string name="empty_field">This field is required.</string>
+    <string name="invalid_email">Invalid e-mail</string>
+    <string name="password_length">The length of the password must be between 8 and 15 characters.</string>
+    <string name="password_same">The password can not be the same as your e-mail.</string>
+    <string name="password_case">The password must contain at least one uppercase.</string>
+    <string name="password_number">The password must contain at least one number.</string>
+    <string name="empty_time">The recipe must have a time in minutes</string>
+    <string name="empty_dif">"Add a difficulty to the recipe "</string>
+    <string name="empty_name">Add a name to the recipe</string>
+    <string name="empty_ing">Add some ingredients</string>
+    <string name="empty_elaboration">Add some elaboration steps</string>
+    <string name="phone_error">Invalid phone number</string>
+    <string name="strqqc">Recipe search</string>
+    <string name="strFilters">Add filters</string>
+    <string name="email">E-mail</string>
+    <string name="password">Password</string>
+    <string name="name">Full name</string>
+    <string name="register">Sign in</string>
+    <string name="forget_pass">"I forgot my password forgot "</string>
+    <string name="login_error">Incorrect e-mail or password</string>
+    <string name="singin">Log in</string>
+    <string name="access">Log in</string>
+    <string name="myrecipes">My recipes</string>
+    <string name="accept">Accept</string>
+    <string name="back">Back</string>
+    <string name="minutes">minutes</string>
+    <string name="commentrecipe">Comment this recipe</string>
+    <string name="send">Send</string>
+    <string name="published_recipes">Published recipes</string>
+    <string name="camera">Camera</string>
+    <string name="gallery">Gallery</string>
+    <string name="source">Source:</string>
+    <string name="rate">Rate</string>
+    <string name="bad">I don\'t like this</string>
+    <string name="titleSaveUser">Remember user?</string>
+    <string name="emptyMyRecs">You have not published recipes yet.</string>
+    <string name="favourites">Favourite recipes</string>
+    <string name="empty_favs">" 42/5000 You have not added any recipe to favorites."</string>
+    <string name="nameAuthorTile">Author</string>
+    <string name="add_quantity">Add quantity</string>
+    <string name="addrecipe">Add recipe</string>
+    <string name="searchRes">Search result</string>
+    <string name="norecipes">There are no recipes that match your search</string>
+    <string name="time">Time</string>
+    <string name="difficulty">Difficulty</string>
+    <string name="searchIngre">Search ingredients</string>
+    <string name="dontrem">Do not remember</string>
+    <string name="rem">Remember</string>
+    <string name="nofavs">No one has marked this recipe as a favorite.</string>
+    <string name="favs">Favourites</string>
+    <string name="nointernet">There is no network connection.</string>
+    <string name="recipepublished">"The recipe has been published "</string>
+    <string name="updatedrecipe">Updated recipe</string>
+    <string name="updatedprofile">Update profile</string>
+    <string name="delete">Delete</string>
+    <string name="sendEmailVerification">Resend e-mail</string>
+    <string name="credits">Crédits</string>
+    <string name="rememberuser">Remember user</string>
+    <string name="version">Version</string>
+    <string name="terms">Terms and conditions</string>
+    <string name="about">About...</string>
+    <string name="recipeday">Fast recipe of the day</string>
+    <string name="textProm">Are you looking for something more concrete? Add filters to the search and ... start cooking!</string>
+    <string name="withingredients">With ingredients:</string>
+    <string name="withoutin">Without:</string>
+    <string name="notverified">E-mail not verified, some functions are disabled</string>
+    <string name="like">I like it</string>
+    <string name="okay">Edible</string>
+    <string name="terrible">Bad!</string>
+    <string name="love">Love it!</string>
+    <string name="cantuploadphoto">It was not possible to load the image. Try again in a few minutes.</string>
+    <string name="serverError">Server connection error</string>
+    <string name="publishedComment">Comment published</string>
     <string name="nothing">-</string>
-    <string name="recipesearch">Búsqueda de recetas</string>
-    <string name="addfilter">Añadir filtro</string>
-    <string name="deleteall">Borrar todos</string>
-    <string name="filterEmpty">Añade filtros para concretar la búsqueda.</string>
-    <string name="ingOk">Que contenga</string>
-    <string name="ingNot">Que no contenga</string>
-    <string name="categories">Categorías</string>
-    <string name="nocats" translatable="false">Sin categorías.</string>
-    <string name="location">Ubicación</string>
-    <string name="regdate">Fecha de registro:</string>
-    <string name="ingredients">Ingredientes:</string>
-    <string name="adding">Añadir ingredientes</string>
-    <string name="elaboration">Elaboración</string>
-    <string name="npers">Personas:</string>
-    <string name="recipename">Nombre de receta</string>
-    <string name="imageurl">O bien introduce la url de la imagen</string>
-    <string name="examinate">Examinar</string>
-    <string name="add">Añadir</string>
+    <string name="recipesearch">Recipes search</string>
+    <string name="addfilter">Add filter</string>
+    <string name="deleteall">Delete all</string>
+    <string name="filterEmpty">Add filters to concrete your search</string>
+    <string name="ingOk">With ingredients</string>
+    <string name="ingNot">Without</string>
+    <string name="categories">Categories</string>
+    <string name="location">Location</string>
+    <string name="regdate">Since:</string>
+    <string name="ingredients">Ingredients:</string>
+    <string name="adding">Add ingredients</string>
+    <string name="elaboration">Elaboration</string>
+    <string name="npers">Persons</string>
+    <string name="recipename">Recipe name</string>
+    <string name="imageurl">image url</string>
+    <string name="examinate">Load image</string>
+    <string name="add">Add</string>
     <string name="fastrecipes">Fast Recipes</string>
-    <string name="favdeleted">Eliminado de favoritos.</string>
-    <string name="favadded">Añadido a favoritos.</string>
-    <string name="minutestime">Tiempo en minutos</string>
-    <string name="aboutUs">Sobre nosotros</string>
-    <string name="profesionalprofile">Perfil profesional</string>
-
+    <string name="favdeleted">Favourite deleted</string>
+    <string name="favadded">Added to favourites</string>
+    <string name="minutestime">Time in minutes</string>
+    <string name="aboutUs">About us</string>
+    <string name="profesionalprofile">Proffesional profile</string>
 
     <string-array name="categories_array">
         <item>Bebidas y cóckteles</item>
@@ -108,7 +114,6 @@
         <item>Aperitivos</item>
         <item>Para llevar</item>
     </string-array>
-
     <string-array name="ingredients">
         <item>Albahaca</item>
         <item>Anís</item>
@@ -370,22 +375,4 @@
         <item>Media</item>
         <item>Difícil</item>
     </string-array>
-
-    <integer-array name="icons_cat">
-        <item>@drawable/cat_drinks</item>
-        <item>@drawable/cat_rice</item>
-        <item>@drawable/cat_veget</item>
-        <item>@drawable/cat_desserts</item>
-        <item>@drawable/cat_soups</item>
-        <item>@drawable/cat_meat</item>
-        <item>@drawable/cat_nuts</item>
-        <item>@drawable/cat_fish</item>
-        <item>@drawable/cat_fruits</item>
-        <item>@drawable/cat_pasta</item>
-        <item>@drawable/cat_dairy</item>
-        <item>@drawable/cat_aperitifs</item>
-        <item>@drawable/cat_take</item>
-
-
-    </integer-array>
 </resources>

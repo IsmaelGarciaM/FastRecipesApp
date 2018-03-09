@@ -36,7 +36,6 @@ import com.ismael.fastrecipes.model.Filter;
 import com.ismael.fastrecipes.model.Recipe;
 import com.ismael.fastrecipes.presenter.RecipesPresenterImpl;
 import com.squareup.picasso.Picasso;
-import com.weiwangcn.betterspinner.library.BetterSpinner;
 
 import java.util.ArrayList;
 import butterknife.BindView;
@@ -172,9 +171,11 @@ public class SearchRecipeFragment extends Fragment implements RecipesPresenter.V
 
     @Override
     public void showNetworkError(String msg) {
-        Toast t = Toast.makeText(FastRecipesApplication.getContext(), msg, Toast.LENGTH_LONG);
-        t.setGravity(Gravity.CENTER, 0, 0);
-        t.show();
+        try {
+            Toast t = Toast.makeText(getContext(), msg, Toast.LENGTH_LONG);
+            t.setGravity(Gravity.CENTER, 0, 0);
+            t.show();
+        }catch(Exception e){}
     }
 
     //Interfaz para HomeActivity
@@ -346,7 +347,7 @@ public class SearchRecipeFragment extends Fragment implements RecipesPresenter.V
         customDialog = new AlertDialog.Builder(this.getContext(), R.style.Theme_AppCompat_DayNight_Dialog);
         customDialog.setTitle("Filtros");
 
-        customDialog.setItems(new CharSequence[]{"Ingredientes", "Categorias", "Nombre", "Tiempo", "Dificultad"}, new DialogInterface.OnClickListener() {
+        customDialog.setItems(new CharSequence[]{"Ingredientes", "Categorías", "Nombre", "Tiempo", "Dificultad"}, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 switch (i){

@@ -24,7 +24,8 @@ import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
- * Created by Ismael on 23/01/2018.
+ * CategoryAdapter.class -> Adaptador para las categorías
+ * @author Ismael Garcia
  */
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHolder> {

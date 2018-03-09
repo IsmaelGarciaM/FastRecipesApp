@@ -33,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/imvRecipeImage"
-            android:text="Título de la receta"
+            android:text="@string/nothing"
             android:textSize="20sp"
             android:layout_centerHorizontal="true"
             />
@@ -41,12 +41,12 @@
         <TextView
             android:layout_below="@+id/txvRecipeNamePrinView"
             android:layout_marginTop="5dp"
-            android:text="Sin categorías."
+            android:text="@string/nocats"
             android:id="@+id/txvRecipeCatPV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:textSize="8dp"
+            android:textSize="8sp"
             android:layout_marginBottom="@dimen/hbLines"
             />
         </RelativeLayout>
@@ -83,7 +83,7 @@
                 android:layout_marginTop="@dimen/elevation"
                 android:textSize="10sp"
                 android:id="@+id/txvRecipeTimePR"
-                android:text="- min" />
+                android:text="@string/nothing" />
 
             <ImageView
                 android:layout_width="20dp"
@@ -102,7 +102,7 @@
                 android:layout_marginStart="@dimen/elevation"
                 android:layout_height="wrap_content"
                 android:id="@+id/txvRecipeDifficultPR"
-                android:text="-"
+                android:text="@string/nothing"
                 android:layout_weight="1"
                 android:textSize="10sp"
 

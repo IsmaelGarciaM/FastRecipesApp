@@ -4,16 +4,12 @@ package com.ismael.fastrecipes;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.database.Cursor;
-import android.database.DataSetObserver;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,18 +18,10 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 
-import com.ismael.fastrecipes.db.DatabaseContract;
-import com.ismael.fastrecipes.interfaces.IngredientPresenter;
-import com.ismael.fastrecipes.model.Ingredient;
 import com.ismael.fastrecipes.model.Recipe;
-import com.ismael.fastrecipes.presenter.IngredientsPresenterImpl;
-
-import java.util.ArrayList;
-import java.util.Collections;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -48,6 +36,10 @@ public class AddIngredientsFragment extends Fragment{
     //Cuadro de texto para la búsqueda
     @BindView(R.id.actxvIng)
     AutoCompleteTextView searchI;
+
+    @BindView(R.id.txvaddingtitle)
+    TextView addingtitle;
+
 
     @BindView(R.id.btnAddIng)
     Button btnAddIng;
@@ -123,7 +115,8 @@ public class AddIngredientsFragment extends Fragment{
                 tmpRecipe = aifInstance.getArguments().getParcelable("recipe");
         }
 
-
+        Typeface font = Typeface.createFromAsset(getContext().getAssets(), "yummycupcakes.ttf");
+        addingtitle.setTypeface(font);
         allIng = getResources().getStringArray(R.array.ingredients);
 
         adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, allIng);

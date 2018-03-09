@@ -78,14 +78,6 @@ public class FastRecipesService {
     }
 
 
-    /**
-     * Realiza la llamada a la api para obtener los comentarios realizados por un usuario
-     * @param idUser Id del usuario
-     * @return Devuelve un Observable con un array de ResultComment, array con los comentarios
-     */
-    public Observable<ResultComment> getUserComments(int idUser){
-        return null;//fastRecipesApi.getCommentsObservable(idUser);
-    }
 
     /**
      * Realiza la llamada a la api para obtener los usuarios que han marcado como favorita una receta

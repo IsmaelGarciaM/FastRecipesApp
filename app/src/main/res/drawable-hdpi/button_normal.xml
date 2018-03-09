@@ -10,7 +10,7 @@
     <!-- Contenido -->
     <item android:bottom="4dp">
         <shape>
-            <solid android:color="@color/windowBackground" />
+            <solid android:color="#8bf12e1c" />
             <corners android:radius="10dip" />
         </shape>
     </item>

@@ -31,7 +31,6 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.ismael.fastrecipes.FastRecipesApplication;
 import com.ismael.fastrecipes.R;
-import com.ismael.fastrecipes.db.DatabaseContract;
 import com.ismael.fastrecipes.exceptions.DataEntryException;
 import com.ismael.fastrecipes.interfaces.RecipesPresenter;
 import com.ismael.fastrecipes.model.Comment;
@@ -41,21 +40,12 @@ import com.ismael.fastrecipes.provider.FastRecipesContract;
 import com.ismael.fastrecipes.utils.Const;
 import com.ismael.fastrecipes.utils.FastRecipesService;
 import com.ismael.fastrecipes.utils.Result;
-
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-import static com.ismael.fastrecipes.provider.FastRecipesProvider.FAVRECIPES;
-import static com.ismael.fastrecipes.provider.FastRecipesProvider.FAVRECIPE_ID;
-import static com.ismael.fastrecipes.provider.FastRecipesProvider.RECIPE;
-import static com.ismael.fastrecipes.provider.FastRecipesProvider.RECIPE_ID;
 
 /**
  * RecipesPresenterImpl.java - Clase que controla todas las conexiones para la obtención, modificación, borrado y añadido de recetas. Local o externo
@@ -125,7 +115,7 @@ public class RecipesPresenterImpl implements RecipesPresenter{
 
                         @Override
                         public void onError(Throwable e) {
-                            view.showNetworkError("Error de conexión con el servidor");
+                            view.showNetworkError(context.getResources().getString(R.string.serverError));
                         }
 
                         @Override
@@ -168,7 +158,7 @@ public class RecipesPresenterImpl implements RecipesPresenter{
                     @Override
                     public void onError(Throwable e) {
                         e.printStackTrace();
-                        view.showNetworkError("Error de conexión con el servidor");
+                        view.showNetworkError(context.getResources().getString(R.string.serverError));
                     }
 
                     @Override
@@ -262,7 +252,6 @@ public class RecipesPresenterImpl implements RecipesPresenter{
 
     @Override
     public void getRecipe(int id, int idu) {
-
         final Recipe[] r = new Recipe[1];
         String idS = String.valueOf(idu)+"-"+String.valueOf(id);
         if(isOnline()) {
@@ -277,20 +266,20 @@ public class RecipesPresenterImpl implements RecipesPresenter{
                                 view.showRecipeInfo(b);
                             }
                         }
-
                         @Override
                         public void onError(Throwable e) {
-                            view.showNetworkError("Error de conexión con el servidor");
+                            view.showNetworkError(context.getResources().getString(R.string.serverError));
                         }
 
                         @Override
                         public void onNext(Result result) {
-                            if (result.getRecipes() != null)
+                            if (result.getCode() && result.getRecipes() != null)
                                 r[0] = result.getRecipes().get(0);
                         }
 
                     });
-        }
+        }else
+            view.showNetworkError(context.getResources().getString(R.string.nointernet));
     }
 
 
@@ -309,10 +298,10 @@ public class RecipesPresenterImpl implements RecipesPresenter{
                         @Override
                         public void onCompleted() {
                             if(r[0].getFav() == 0)
-                                view.showNetworkError("Eliminado de favoritos.");
+                                view.showNetworkError(context.getResources().getString(R.string.favdeleted));
 
                             else
-                                view.showNetworkError("Añadido a favoritos.");
+                                view.showNetworkError(context.getResources().getString(R.string.favadded));
 
                             view.setFavState(r[0]);
 
@@ -320,7 +309,7 @@ public class RecipesPresenterImpl implements RecipesPresenter{
 
                         @Override
                         public void onError(Throwable e) {
-                            view.showNetworkError("Error de conexión con el servidor");
+                            view.showNetworkError(context.getResources().getString(R.string.serverError));
                         }
 
                         @Override
@@ -331,7 +320,6 @@ public class RecipesPresenterImpl implements RecipesPresenter{
                     });
         }else
             view.showNetworkError(context.getResources().getString(R.string.nointernet));
-
     }
 
 
@@ -378,12 +366,12 @@ public class RecipesPresenterImpl implements RecipesPresenter{
         mCommentsReference.push().setValue(cTmp).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                view.showNetworkError("Comentario publicado.");
+                view.showNetworkError(context.getResources().getString(R.string.publishedComment));
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                view.showNetworkError("Se ha producido un error de conexión");
+                view.showNetworkError(context.getResources().getString(R.string.serverError));
             }
         });
     }
@@ -549,5 +537,4 @@ public class RecipesPresenterImpl implements RecipesPresenter{
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null && activeNetwork.isConnected();
     }
-
 }

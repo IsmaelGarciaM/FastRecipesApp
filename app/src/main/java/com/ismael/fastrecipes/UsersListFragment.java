@@ -28,8 +28,8 @@ import butterknife.ButterKnife;
 
 
 /**
- * A simple {@link Fragment} subclass.
- */
+ * @author Ismael Garcia
+ * */
 public class UsersListFragment extends Fragment implements ProfilePresenter.View {
 
     @BindView(R.id.lvUsers)

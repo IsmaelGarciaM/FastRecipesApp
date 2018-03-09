@@ -6,8 +6,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.ismael.fastrecipes.model.User;
 
 /**
- * Created by ismael on 3/05/17.
- */
+ * LoginPresenter -> Interfaz para login
+ * @author Ismael Garcia
+ * */
 
 public interface LoginPresenter {
     void validateMail(String email);

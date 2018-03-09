@@ -133,7 +133,7 @@
             android:textSize="10sp"
             android:layout_marginStart="@dimen/elevation"
             android:layout_toEndOf="@id/imvNpersicon"
-            android:text="-"
+            android:text="@string/nothing"
             />
 
         </RelativeLayout>

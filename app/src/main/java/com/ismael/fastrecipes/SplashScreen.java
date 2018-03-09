@@ -19,15 +19,17 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.firebase.auth.FirebaseUser;
 import com.ismael.fastrecipes.interfaces.LoginPresenter;
 import com.ismael.fastrecipes.model.Recipe;
-import com.ismael.fastrecipes.model.User;
 import com.ismael.fastrecipes.presenter.LoginPresenterImpl;
-import com.ismael.fastrecipes.prefs.SessionPrefs;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
 import butterknife.BindView;
 
+/**
+ * SplashScreen -> Vista de la pantalla de carga de la aplicación
+ * @author Ismael Garcia
+ */
 public class SplashScreen extends AppCompatActivity implements LoginPresenter.View{
 
     //Duración de splash screen
@@ -97,7 +99,7 @@ public class SplashScreen extends AppCompatActivity implements LoginPresenter.Vi
         Recipe rTmp = new Recipe();
         /*Looper.getMainLooper().prepare();
         ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);*/
-        String text = getIntent().getStringExtra(Intent.EXTRA_TEXT).toLowerCase();
+        String text = getIntent().getStringExtra(Intent.EXTRA_TEXT);
         // = String.valueOf(clipboard.getText()).toLowerCase();//.getPrimaryClip().getItemAt(0).coerceToText(FastRecipesApplication.getContext())).toLowerCase();
 
 
@@ -106,62 +108,73 @@ public class SplashScreen extends AppCompatActivity implements LoginPresenter.Vi
             text = item.getText().toString().toLowerCase();
         }*/
 
-        if(text.contains("ingredients")) {
-            if(text.contains("description")) {
-                rTmp.setIngredients(text.substring(text.indexOf("ingredients") + 13, text.indexOf("description") - 1));
-                rTmp.setElaboration(text.substring(text.indexOf("description") + "description".length(), text.length()));
+        if(text.toLowerCase().contains("ingredients")) {
+            if(text.toLowerCase().contains("description")) {
+                rTmp.setIngredients(text.substring(text.toLowerCase().indexOf("ingredients") + 13, text.toLowerCase().indexOf("description") - 1));
+                rTmp.setElaboration(text.substring(text.toLowerCase().indexOf("description") + "description".length(), text.length()));
             }
-            else if(text.contains("elaboration")) {
-                rTmp.setIngredients(text.substring(text.indexOf("ingredients") + 13, text.indexOf("elaboration") - 1));
-                rTmp.setElaboration(text.substring(text.indexOf("elaboration") + "elaboration".length(), text.length()));
+            else if(text.toLowerCase().contains("elaboration")) {
+                rTmp.setIngredients(text.substring(text.toLowerCase().indexOf("ingredients") + 13, text.indexOf("elaboration") - 1));
+                rTmp.setElaboration(text.substring(text.toLowerCase().indexOf("elaboration") + "elaboration".length(), text.length()));
             }
             else{
-                rTmp.setIngredients(text.substring(text.indexOf("ingredients") + 13, text.length()));
+                rTmp.setIngredients(text.substring(text.toLowerCase().indexOf("ingredients") + 13, text.length()));
             }
 
         }
-        if(text.contains("ingredientes")) {
-            if(text.contains("descripci")) {
-                rTmp.setIngredients(text.substring(text.indexOf("ingredientes") + "ingredientes".length() +1, text.indexOf("descripci") - 1));
-                rTmp.setElaboration(text.substring(text.indexOf("descripci") + "descripcion".length()+1, text.length()));
+        if(text.toLowerCase().contains("ingredientes")) {
+            if(text.toLowerCase().contains("descripci")) {
+                rTmp.setIngredients(text.substring(text.toLowerCase().indexOf("ingredientes") + "ingredientes".length() +1, text.toLowerCase().indexOf("descripci") - 1));
+                rTmp.setElaboration(text.substring(text.toLowerCase().indexOf("descripci") + "descripcion".length()+1, text.length()));
             }
-            else if(text.contains("elaboraci")) {
-                rTmp.setIngredients(text.substring(text.indexOf("ingredientes") + "ingredientes".length()+1, text.indexOf("elaboraci") - 1));
-                rTmp.setElaboration(text.substring(text.indexOf("elaboraci") + "elaboracion".length() + 1, text.length()));
+            else if(text.toLowerCase().contains("instrucciones")) {
+                rTmp.setIngredients(text.substring(text.toLowerCase().indexOf("ingredientes") + "ingredientes".length()+1, text.toLowerCase().indexOf("instrucciones") - 1));
+                rTmp.setElaboration(text.substring(text.toLowerCase().indexOf("instrucciones") + "instrucciones".length() + 1, text.length()));
             }
-            else if(text.contains("preparaci")) {
-                rTmp.setIngredients(text.substring(text.indexOf("ingredientes") + "ingredientes".length()+1, text.indexOf("preparaci") - 1));
-                rTmp.setElaboration(text.substring(text.indexOf("preparaci") + "preparacion".length() + 1, text.length()));
+            else if(text.toLowerCase().contains("elaboraci")) {
+                rTmp.setIngredients(text.substring(text.toLowerCase().indexOf("ingredientes") + "ingredientes".length()+1, text.toLowerCase().indexOf("elaboraci") - 1));
+                rTmp.setElaboration(text.substring(text.toLowerCase().indexOf("elaboraci") + "elaboracion".length() + 1, text.length()));
             }
-            else if(text.contains("pasos")) {
-                rTmp.setIngredients(text.substring(text.indexOf("ingredientes") + "ingredientes".length()+1, text.indexOf("pasos") - 1));
-                rTmp.setElaboration(text.substring(text.indexOf("pasos") + "pasos".length() + 1, text.length()));
+            else if(text.toLowerCase().contains("preparaci")) {
+                rTmp.setIngredients(text.substring(text.toLowerCase().indexOf("ingredientes") + "ingredientes".length()+1, text.toLowerCase().indexOf("preparaci") - 1));
+                rTmp.setElaboration(text.substring(text.toLowerCase().indexOf("preparaci") + "preparacion".length() + 1, text.length()));
             }
-            else if(text.contains("indicaciones")) {
-                rTmp.setIngredients(text.substring(text.indexOf("ingredientes") + "ingredientes".length()+1, text.indexOf("indicaciones") - 1));
-                rTmp.setElaboration(text.substring(text.indexOf("indicaciones") + "indidcaciones".length() + 1, text.length()));
+            else if(text.toLowerCase().contains("pasos")) {
+                rTmp.setIngredients(text.substring(text.toLowerCase().indexOf("ingredientes") + "ingredientes".length()+1, text.toLowerCase().indexOf("pasos") - 1));
+                rTmp.setElaboration(text.substring(text.toLowerCase().indexOf("pasos") + "pasos".length() + 1, text.length()));
             }
-            else{
-                rTmp.setIngredients(text.substring(text.indexOf("ingredientes")+"ingredientes".length()+1,text.length()));
+            else if(text.toLowerCase().contains("indicaciones")) {
+                rTmp.setIngredients(text.substring(text.toLowerCase().indexOf("ingredientes") + "ingredientes".length()+1, text.toLowerCase().indexOf("indicaciones") - 1));
+                rTmp.setElaboration(text.substring(text.toLowerCase().indexOf("indicaciones") + "indidcaciones".length() + 1, text.length()));
             }
 
+            else{
+                rTmp.setIngredients(text.substring(text.toLowerCase().indexOf("ingredientes")+"ingredientes".length()+1,text.length()));
+            }
+
+
+
         }
-        else if(text.contains("description")) {
-            rTmp.setElaboration(text.substring(text.indexOf("description") + "description".length()+1, text.length()-1));
+        else if(text.toLowerCase().contains("description")) {
+            rTmp.setElaboration(text.substring(text.toLowerCase().indexOf("description") + "description".length()+1, text.length()-1));
         }else if(text.contains("elaboration")) {
-            rTmp.setElaboration(text.substring(text.indexOf("elaboration") + "elaboration".length()+1, text.length()));
+            rTmp.setElaboration(text.substring(text.toLowerCase().indexOf("elaboration") + "elaboration".length()+1, text.length()));
         }
-        else if(text.contains("elaboraci")){
-            rTmp.setElaboration(text.substring(text.indexOf("elaboraci") + "elaboracion".length() +1, text.length()));
+        else if(text.toLowerCase().contains("instrucciones")) {
+            rTmp.setElaboration(text.substring(text.toLowerCase().indexOf("instrucciones") + "instrucciones".length() + 1, text.length()));
         }
-        else if(text.contains("preparaci")) {
-            rTmp.setElaboration(text.substring(text.indexOf("preparaci") + "preparacion".length() + 1, text.length()));
+        else if(text.toLowerCase().contains("elaboraci")){
+            rTmp.setElaboration(text.substring(text.toLowerCase().indexOf("elaboraci") + "elaboracion".length() +1, text.length()));
         }
-        else if(text.contains("pasos")) {
-            rTmp.setElaboration(text.substring(text.indexOf("pasos") + "pasos".length() + 1, text.length()));
-        }else if(text.contains("indicaciones")) {
-            rTmp.setElaboration(text.substring(text.indexOf("indicaciones") + "indidcaciones".length() + 1, text.length()));
+        else if(text.toLowerCase().contains("preparaci")) {
+            rTmp.setElaboration(text.substring(text.toLowerCase().indexOf("preparaci") + "preparacion".length() + 1, text.length()));
         }
+        else if(text.toLowerCase().contains("pasos")) {
+            rTmp.setElaboration(text.substring(text.toLowerCase().indexOf("pasos") + "pasos".length() + 1, text.length()));
+        }else if(text.toLowerCase().contains("indicaciones")) {
+            rTmp.setElaboration(text.substring(text.toLowerCase().indexOf("indicaciones") + "indidcaciones".length() + 1, text.length()));
+        }
+
 
         if(rTmp.getIngredients() == null && rTmp.getElaboration() == null)
             rTmp = null;

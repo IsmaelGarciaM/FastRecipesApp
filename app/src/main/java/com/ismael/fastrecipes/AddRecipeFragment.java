@@ -28,8 +28,6 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.ismael.fastrecipes.exceptions.DataEntryException;
 import com.ismael.fastrecipes.interfaces.RecipesPresenter;
 import com.ismael.fastrecipes.model.Comment;
@@ -163,7 +161,7 @@ public class AddRecipeFragment extends Fragment implements RecipesPresenter.View
     @Override
     public void onStop() {
         super.onStop();
-        clear();
+        this.setRetainInstance(true);
     }
 
     @Override
@@ -190,13 +188,11 @@ public class AddRecipeFragment extends Fragment implements RecipesPresenter.View
                         showProgress(true);
                         presenter.modifyRecipe(r, mImageUri);
                         returnQuery = getResources().getString(R.string.updatedrecipe);
-                        clear();
 
                     } else {
                         showProgress(true);
                         presenter.addRecipe(r, mImageUri);
                         returnQuery = getResources().getString(R.string.recipepublished);
-                        clear();
                     }
 
                 }
@@ -504,14 +500,15 @@ public class AddRecipeFragment extends Fragment implements RecipesPresenter.View
         AlertDialog.Builder customDialog;
         customDialog = new AlertDialog.Builder(this.getContext(), R.style.Theme_AppCompat_DayNight_Dialog);
         customDialog.setCancelable(false);
+        customDialog.setTitle(getContext().getResources().getString(R.string.minutestime));
         customDialog.setView(R.layout.dialog_time_picker);
-        customDialog.setNegativeButton("Atrás", new DialogInterface.OnClickListener() {
+        customDialog.setNegativeButton(getContext().getResources().getString(R.string.back), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 //cancel
             }
         });
-        customDialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+        customDialog.setPositiveButton(getContext().getResources().getString(R.string.accept), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 EditText edtTime = ((Dialog)dialogInterface).findViewById(R.id.edtTime);
@@ -606,7 +603,7 @@ public class AddRecipeFragment extends Fragment implements RecipesPresenter.View
      */
     private void showDifficultDialog(){
         AlertDialog.Builder builderDificult = new AlertDialog.Builder(this.getContext(), R.style.Theme_AppCompat_DayNight_Dialog);
-        builderDificult.setTitle("Dificultad")
+        builderDificult.setTitle(getContext().getResources().getString(R.string.difficulty))
                 .setItems(R.array.diff_array, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -718,4 +715,8 @@ public class AddRecipeFragment extends Fragment implements RecipesPresenter.View
 
     }
 
+    @Override
+    public void setInitialSavedState(SavedState state) {
+        super.setInitialSavedState(state);
+    }
 }

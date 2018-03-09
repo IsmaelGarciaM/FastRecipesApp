@@ -10,6 +10,11 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * ErrorMaputil -> Clase que realiza el mapeo de los errores de entrada de texto
+ * @author Ismael Garcia
+ */
+
 public class ErrorMapUtils {
 
     private static Map<String, String> map = null;

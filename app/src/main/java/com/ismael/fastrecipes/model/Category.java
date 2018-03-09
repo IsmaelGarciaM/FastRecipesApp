@@ -3,7 +3,8 @@ package com.ismael.fastrecipes.model;
 import android.graphics.drawable.Drawable;
 
 /**
- * Created by Ismael on 23/01/2018.
+ * Category.class -> Clase POJO para objetos categorias
+ * @author Ismael Garcia
  */
 
 public class Category {

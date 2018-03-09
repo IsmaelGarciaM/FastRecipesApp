@@ -18,7 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Ismael on 29/01/2018.
+ * FilterAdapter.class -> Adaptador para los filtros
+ * @author Ismael Garcia
  */
 
 public class FilterAdapter extends ArrayAdapter<Filter> {

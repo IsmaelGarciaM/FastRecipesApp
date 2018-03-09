@@ -34,12 +34,12 @@
     <PreferenceCategory android:title="Sobre el desarrollador">
 
         <Preference
-            android:title="Sobre nosotros"
+            android:title="@string/aboutUs"
             android:icon="@drawable/ic_info"
             android:key="about_us"/>
 
         <Preference
-            android:title="Perfil profesional"
+            android:title="@string/profesionalprofile"
             android:icon="@drawable/linkedin"
             android:key="profesional"/>
 

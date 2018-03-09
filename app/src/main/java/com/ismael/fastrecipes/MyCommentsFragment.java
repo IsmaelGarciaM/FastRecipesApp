@@ -5,18 +5,15 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.ismael.fastrecipes.adapter.CommentsAdapter;
 import com.ismael.fastrecipes.interfaces.CommentPresenter;
 import com.ismael.fastrecipes.model.Comment;
 import com.ismael.fastrecipes.model.User;
-import com.ismael.fastrecipes.presenter.CommentPresenterImpl;
 
 import java.util.ArrayList;
 
@@ -80,7 +77,7 @@ public class MyCommentsFragment extends Fragment implements CommentPresenter.Vie
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        presenter = new CommentPresenterImpl(this);
+       // presenter = new CommentPresenterImpl(this);
         myCom = new ArrayList<>();
     }
 

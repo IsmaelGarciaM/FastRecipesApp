@@ -9,6 +9,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -30,6 +31,8 @@ import com.ismael.fastrecipes.presenter.LoginPresenterImpl;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.ismael.fastrecipes.FastRecipesApplication.getContext;
+
 /**
  * LoginActivity.java - Clase que controla el acceso de los usuarios a los servidores
  * @author Ismael Garcia
@@ -44,6 +47,10 @@ public class LoginActivity extends Activity implements LoginPresenter.View{
 
     @BindView(R.id.edtMailLogin)
     EditText edtMail;
+
+    @BindView(R.id.logintitle)
+    TextView logintitle;
+
 
     @BindView(R.id.edtPasswordLogin)
     EditText edtPass;
@@ -76,6 +83,8 @@ public class LoginActivity extends Activity implements LoginPresenter.View{
         {
             newR = tmp.getExtras();
         }
+        Typeface font = Typeface.createFromAsset(getContext().getAssets(), "yummycupcakes.ttf");
+        logintitle.setTypeface(font);
         presenter = new LoginPresenterImpl(this, getApplicationContext());
         edtPass.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -137,7 +146,6 @@ public class LoginActivity extends Activity implements LoginPresenter.View{
                 //El presentador realiza el envío
                 else{
                     showConfirmDialog(mail);
-
                 }
 
             }
@@ -299,7 +307,7 @@ public class LoginActivity extends Activity implements LoginPresenter.View{
      * Muestra un cuadro de diálogo para saber si se debe guardar la sesión activa o no
      */
     void saveUser(){
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.Theme_Dialog_Translucent);
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.Theme_AppCompat_DayNight_Dialog);
         dialog.setCancelable(false);
         dialog.setTitle(R.string.titleSaveUser);
         dialog.setMessage("Puedes volver a configurar esto en las preferencias de la app.");

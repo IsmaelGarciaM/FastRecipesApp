@@ -21,14 +21,12 @@
             android:id="@+id/catIcon"
             android:layout_margin="@dimen/textPageBorder"
             android:layout_width="72dp"
-            android:layout_height="54dp"
-            android:src="@drawable/ic_enter"/>
+            android:layout_height="54dp"/>
         <CheckBox
             android:layout_below="@id/catIcon"
             android:id="@+id/cbxCatState"
             android:layout_width="wrap_content"
-            android:text="Carnes"
-            android:textSize="8sp"
+            android:textSize="12sp"
             android:buttonTint="@color/textColorPrimary"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/hbLines"/>

@@ -10,7 +10,8 @@ import com.ismael.fastrecipes.model.Category;
 import java.util.ArrayList;
 
 /**
- * Created by Ismael on 28/01/2018.
+ * CategoriesPresenterImpl.class -> Realiza la creación de los objetos 'Category' para mostrarlos en la vista SearchByCategoriesFragment
+ * @author Ismael García
  */
 
 public class CategoriesPresenterImpl implements CategoriesPresenter {

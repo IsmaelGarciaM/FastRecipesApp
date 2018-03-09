@@ -1,31 +1,21 @@
 package com.ismael.fastrecipes.interfaces;
 
-import android.util.Log;
-
-import com.ismael.fastrecipes.FastRecipesApplication;
-import com.ismael.fastrecipes.model.Comment;
 import com.ismael.fastrecipes.model.Recipe;
 import com.ismael.fastrecipes.model.User;
 import com.ismael.fastrecipes.utils.Result;
-import com.ismael.fastrecipes.utils.ResultComment;
 import com.ismael.fastrecipes.utils.ResultUser;
 
-import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
-import retrofit2.http.Field;
 import retrofit2.http.GET;
-import retrofit2.http.Header;
-import retrofit2.http.Headers;
-import retrofit2.http.PATCH;
 import retrofit2.http.POST;
-import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import rx.Observable;
 
 /**
- * Created by Ismael on 06/02/2018.
- */
+ * FastRecipesApi -> Interfaz para la gestión de las llamadas a la API
+ * @author Ismael Garcia
+ * */
 
 public interface FastRecipesApi {
 

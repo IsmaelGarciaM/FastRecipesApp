@@ -121,48 +121,28 @@ public class LoginPresenterImpl implements LoginPresenter {
 
         if(email.equals("") && pass.equals("")) {
                 if (context.getSharedPreferences("fastrecipessp", Context.MODE_PRIVATE).getBoolean("remember_user", false)) {
-                    /*
 
                     email = context.getSharedPreferences("fastrecipessp", Context.MODE_PRIVATE).getString("um", "");
                     pass = context.getSharedPreferences("fastrecipessp", Context.MODE_PRIVATE).getString("up", "");
-                    */
-                    if(mAuth.getCurrentUser() != null){
-                        mAuth.getCurrentUser().getIdToken(false).addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
-                             @Override
-                             public void onComplete(@NonNull Task<GetTokenResult> task) {
-                                 userLogin(task.getResult().getToken());
-                             }
-                        }).addOnFailureListener(new OnFailureListener() {
-                             @Override
-                             public void onFailure(@NonNull Exception e) {
-                                 vista.showLoginError("");
-                             }
-                        });
 
-
-
-                    }
-                    else {
-                        /*mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    if(!email.equals("") && !pass.equals("")) {
+                        mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
                                     Log.d(TAG, "signInWithEmail:success");
                                     FirebaseUser user = mAuth.getCurrentUser();
-                                    //if(user.isEmailVerified())
                                     vista.updateUI(user);
-
-                                    //else
-                                    //vista.updateUI(null);
                                 } else {
                                     Log.d(TAG, "signInWithEmail:failure", task.getException());
                                     vista.showProgress(false);
                                     vista.showLoginError(context.getResources().getString(R.string.login_error));
                                 }
                             }
-                        });*/
+                        });
+                    }
+                    else {
                         vista.showLoginError("");
-
                     }
                 } else {
                     vista.showLoginError("");
@@ -175,11 +155,8 @@ public class LoginPresenterImpl implements LoginPresenter {
                     if (task.isSuccessful()) {
                         Log.d(TAG, "signInWithEmail:success");
                         FirebaseUser user = mAuth.getCurrentUser();
-                        //if(user.isEmailVerified())
                         vista.updateUI(user);
 
-                        //else
-                        //vista.updateUI(null);
                     } else {
                         Log.d(TAG, "signInWithEmail:failure", task.getException());
                         vista.showProgress(false);
@@ -215,7 +192,6 @@ public class LoginPresenterImpl implements LoginPresenter {
      */
     private void userLogin(String token){
         final Bundle b = new Bundle();
-        Log.d("token", token);
 
         mService.getUser(token).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -227,16 +203,12 @@ public class LoginPresenterImpl implements LoginPresenter {
                             vista.showProgress(false);
                             vista.showHome(b);
                         }
-
                     }
-
                     @Override
                     public void onError(Throwable e) {
                         vista.showProgress(false);
-                        Log.d("SUBSCRIBER FAILED", e.getMessage());
                         vista.showLoginError(e.getMessage());
                     }
-
                     @Override
                     public void onNext(ResultUser user) {
                         if(user.getCode()) {
@@ -245,8 +217,6 @@ public class LoginPresenterImpl implements LoginPresenter {
                         } else{
                             vista.showProgress(false);
                             vista.showLoginError(user.getMessage());
-                            Log.d("SUBSCRIBER FAILED NEXT", user.getMessage());
-
                         }
                     }
                 });
@@ -300,40 +270,4 @@ public class LoginPresenterImpl implements LoginPresenter {
         }
         return isValid;
     }
-
-   /* Callback<User> calb = new Callback<User>() {
-        @Override
-        public void onResponse(Call<User> call, Response<User> response) {
-            vista.showProgress(false);
-
-            if (!response.isSuccessful()) {
-                String error;
-                if (response.errorBody()
-                        .contentType()
-                        .subtype()
-                        .equals("application/json")) {
-                    Log.d("LoginActivity", "APIERROR");
-                } else {
-                    error = response.message();
-                }
-
-                vista.showLoginError();
-                return;
-            }
-
-            // Guardar cliente en preferencias
-            //SessionPrefs.get(FastRecipesApplication.getContext()).saveClient(response.body());
-            Bundle b = new Bundle();
-            b.putParcelable("user", response.body());
-            vista.showHome(b);
-        }
-
-        @Override
-        public void onFailure(Call<User> call, Throwable t) {
-            vista.showProgress(false);
-            vista.showLoginError();
-        }
-    };*/
-
-
 }

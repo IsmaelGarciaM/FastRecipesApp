@@ -19,10 +19,10 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.RuntimeExecutionException;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.ismael.fastrecipes.adapter.PagerAdapter;
 import com.ismael.fastrecipes.model.User;
 import com.ismael.fastrecipes.utils.Const;
 import com.squareup.picasso.MemoryPolicy;
@@ -52,7 +52,6 @@ public class SocialActivityFragment extends Fragment{
     static SocialActivityFragment safInstance;
     TabLayout tabLayout;
     FrameLayout frame;
-    PagerAdapter adapter;
 
     public SocialActivityFragment() {
         // Required empty public constructor
@@ -108,6 +107,8 @@ public class SocialActivityFragment extends Fragment{
                         .noFade()
                         .error(R.drawable.user_icon)
                         .into(imvUser);
+            }catch (RuntimeExecutionException ree) {
+                imvUser.setImageDrawable(getResources().getDrawable(R.drawable.user_icon));
             }catch (Exception e){
                 imvUser.setImageDrawable(getResources().getDrawable(R.drawable.user_icon));
             }
@@ -183,12 +184,6 @@ public class SocialActivityFragment extends Fragment{
                 mCallback.showProfile(b);
             }
         });
-
-        if(safInstance.getArguments().getString("message") != null && !safInstance.getArguments().getString("message").equals("") ) {
-            String msg = safInstance.getArguments().getString("message");
-            Snackbar.make(view, msg, Snackbar.LENGTH_LONG).show();
-        }
-
 
     }
 

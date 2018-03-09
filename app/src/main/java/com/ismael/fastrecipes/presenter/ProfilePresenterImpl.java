@@ -37,7 +37,8 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
- * Created by Ismael on 17/02/2018.
+ * ProfilePresenterImpl -> Clase que se encarga de la gestión de datos de los usuarios
+ * @author Ismael Garcia
  */
 
 public class ProfilePresenterImpl implements ProfilePresenter {
@@ -72,7 +73,7 @@ public class ProfilePresenterImpl implements ProfilePresenter {
 
                         @Override
                         public void onError(Throwable e) {
-                            view.showNetworkError("Ha ocurrido un problema con la conexión");
+                            view.showNetworkError(context.getResources().getString(R.string.serverError));
                         }
 
                         @Override
@@ -81,7 +82,7 @@ public class ProfilePresenterImpl implements ProfilePresenter {
                                 u.addAll(resultUser.getUsers());
                                 cont = true;
                             } else
-                                view.showNetworkError("Error en el servidor. No se ha podido obtener los datos del usuario.");
+                                view.showNetworkError(context.getResources().getString(R.string.serverError));
                         }
                     });
         }else
@@ -104,7 +105,7 @@ public class ProfilePresenterImpl implements ProfilePresenter {
 
                 @Override
                 public void onError(Throwable e) {
-                    view.showNetworkError("Error en la conexión.");
+                    view.showNetworkError(context.getResources().getString(R.string.serverError));
                 }
 
                 @Override
@@ -136,7 +137,7 @@ public class ProfilePresenterImpl implements ProfilePresenter {
 
                     @Override
                     public void onError(Throwable e) {
-                        view.showNetworkError("Error de conexión con el servidor");
+                        view.showNetworkError(context.getResources().getString(R.string.serverError));
                     }
 
                     @Override
@@ -176,7 +177,7 @@ public class ProfilePresenterImpl implements ProfilePresenter {
 
                     @Override
                     public void onError(Throwable e) {
-                        view.showNetworkError("Error de conexión con el servidor. " + e.getMessage());
+                        view.showNetworkError(context.getResources().getString(R.string.serverError));
                     }
 
                     @Override
@@ -195,33 +196,35 @@ public class ProfilePresenterImpl implements ProfilePresenter {
 
 
     private void loadImage(final User u, Uri mImageUri){
-        // Intent i = new Intent(Intent.ACTION_PICK, android.provider.)
-        final String[] newImage = new String[1];
-        mStorageRef = FirebaseStorage.getInstance().getReference(Const.FIREBASE_IMAGE_USER+"/"+String.valueOf(u.getId()));
-        mStorageRef.putFile(mImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                mStorageRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Uri> task) {
-                        u.setImage(task.getResult().toString());
-                        editProfile(u, false, null);
-                        view.setUserData(u);
-                        view.updateCurrentUser(u);
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        view.showNetworkError("No ha sido posible cargar la imagen. Inténtelo de nuevo en unos minutos.");
-                    }
-                });
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                view.showNetworkError("No ha sido posible cargar la imagen. Inténtelo de nuevo en unos minutos.");
-            }
-        });
+        try {
+            mStorageRef = FirebaseStorage.getInstance().getReference(Const.FIREBASE_IMAGE_USER + "/" + String.valueOf(u.getId()));
+            mStorageRef.putFile(mImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    mStorageRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Uri> task) {
+                            u.setImage(task.getResult().toString());
+                            editProfile(u, false, null);
+                            view.setUserData(u);
+                            view.updateCurrentUser(u);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            view.showNetworkError(context.getResources().getString(R.string.cantuploadphoto));
+                        }
+                    });
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    view.showNetworkError(context.getResources().getString(R.string.cantuploadphoto));
+                }
+            });
+        }catch (Exception e){
+            view.showNetworkError(context.getResources().getString(R.string.cantuploadphoto));
+        }
     }
     /**
      * Realiza la comprobación de que el email no es nulo y llama a otra función para comprobar su validez

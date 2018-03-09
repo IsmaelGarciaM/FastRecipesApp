@@ -10,7 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Ismael on 17/02/2018.
+ * Result -> Clase POJO para objetos devueltos por la API que contengan recetas
+ * @author Ismael Garcia
  */
 
 public class Result implements Serializable {

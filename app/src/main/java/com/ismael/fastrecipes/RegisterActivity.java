@@ -6,6 +6,7 @@ import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -17,8 +18,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import com.ismael.fastrecipes.exceptions.DataEntryException;
 import com.ismael.fastrecipes.interfaces.RegisterPresenter;
@@ -27,13 +30,18 @@ import com.ismael.fastrecipes.presenter.RegisterPresenterImpl;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.ismael.fastrecipes.FastRecipesApplication.getContext;
+
 /**
  * RegisterActivity.class - Clase contenedora de la vista del formulario de registro para un usuario
+ * @author Ismael Garcia
  */
 public class RegisterActivity extends AppCompatActivity implements RegisterPresenter.View{
 
     @BindView(R.id.tilNameRegister)
     TextInputLayout tilNameRegister;
+    @BindView(R.id.regTit)
+    TextView txvRegTit;
     @BindView(R.id.edtNameRegister)
     TextInputEditText edtNameRegister;
     @BindView(R.id.tilEmailRegister)
@@ -48,8 +56,9 @@ public class RegisterActivity extends AppCompatActivity implements RegisterPrese
     Button btnOkRegister;
     @BindView(R.id.btnSeePass)
     Button btnSeePass;
+    @BindView(R.id.pgbLoadingReg)
+    ProgressBar pgbLoadingReg;
     RegisterPresenter presenter;
-    View mView = null;
 
 
     @Override
@@ -64,6 +73,8 @@ public class RegisterActivity extends AppCompatActivity implements RegisterPrese
                 saveUser();
                 }
         });
+        Typeface font = Typeface.createFromAsset(getContext().getAssets(), "yummycupcakes.ttf");
+        txvRegTit.setTypeface(font);
         btnSeePass.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -154,12 +165,14 @@ public class RegisterActivity extends AppCompatActivity implements RegisterPrese
         else{
             //proceder con el registro
             presenter.registerUser(name, mail, pass);
+            showProgress(true);
         }
     }
 
 
     @Override
     public void showInputError(String msg) {
+        showProgress(false);
         Snackbar.make(btnOkRegister, msg, Snackbar.LENGTH_LONG).show();
     }
 
@@ -173,20 +186,20 @@ public class RegisterActivity extends AppCompatActivity implements RegisterPrese
     }
 
     void saveUser(){
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.Theme_Dialog_Translucent);
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.Theme_AppCompat_DayNight_Dialog);
         dialog.setCancelable(false);
         dialog.setTitle(R.string.titleSaveUser);
-        dialog.setMessage("Puedes volver a configurar esto en las preferencias de la app.");
+        dialog.setMessage("Puedes volver a configurar esto en las preferencias.");
         dialog.setNegativeButton(getResources().getString(R.string.dontrem), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 getPreferences(MODE_PRIVATE).edit().putBoolean("remember_user", false).apply();
-                /*String m = String.valueOf(edtEmailRegister.getText());
+                String m = String.valueOf(edtEmailRegister.getText());
                 if(m.endsWith(" ")){
                     m = m.trim();
-                }*/
-                //getSharedPreferences("fastrecipessp", MODE_PRIVATE).edit().putString("um", m).apply();
-                //getSharedPreferences("fastrecipessp", MODE_PRIVATE).edit().putString("up", String.valueOf(edtPasswordRegister.getText())).apply();
+                }
+                getSharedPreferences("fastrecipessp", MODE_PRIVATE).edit().putString("um", m).apply();
+                getSharedPreferences("fastrecipessp", MODE_PRIVATE).edit().putString("up", String.valueOf(edtPasswordRegister.getText())).apply();
                 attemptRegister();
 
             }
@@ -196,16 +209,38 @@ public class RegisterActivity extends AppCompatActivity implements RegisterPrese
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 getSharedPreferences("fastrecipessp", MODE_PRIVATE).edit().putBoolean("remember_user", true).apply();
-                /*String m = String.valueOf(edtEmailRegister.getText());
+                String m = String.valueOf(edtEmailRegister.getText());
                 if(m.endsWith(" ")){
                     m = m.trim();
                 }
 
                 getSharedPreferences("fastrecipessp", MODE_PRIVATE).edit().putString("um",m).apply();
                 getSharedPreferences("fastrecipessp", MODE_PRIVATE).edit().putString("up", String.valueOf(edtPasswordRegister.getText())).apply();
-                */attemptRegister();
+                attemptRegister();
 
             }
         }).show();
     }
+
+    /**
+     * Muestra la animación de carga de la siguiente pantalla
+     * @param show Determina si es visible o no
+     */
+    @Override
+    public void showProgress(final boolean show) {
+        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
+        // for very easy animations. If available, use these APIs to fade-in
+        // the progress spinner.
+        int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+        pgbLoadingReg.setVisibility(show ? View.VISIBLE : View.GONE);
+        pgbLoadingReg.animate().setDuration(shortAnimTime).alpha(
+                show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                pgbLoadingReg.setVisibility(show ? View.VISIBLE : View.GONE);
+            }
+        });
+    }
+
 }

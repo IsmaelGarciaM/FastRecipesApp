@@ -16,7 +16,7 @@
     <TextView
         android:id="@+id/txvIngIn"
         android:textSize="18sp"
-        android:text="Que contenga"
+        android:text="@string/ingOk"
         android:layout_marginTop="@dimen/hbLines"
         android:layout_marginStart="@dimen/textPageBorder"
         android:layout_marginEnd="@dimen/elevation"
@@ -35,7 +35,7 @@
 
     <TextView
         android:id="@+id/txvIngOut"
-        android:text="Que no contenga"
+        android:text="@string/ingNot"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="@dimen/hbLines"
         android:textSize="18sp"
@@ -54,7 +54,7 @@
         android:layout_marginEnd="@dimen/textPageBorder"
         android:layout_below="@+id/crvSwitch"
         android:drawableEnd="@drawable/ic_search_black_24dp"
-        android:hint="Buscar ingredientes.."/>
+        android:hint="@string/searchIngre"/>
 
     <RelativeLayout
         android:id="@+id/rls"

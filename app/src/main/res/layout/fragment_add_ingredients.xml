@@ -5,12 +5,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.ismael.fastrecipes.AddIngredientsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        android:id="@+id/txvaddingtitle"
+        android:layout_marginTop="@dimen/textPageBorder"
+        android:text="@string/ingredients"/>
+
     <LinearLayout
         android:id="@+id/lladding"
+        android:layout_below="@id/txvaddingtitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
     <AutoCompleteTextView
         android:id="@+id/actxvIng"
         android:layout_width="0dp"
@@ -22,9 +32,10 @@
         <Button
             android:layout_marginTop="@dimen/textPageBorder"
             android:id="@+id/btnAddIng"
+            android:layout_marginEnd="@dimen/hbLines"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
-            android:text="Añadir"
+            android:text="@string/add"
             android:background="@drawable/bg_button"/>
     </LinearLayout>
 

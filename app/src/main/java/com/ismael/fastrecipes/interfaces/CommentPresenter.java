@@ -7,7 +7,8 @@ import com.ismael.fastrecipes.model.Comment;
 import java.util.ArrayList;
 
 /**
- * Created by Ismael on 23/01/2018.
+ * CommentsPresenter -> Interfaz para comentarios
+ * @author Ismael Garcia
  */
 
 public interface CommentPresenter {

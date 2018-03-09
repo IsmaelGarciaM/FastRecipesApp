@@ -6,7 +6,8 @@ import android.os.Parcelable;
 import java.io.Serializable;
 
 /**
- * Created by ismael on 17/05/17.
+ * User -> Clase POJO para usuarios
+ * @author Ismael Garcia
  */
 
 public class User implements Parcelable, Serializable{

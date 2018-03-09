@@ -31,7 +31,7 @@
                     android:id="@+id/imvRecipeOfDay"
                     android:layout_width="128dp"
                     android:layout_height="128dp"
-                    android:contentDescription="Receta rápida del día"
+                    android:contentDescription="@string/recipeday"
                     android:layout_margin="@dimen/textPageBorder"
                     android:src="@drawable/iconbig" />
 
@@ -82,7 +82,7 @@
                         android:layout_height="wrap_content"
                         android:textColor="@color/textColorPrimary"
                         android:layout_marginStart="@dimen/elevation"
-                        android:text="- min."
+                        android:text="@string/nothing"
                         android:textSize="10sp"
                         android:textAlignment="center"
                         />
@@ -102,7 +102,7 @@
 
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/elevation"
-                        android:text="-"
+                        android:text="@string/nothing"
                         android:textSize="10sp"
 
                         android:textAlignment="center"
@@ -123,7 +123,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/elevation"
                         android:layout_marginTop="@dimen/elevation"
-                        android:text="- pers"
+                        android:text="@string/nothing"
                         android:textSize="10sp"
                         android:textColor="@color/textColorPrimary"
 
@@ -156,7 +156,7 @@
         <android.support.v7.widget.CardView
             android:id="@+id/crvFilters"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="90dp"
             android:layout_below="@id/crvRecipeOfDay"
             android:layout_marginBottom="@dimen/elevation"
             android:layout_marginEnd="@dimen/textPageBorder"
@@ -174,7 +174,7 @@
                 android:layout_centerHorizontal="true"
                 android:lines="1"
                 android:layout_marginTop="@dimen/elevation"
-                android:text="Búsqueda de recetas"
+                android:text="@string/recipesearch"
                 android:textColor="@color/textColorPrimary"
                 android:textSize="18sp" />
 
@@ -182,14 +182,15 @@
             <LinearLayout
                 android:layout_below="@id/txvQqc"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
                 <Button
                     android:layout_marginTop="@dimen/elevation"
                     android:id="@+id/btnAddFilter"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="45dp"
                     android:textSize="12sp"
-                    android:text="Añadir filtro"
+                    android:text="@string/addfilter"
                     android:layout_weight="2"
                     style="@style/Base.TextAppearance.AppCompat.Widget.Button.Borderless.Colored"
                     android:background="@drawable/bg_button"
@@ -208,14 +209,14 @@
                 <Button
                     android:layout_marginTop="@dimen/elevation"
                     android:id="@+id/btnDelete"
-                    android:text="Borrar todos"
+                    android:text="@string/deleteall"
                     android:layout_width="60dp"
                     android:layout_weight="2"
                     style="@style/Base.TextAppearance.AppCompat.Widget.Button.Borderless.Colored"
                     android:layout_marginBottom="@dimen/elevation"
                     android:textSize="12sp"
                     android:layout_marginEnd="@dimen/textPageBorder"
-                    android:layout_height="wrap_content"
+                    android:layout_height="45dp"
                     android:background="@drawable/bg_button"
                     />
             </LinearLayout>
@@ -271,7 +272,7 @@
             android:visibility="gone"
             android:textAlignment="center"
             android:layout_marginEnd="50dp"
-            android:text="Añade filtros para concretar la búsqueda."
+            android:text="@string/filterEmpty"
             android:layout_marginBottom="50dp"
             android:layout_height="wrap_content"/>
 

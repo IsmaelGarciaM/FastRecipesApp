@@ -5,7 +5,8 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 /**
- * Created by Ismael on 07/03/2018.
+ * NotificationService -> Clase que activa el servicio de notificaciones provenientes de firebase
+ * @author Ismael Garcia
  */
 
 public class NotificationService extends FirebaseMessagingService {

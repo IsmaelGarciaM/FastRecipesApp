@@ -4,7 +4,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 /**
- * Created by Ismael on 29/01/2018.
+ * Filter -> Clase POJO para filtros
+ * @author Ismael Garcia
  */
 
 public class Filter implements Parcelable{

@@ -12,7 +12,8 @@ import static com.ismael.fastrecipes.model.Errors.PASSWORDLENGHT_EXCEPTION;
 import static com.ismael.fastrecipes.model.Errors.USERISPASS_EXCEPTION;
 
 /**
- * Created by ismael on 15/05/17.
+ * DataEntryException -> Excepción personalizada para la gestión de errores en la interfaz
+ * @author Ismael Garcia
  */
 
 public class DataEntryException extends RuntimeException {

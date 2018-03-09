@@ -18,7 +18,7 @@
 
     <TextView
         android:id="@+id/txvInit"
-        android:text="Fast Recipes"
+        android:text="@string/fastrecipes"
         android:layout_marginTop="25dp"
         android:layout_below="@id/im"
         android:textAlignment="center"

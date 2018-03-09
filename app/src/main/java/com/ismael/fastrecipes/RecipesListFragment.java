@@ -39,6 +39,7 @@ import static com.ismael.fastrecipes.utils.Const.f6;
 
 /**
  * RecipesListFragment.clas - Vista para mostrar las recetas filtradas desde el servidor
+ * @author Ismael García
  */
 public class RecipesListFragment extends Fragment implements RecipesPresenter.View{
 
@@ -257,9 +258,17 @@ public class RecipesListFragment extends Fragment implements RecipesPresenter.Vi
      */
     @Override
     public void showNetworkError(String msg) {
-        Toast t = Toast.makeText(FastRecipesApplication.getContext(), msg, Toast.LENGTH_LONG);
-        t.setGravity(Gravity.CENTER, 0, 0);
-        t.show();
+        try {
+            Toast t = Toast.makeText(getContext(), msg, Toast.LENGTH_LONG);
+            t.setGravity(Gravity.CENTER, 0, 0);
+            t.show();
+        }catch (Exception e){}
         empty.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        this.setRetainInstance(true);
     }
 }

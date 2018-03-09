@@ -463,10 +463,12 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
      */
     @Override
     public void showNetworkError(String msg) {
-        showProgress(false);
-        Toast t = Toast.makeText(FastRecipesApplication.getContext(), msg, Toast.LENGTH_LONG);
-        t.setGravity(Gravity.CENTER, 0, 0);
-        t.show();
+        try {
+            showProgress(false);
+            Toast t = Toast.makeText(getContext(), msg, Toast.LENGTH_LONG);
+            t.setGravity(Gravity.CENTER, 0, 0);
+            t.show();
+        }catch (Exception e){}
     }
 
     @Override

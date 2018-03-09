@@ -9,7 +9,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * Created by ismael on 17/05/17.
+ * Comment.class -> Clase POJO para objetos comentario
+ * @author Ismael Garcia
  */
 
 public class Comment implements Serializable, Parcelable{

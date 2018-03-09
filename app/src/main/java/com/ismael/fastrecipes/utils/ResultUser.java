@@ -5,7 +5,8 @@ import com.ismael.fastrecipes.model.User;
 import java.util.List;
 
 /**
- * Created by Ismael on 17/02/2018.
+ * ResultUser -> Clase POJO para objetos devueltos por la API que contengan usuarios
+ * @author Ismael Garcia
  */
 
 public class ResultUser {

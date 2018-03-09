@@ -1,7 +1,8 @@
 package com.ismael.fastrecipes.interfaces;
 
 /**
- * Created by ismael on 30/05/17.
+ * RegisterPresenter -> Interfaz para el registro
+ * @author Ismael Garcia
  */
 
 public interface RegisterPresenter {
@@ -14,6 +15,7 @@ public interface RegisterPresenter {
 
 
     interface View{
+        void showProgress(boolean show);
         void showInputError(String msg);
         void showLogin();
     }

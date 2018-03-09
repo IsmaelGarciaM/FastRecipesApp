@@ -1,7 +1,8 @@
 package com.ismael.fastrecipes.model;
 
 /**
- * Created by ismael on 15/05/17.
+ * Errors.class -> Clase para el mapeo de errores
+ * @author Ismael Garcia
  */
 
 public class Errors {

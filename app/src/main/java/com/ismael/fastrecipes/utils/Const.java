@@ -1,7 +1,8 @@
 package com.ismael.fastrecipes.utils;
 
 /**
- * Created by Ismael on 19/02/2018.
+ * Const -> Clase con algunas constantes utilizadas frecuentemente
+ * @author Ismael Garcia
  */
 
 public class Const {

@@ -9,7 +9,8 @@ import com.ismael.fastrecipes.model.User;
 import java.util.ArrayList;
 
 /**
- * Created by Ismael on 17/02/2018.
+ * ProfilePresenter -> Interfaz para los usuarios
+ * @author Ismael Garcia
  */
 
 public interface ProfilePresenter {

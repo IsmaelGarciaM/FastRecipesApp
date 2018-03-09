@@ -40,7 +40,9 @@
             android:layout_centerHorizontal="true"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
-            android:text="EXAMINAR..."
+            android:paddingStart="@dimen/elevation"
+            android:paddingEnd="@dimen/elevation"
+            android:text="@string/examinate"
             android:background="@drawable/bg_button"/>
     </RelativeLayout>
     </android.support.v7.widget.CardView>
@@ -51,7 +53,7 @@
         android:layout_marginStart="@dimen/textPageBorder"
         android:layout_marginTop="-12dp"
         android:layout_marginEnd="@dimen/textPageBorder"
-        android:hint="O bien introduce la url de la imagen"
+        android:hint="@string/imageurl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -69,7 +71,7 @@
         android:layout_below="@+id/tilImageUrl"
         android:layout_marginStart="@dimen/textPageBorder"
         android:layout_marginEnd="@dimen/textPageBorder"
-        android:hint="Nombre de receta"
+        android:hint="@string/recipename"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -87,14 +89,16 @@
         android:layout_marginStart="@dimen/textPageBorder"
         android:layout_marginTop="@dimen/hbLines"
         android:layout_height="50dp"
-        android:text="Categorias..."
+        android:paddingStart="@dimen/elevation"
+        android:paddingEnd="@dimen/elevation"
+        android:text="@string/categories"
         android:background="@drawable/bg_button"/>
 
     <TextView
         android:id="@+id/txvAddRecipeCat"
         android:layout_below="@id/tilNameRecipe"
         android:layout_toEndOf="@+id/btnAddCategories"
-        android:text="Sin categorías."
+        android:text="@string/nocats"
         android:layout_alignBaseline="@id/btnAddCategories"
         android:layout_marginStart="@dimen/textPageBorder"
         android:layout_marginTop="@dimen/textPageBorder"
@@ -106,7 +110,7 @@
         android:layout_marginStart="@dimen/textPageBorder"
         android:layout_below="@id/btnAddCategories"
         android:layout_marginTop="30dp"
-        android:text="Personas:"
+        android:text="@string/npers"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
@@ -137,7 +141,8 @@ android:layout_below="@id/btnAddCategories"
             android:layout_height="50dp"
             android:layout_marginEnd="@dimen/textPageBorder"
             style="@style/Base.TextAppearance.AppCompat.Widget.Button.Borderless.Colored"
-            android:text="Tiempo"
+            android:text="@string/time"
+            android:background="@drawable/bg_button"
             />
 
 
@@ -149,7 +154,9 @@ android:layout_below="@id/btnAddCategories"
             android:layout_marginStart="@dimen/textPageBorder"
             android:layout_marginEnd="@dimen/textPageBorder"
             style="@style/Base.TextAppearance.AppCompat.Widget.Button.Borderless.Colored"
-            android:text="Dificultad"
+            android:text="@string/difficulty"
+            android:background="@drawable/bg_button"
+
             />
     </LinearLayout>
 
@@ -161,7 +168,7 @@ android:layout_below="@id/btnAddCategories"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/textPageBorder"
-        android:text="Ingredientes:"
+        android:text="@string/ingredients"
         android:textSize="16sp"/>
 
     <TextView
@@ -169,7 +176,9 @@ android:layout_below="@id/btnAddCategories"
         android:layout_below="@id/txvIng"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/textPageBorder"
+        android:layout_marginStart="@dimen/textPageBorder"
+        android:layout_marginEnd="@dimen/textPageBorder"
+
         android:textSize="14sp"/>
 
     <Button
@@ -177,7 +186,9 @@ android:layout_below="@id/btnAddCategories"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/txvAddIng"
         android:layout_width="wrap_content"
-        android:text="Añadir ingredientes"
+        android:paddingStart="@dimen/elevation"
+        android:paddingEnd="@dimen/elevation"
+        android:text="@string/adding"
         android:layout_height="50dp"
         android:background="@drawable/bg_button"/>
 
@@ -189,7 +200,7 @@ android:layout_below="@id/btnAddCategories"
         android:layout_marginEnd="@dimen/textPageBorder"
         android:layout_marginTop="@dimen/hbLines"
         android:layout_width="match_parent"
-        android:hint="Elaboración"
+        android:hint="@string/elaboration"
         android:layout_height="wrap_content">
 
         <android.support.design.widget.TextInputEditText
@@ -207,7 +218,7 @@ android:layout_below="@id/btnAddCategories"
         android:layout_marginTop="@dimen/hbLines"
         android:layout_marginEnd="@dimen/textPageBorder"
         android:layout_width="match_parent"
-        android:hint="Fuente"
+        android:hint="@string/source"
         android:layout_height="wrap_content">
 
         <android.support.design.widget.TextInputEditText
