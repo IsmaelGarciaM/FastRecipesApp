@@ -32,10 +32,10 @@ public class FastRecipesService {
      * Constructor del servicio
      */
     public FastRecipesService() {
+
         Gson gson = new GsonBuilder()
                 .setLenient().create();
         //Conexión con servicio rest
-
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(FastRecipesApi.BASE_URL)
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())

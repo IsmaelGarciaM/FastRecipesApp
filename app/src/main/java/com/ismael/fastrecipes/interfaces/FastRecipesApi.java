@@ -31,11 +31,12 @@ public interface FastRecipesApi {
     @POST("recipe")
     Observable<Result> addRecipeObservable(@Body Recipe addR);
 
-    @POST("recipe/update")
-    Observable<Result> modifyRecipeObservable(@Body Recipe addR);
-
     @DELETE("recipe/{id}")
     Observable<Result> removeRecipeObservable(@Path("id") int idRecipe);
+
+
+    @POST("recipe/update")
+    Observable<Result> modifyRecipeObservable(@Body Recipe addR);
 
     //FAVS
     @POST("recipe/fav/{id}")

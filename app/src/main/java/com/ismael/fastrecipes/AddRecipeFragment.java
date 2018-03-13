@@ -1,5 +1,7 @@
 package com.ismael.fastrecipes;
 
+import android.*;
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
@@ -7,15 +9,19 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -113,6 +119,7 @@ public class AddRecipeFragment extends Fragment implements RecipesPresenter.View
     boolean imageChanged;
     private PhotoUtils photoUtils;
     String returnQuery;
+    int imageOption = 0;
 
     /**
      * Interfaz para la gestión con HomeActivity
@@ -547,20 +554,28 @@ public class AddRecipeFragment extends Fragment implements RecipesPresenter.View
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(
-                        "android.media.action.IMAGE_CAPTURE");
-                File photo = null;
-                try {
-                    // place where to store camera taken picture
-                    photo = PhotoUtils.createTemporaryFile("picture", ".jpg", getContext());
-                    photo.delete();
-                } catch (Exception e) {
-                    Log.v(getClass().getSimpleName(),"Can't create file to take picture!");
+
+                int permission = 0;
+                if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    imageOption = 1;
+                    requestPermissions(new String[]{android.Manifest.permission.CAMERA}, permission);
                 }
-                //Obtenemos la URI de la imagen temporal creada desde la cámara
-                mImageUri = GenericFileProvider.getUriForFile(getContext(), "com.ismael.fastrecipes", photo);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri);
-                startActivityForResult(intent, ACTIVITY_SELECT_FROM_CAMERA);
+                else {
+                    Intent intent = new Intent(
+                            "android.media.action.IMAGE_CAPTURE");
+                    File photo = null;
+                    try {
+                        // place where to store camera taken picture
+                        photo = PhotoUtils.createTemporaryFile("picture", ".jpg", getContext());
+                        photo.delete();
+                    } catch (Exception e) {
+                        Log.v(getClass().getSimpleName(), "Can't create file to take picture!");
+                    }
+                    //Obtenemos la URI de la imagen temporal creada desde la cámara
+                    mImageUri = GenericFileProvider.getUriForFile(getContext(), "com.ismael.fastrecipes", photo);
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri);
+                    startActivityForResult(intent, ACTIVITY_SELECT_FROM_CAMERA);
+                }
 
             }
 
@@ -569,13 +584,46 @@ public class AddRecipeFragment extends Fragment implements RecipesPresenter.View
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
-                galleryIntent.setType("image/*");
-                startActivityForResult(galleryIntent, ACTIVITY_SELECT_IMAGE);
+                int permission = 0;
+                if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    imageOption = 2;
+                    requestPermissions( new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, permission);
+                }   else{
+                    Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                    galleryIntent.setType("image/*");
+                    startActivityForResult(galleryIntent, ACTIVITY_SELECT_IMAGE);
+                }
             }
 
         });
         builder.show();
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode == 200 && imageOption == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            Intent intent = new Intent(
+                    "android.media.action.IMAGE_CAPTURE");
+            File photo = null;
+            try {
+                // place where to store camera taken picture
+                photo = PhotoUtils.createTemporaryFile("picture", ".jpg", getContext());
+                photo.delete();
+            } catch (Exception e) {
+                Log.v(getClass().getSimpleName(),"Can't create file to take picture!");
+            }
+            //Obtenemos la URI de la imagen temporal creada desde la cámara
+            mImageUri = GenericFileProvider.getUriForFile(getContext(), "com.ismael.fastrecipes", photo);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri);
+            startActivityForResult(intent, ACTIVITY_SELECT_FROM_CAMERA);
+        }else if(requestCode == 200 && imageOption == 2 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
+            galleryIntent.setType("image/*");
+            startActivityForResult(galleryIntent, ACTIVITY_SELECT_IMAGE);
+        }
+        imageOption = 0;
     }
 
     /**

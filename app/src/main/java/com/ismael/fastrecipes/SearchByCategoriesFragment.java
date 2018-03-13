@@ -100,6 +100,20 @@ public class SearchByCategoriesFragment extends Fragment implements CategoriesPr
         ButterKnife.bind(this, rootView);
         RecyclerView.LayoutManager lm = new GridLayoutManager(this.getContext(), 3);
 
+
+        Typeface font = Typeface.createFromAsset(getContext().getAssets(), "yummycupcakes.ttf");
+        txvCatTitle.setTypeface(font);
+        rcvCategories.setLayoutManager(lm);
+        catList = new ArrayList<>();
+
+        return rootView;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        catList.addAll(presenter.getCategories(false));
+
         if(sbcfInstance.getArguments() != null && sbcfInstance.getArguments().getParcelable("recipe") != null){
             tmp = sbcfInstance.getArguments().getParcelable("recipe");
             adding = true;
@@ -110,11 +124,6 @@ public class SearchByCategoriesFragment extends Fragment implements CategoriesPr
             if(mCallback.getFilterByName(Const.f3) != null)
                 cats = mCallback.getFilterByName(Const.f3).getContent().split(", ");
         }
-        Typeface font = Typeface.createFromAsset(getContext().getAssets(), "yummycupcakes.ttf");
-        txvCatTitle.setTypeface(font);
-        rcvCategories.setLayoutManager(lm);
-        catList = new ArrayList<>();
-        catList.addAll(presenter.getCategories(false));
         if(cats != null){
             for (String cat : cats) {
                 for (int j = 0; j < catList.size(); j++)
@@ -125,12 +134,6 @@ public class SearchByCategoriesFragment extends Fragment implements CategoriesPr
         adapter = new CategoryAdapter(this.getContext(), catList);
 
 
-        return rootView;
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
 
         rcvCategories.setAdapter(adapter);
         fabSave.setOnClickListener(new View.OnClickListener() {
@@ -203,15 +206,5 @@ public class SearchByCategoriesFragment extends Fragment implements CategoriesPr
                 mCallback.addFilter(ftmp);
             }
         }
-        else {
-            if (mCallback.getFilterByName(Const.f3) != null)
-                ;
-
-            else {
-                Filter ftmp = new Filter(Const.f3, content.substring(0, content.length() - 2));
-                mCallback.addFilter(ftmp);
-            }
-        }
-
     }
 }

@@ -101,7 +101,7 @@ public class SocialActivityFragment extends Fragment{
             try {
                 Picasso.with(getContext())
                         .load(mCallback.getUser().getImage())
-                        .resize(110, 145).onlyScaleDown()
+                        .resize(280, 350).onlyScaleDown()
                         .memoryPolicy(MemoryPolicy.NO_CACHE)
                         .networkPolicy(NetworkPolicy.NO_CACHE)
                         .noFade()

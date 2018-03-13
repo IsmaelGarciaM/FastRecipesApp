@@ -1,20 +1,27 @@
 package com.ismael.fastrecipes;
 
+import android.*;
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Gravity;
@@ -93,6 +100,7 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
     private static final int ACTIVITY_SELECT_FROM_CAMERA = 1040;
     private PhotoUtils photoUtils;
     boolean imageChanged;
+    int imageOption = 0;
 
     private static ProfileFragment instance;
     public ProfileFragment() {
@@ -115,7 +123,8 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
         View rootView =  inflater.inflate(R.layout.fragment_profile, container, false);
         ButterKnife.bind(this, rootView);
         adapter = new FilteredRecipeAdapter(getContext(), R.layout.item_recipes_list, userRecipes);
-        idUser = instance.getArguments().getInt("id");
+        if(instance.getArguments()!= null && instance.getArguments().getInt("id" )!= 0)
+            idUser = instance.getArguments().getInt("id");
         if(idUser != mCallback.getUser().getId()) {
             fabEditProfile.setEnabled(false);
             fabEditProfile.setVisibility(View.GONE);
@@ -324,8 +333,8 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
             showProgress(false);
         }
         else {
-            if(mCallback.getUser().getLocation().equals(edtLocation.getText().toString()) &&
-                    mCallback.getUser().getName().equals(name) && !imageChanged){
+            if(mCallback.getUser().getLocation() != null && mCallback.getUser().getLocation().equals(edtLocation.getText().toString()) &&
+                    mCallback.getUser().getName()!= null && mCallback.getUser().getName().equals(name) && !imageChanged){
                     tmp = null;
             }
                 else
@@ -345,20 +354,28 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    Intent intent = new Intent(
-                            "android.media.action.IMAGE_CAPTURE");
-                    File photo = null;
-                    try {
-                        // place where to store camera taken picture
-                        photo = PhotoUtils.createTemporaryFile("picture", ".jpg", getContext());
-                        photo.delete();
-                    } catch (Exception e) {
-                        Log.v(getClass().getSimpleName(),"Can't create file to take picture!");
+
+                    int permission = 200;
+                    if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                        imageOption = 1;
+                        requestPermissions(new String[]{android.Manifest.permission.CAMERA}, permission);
+                    }else{
+                        Intent intent = new Intent(
+                                "android.media.action.IMAGE_CAPTURE");
+                        File photo = null;
+                        try {
+                            // place where to store camera taken picture
+                            photo = PhotoUtils.createTemporaryFile("picture", ".jpg", getContext());
+                            photo.delete();
+                        } catch (Exception e) {
+                            Log.v(getClass().getSimpleName(), "Can't create file to take picture!");
+                        }
+                        //mImageUri = Uri.fromFile(photo);
+                        mImageUri = GenericFileProvider.getUriForFile(getContext(), "com.ismael.fastrecipes", photo);
+                        intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri);
+                        startActivityForResult(intent, ACTIVITY_SELECT_FROM_CAMERA);
                     }
-                    //mImageUri = Uri.fromFile(photo);
-                    mImageUri = GenericFileProvider.getUriForFile(getContext(), "com.ismael.fastrecipes", photo);
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri);
-                    startActivityForResult(intent, ACTIVITY_SELECT_FROM_CAMERA);
+
 
                 }
 
@@ -367,13 +384,47 @@ public class ProfileFragment extends Fragment implements ProfilePresenter.View{
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
-                    galleryIntent.setType("image/*");
-                    startActivityForResult(galleryIntent, ACTIVITY_SELECT_IMAGE);
+                    int permission = 200;
+                    if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                        imageOption = 2;
+                        requestPermissions( new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, permission);
+                    }else{
+                        Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                        galleryIntent.setType("image/*");
+                        startActivityForResult(galleryIntent, ACTIVITY_SELECT_IMAGE);
+                    }
                 }
 
             });
             builder.show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        Log.d("result", String.valueOf(requestCode) + "---" + String.valueOf(imageOption));
+        if(requestCode == 200 && imageOption == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            Intent intent = new Intent(
+                    "android.media.action.IMAGE_CAPTURE");
+            File photo = null;
+            try {
+                // place where to store camera taken picture
+                photo = PhotoUtils.createTemporaryFile("picture", ".jpg", getContext());
+                photo.delete();
+            } catch (Exception e) {
+                Log.v(getClass().getSimpleName(), "Can't create file to take picture!");
+            }
+            //mImageUri = Uri.fromFile(photo);
+            mImageUri = GenericFileProvider.getUriForFile(getContext(), "com.ismael.fastrecipes", photo);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri);
+            startActivityForResult(intent, ACTIVITY_SELECT_FROM_CAMERA);
+        }
+        else if(requestCode ==200 && imageOption == 2 &&  grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
+            galleryIntent.setType("image/*");
+            startActivityForResult(galleryIntent, ACTIVITY_SELECT_IMAGE);
+        }
+
     }
 
     @Override

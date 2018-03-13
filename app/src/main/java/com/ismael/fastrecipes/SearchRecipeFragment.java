@@ -498,6 +498,9 @@ public class SearchRecipeFragment extends Fragment implements RecipesPresenter.V
         txvEmpty.setVisibility(View.GONE);
     }
 
+    /**
+     * Muestra un cuadro de diálogo desde el que se puede solicitar un nuevo correo de verificación
+     */
     public void showVerifyEmail(){
         AlertDialog.Builder dialog = new AlertDialog.Builder(getContext(), R.style.Theme_AppCompat_DayNight_Dialog);
         dialog.setTitle("Verificar e-mail");
