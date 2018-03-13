@@ -7,7 +7,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -43,7 +42,6 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 import static android.content.ContentValues.TAG;
-import static com.ismael.fastrecipes.FastRecipesApplication.getContext;
 
 /**
  * RegisterPresenterImpl.java - Presentador que controla los datos y las conexiones de la vista de registro
@@ -180,16 +178,7 @@ public class RegisterPresenterImpl implements RegisterPresenter {
                     boolean cont = false;
                     @Override
                     public void onCompleted() {
-                        if(cont) {
-                            vista.showLogin();
-                            try {
-                                mAuth.getCurrentUser().sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                    }
-                                });
-                            }catch (Exception e){}
-                        }
+                        if(cont) vista.showLogin();
                         else vista.showInputError(context.getResources().getString(R.string.serverError));
 
                     }

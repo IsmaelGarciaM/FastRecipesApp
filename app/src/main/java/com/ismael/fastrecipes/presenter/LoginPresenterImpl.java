@@ -63,9 +63,7 @@ public class LoginPresenterImpl implements LoginPresenter {
     public LoginPresenterImpl(LoginPresenter.View view, Context c){
         this.vista = view;
         this.context = c;
-
         mAuth = FirebaseAuth.getInstance();
-
         mService = FastRecipesApplication.getFastRecipesService();
 
     }
@@ -209,7 +207,7 @@ public class LoginPresenterImpl implements LoginPresenter {
                     @Override
                     public void onError(Throwable e) {
                         vista.showProgress(false);
-                        vista.showLoginError(context.getResources().getString(R.string.serverError));
+                        vista.showLoginError(e.getMessage());
                     }
                     @Override
                     public void onNext(ResultUser user) {

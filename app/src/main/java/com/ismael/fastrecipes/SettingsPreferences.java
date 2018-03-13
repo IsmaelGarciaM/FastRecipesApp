@@ -117,7 +117,7 @@ public class SettingsPreferences extends PreferenceFragment implements Prefs.Vie
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 Uri uri = Uri.parse("https://www.linkedin.com/in/ismael-garc%C3%ADa-mart%C3%ADnez-a17a94139/");
-                showContent(uri);
+
                 return false;
             }
         });
